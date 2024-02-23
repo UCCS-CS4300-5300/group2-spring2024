@@ -29,7 +29,9 @@ Each feature bracnch should have the following properties:
 - Created for development of one specific feature/story
 - Ideally no/minimal conflicts with other feature branch (no two feature branches should be working on same task/story at once)
 
-The reason we are using feature branches as opposed to pushing to trunk is because it allows for us to have [PR/MRs](#merge-requests-(pull-requests)) for review and CI/CD
+The reason we are using feature branches as opposed to pushing to trunk is because it allows for us to have [PR/MRs](#merge-requests-(pull-requests)) for review and CI/CD.
+
+The trunk (main) branch should be in a fully functional state at all times, ideally we should be able to tag a release off it at any point
 
 ### Merge requests (Pull Requests)
 In order to merge feature branches into the main branch, we will be making use of merge requests (called pull requests in GitHub, abbreviated MR and PR respectively). This has several advantages over manually merging into main. Most notably.
