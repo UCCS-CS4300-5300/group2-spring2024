@@ -8,6 +8,44 @@
 - Reilly Gardner
 - Deepkia Bajaj
 
+
+## Python venv and pip setup for the group
+This section will serve as a guide for setting up a python venv on your machine so that you can keep and update package dependencies that will be needed for this project.
+
+1. Ensure your machine has python3 installed (note, repit uses python 3.10.11, the closer you can get to this version on your machine, the better)
+2. Clone the repo to a folder on your machine
+3. Open the group2-spring2024 folder in a bash terminal
+
+- To create a venv
+in the repo folder run
+```bash
+python3 -m venv venv
+```
+this creates a new venv in the venv folder
+- To activate the venv
+```bash
+source venv/bin/activate
+```
+- To deactivate the venv
+```bash
+deactivate
+```
+- To install dependencies
+
+When in your venv run
+```bash
+pip install -r requirements.txt
+```
+
+- To update dependencies
+
+This should be done anytime you have to pip install anything for this project in the venv
+
+In the venv run
+```bash
+pip freeze > requirements.txt
+```
+make sure to push the updated requirements.txt file with the code that uses the dependency
 ## Replit/Git guide for the group
 
 ### Overview
