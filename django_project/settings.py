@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'calendar_app',
+    'bootstrap5', # Bootstrap - do not remove
 ]
 
 MIDDLEWARE = [
