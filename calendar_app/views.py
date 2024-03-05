@@ -14,7 +14,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('calendar_app/index.html') 
+            return redirect('calendar_app/accounts/index.html') 
     else:
         form = CustomUserCreationForm()
-    return render(request, 'calendar_app/register.html', {'form': form})
+    return render(request, 'calendar_app/accounts/register.html', {'form': form})

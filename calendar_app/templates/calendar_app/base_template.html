@@ -42,7 +42,7 @@
           <!-- Logged-in view --> 
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="#">Log Out</a>
+              <a class="nav-link" aria-current="page" href="/logout">Log Out</a>
             </li>     
           <!-- Logged-out view -->  
           {% else %}
@@ -78,7 +78,7 @@
               <li><a class="dropdown-item" href="#">Help</a></li>
               <li><a class="dropdown-item" href="#">Send Feedback</a></li>
               
-              <!-- Logged-in/out view (un-comment when account functionality is implemented)
+              <!-- Logged-in/out view (un-comment when account functionality is implemented)-->
               {% if user.is_authenticated %}
                 <li><a class="dropdown-item" href="#">Account</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -87,12 +87,12 @@
 
                 <li><hr class="dropdown-divider"></li>
                 
-                <li><a class="dropdown-item" href="/accounts/logout?next=/">Log Out</a></li>
+                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
               {% else %}
-                <li><a class="dropdown-item" href="/accounts/register">Register</a></li>
-                <li><a class="dropdown-item" href="/accounts/login">Log In</a></li>
+                <li><a class="dropdown-item" href="/register">Register</a></li>
+                <li><a class="dropdown-item" href="/login">Log In</a></li>
               {% endif %}
-              -->
+              
             </ul>
           </li> <!-- End of dropdown menu-->
         </ul> <!-- End of nav links UL -->
