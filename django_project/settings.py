@@ -105,6 +105,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Auth for accounts
 AUTH_USER_MODEL = 'calendar_app.CustomUser'
 
+# LOGIN redirect URL for using django login view in URLS, this send the user
+# to the homepage after they login, if you want this changed, change the URL
+
+LOGIN_REDIRECT_URL = 'home'
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
