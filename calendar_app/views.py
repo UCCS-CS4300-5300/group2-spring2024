@@ -9,4 +9,4 @@ def index(request):
     return render( request, 'calendar_app/index.html')
 
 def WeekView(request):
-    return render(request, 'week_view.html')
+    return render(request, 'calendar_app/week_view.html')
