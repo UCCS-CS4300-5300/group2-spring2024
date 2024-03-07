@@ -7,3 +7,6 @@ def exampleView(request):
 def index(request):
     # Render index.html
     return render( request, 'calendar_app/index.html')
+
+def WeekView(request):
+    return render(request, 'week_view.html')
