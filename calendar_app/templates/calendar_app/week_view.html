@@ -26,10 +26,19 @@
     }
     .row > div {
         margin-bottom: 30px; /* Move day bar down */
-      }
+    }
+
+    .weekday {
+        border: 1px solid black; /* Black border */
+        padding: 10px; /* Padding for spacing */
+        background-color: #f0f0f0; /* Background color */
+    }
+
   </style>
 </head>
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <div class="container text-center">
     <h1>Week View Calendar</h1>
     <!-- Calendar Display -->
@@ -57,12 +66,41 @@
     </div>
     <!-- Calendar Grid -->
     <div class="row">
-      <div class="col border-dark-subtle">
-        Monday Events
+      <div class="col weekday">
+        <h3>Monday</h3>
+        <!-- Monday Events -->
         <!-- Django loop to display events for Monday -->
       </div>
-      <!-- Remaining days -->
-      <!-- Similar structure for Tuesday through Sunday -->
+      <div class="col weekday">
+        <h3>Tuesday</h3>
+        <!-- Tuesday Events -->
+        <!-- Django loop to display events for Tuesday -->
+      </div>
+      <div class="col weekday">
+        <h3>Wednesday</h3>
+        <!-- Wednesday Events -->
+        <!-- Django loop to display events for Wednesday -->
+      </div>
+      <div class="col weekday">
+        <h3>Thursday</h3>
+        <!-- Thursday Events -->
+        <!-- Django loop to display events for Thursday -->
+      </div>
+      <div class="col weekday">
+        <h3>Friday</h3>
+        <!-- Friday Events -->
+        <!-- Django loop to display events for Friday -->
+      </div>
+      <div class="col weekday">
+        <h3>Saturday</h3>
+        <!-- Saturday Events -->
+        <!-- Django loop to display events for Saturday -->
+      </div>
+      <div class="col weekday">
+        <h3>Sunday</h3>
+        <!-- Sunday Events -->
+        <!-- Django loop to display events for Sunday -->
+      </div>
     </div>
   </div>
 </body>
