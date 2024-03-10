@@ -1,0 +1,21 @@
+<!-- inherit from base.html-->
+{% extends "calendar_app/base_template.html" %}
+<!-- Replace block content in base_template.html -->
+{% block content %}
+
+<h2>Login</h2>
+<form method="post">
+
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+
+</form>
+
+<!-- Registeer if no login -->
+<form action="/register" method="get">
+    <button type="submit" class="btn">Sign Up</button>
+</form>
+
+<!-- End of block -->
+{% endblock %}
