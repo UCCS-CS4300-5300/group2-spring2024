@@ -1,6 +1,6 @@
 from .models import *
 from .forms import TaskForm, CustomUserCreationForm
-
+from django.views import generic
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 
@@ -35,5 +35,32 @@ def createTask(request):
         form = TaskForm()
 
     context = {'form': form}
-    return render(request, 'calendar_app/add_task_form.html', context)
+    return render(request, 'calendar_app/task_form.html', context)
+
+# class TaskDetailView(generic.DetailView):
+#     model = Task
+#
+# class TaskListView(generic.ListView):
+#     model = Task
+
+# def updateTask(request, task_id ):
+#     task = Task.objects.get(pk=task_id)
+#     form = TaskForm(instance=task)
+#     if request.method == 'POST':
+#         form = TaskForm(request.POST, instance=task)
+#         if form.is_valid():
+#             form.save()
+#         return redirect('task-detail', task.id)
+#
+#     context = {'form': form}
+#     return render(request, 'calendar_app/task_form.html', context)
+#
+# def deleteTask(request, task_id):
+#     task = Task.objects.get(pk=task_id)
+#     if request.method == 'POST':
+#         task.delete()
+#         return redirect('/')
+#
+#     context = {'task': task}
+#     return render(request, 'calendar_app/delete_task_form.html', context)
 

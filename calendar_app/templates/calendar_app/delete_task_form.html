@@ -1,0 +1,13 @@
+{% extends 'calendar_app/base_template.html' %}
+
+
+{% block content %}
+<h2>Are you sure you want to delete {{ task.name }}?</h2>
+
+    <form action="{% url 'delete_task' user.task.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Submit">
+        <a class="btn btn-primary" href="{{ project.portfolio.get_absolute_url }}" role="button">Cancel</a>
+    </form>
+
+{% endblock %}
