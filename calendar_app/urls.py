@@ -13,4 +13,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     path('calendar/week/', views.WeekView, name='week-view')
+    path('create_task', views.createTask, name='create_task'),
+
 ]

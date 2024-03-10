@@ -6,9 +6,9 @@ class CustomUser(AbstractUser):
      email = models.EmailField(unique=True, blank=False)
 class User(models.Model):
     name = models.CharField(max_length=50)
-
     def __str__(self):
         return self.name
+
 
 class Category(models.Model):
     category = models.IntegerField()
@@ -20,8 +20,8 @@ class Task(models.Model):
     deadlineTime = models.TimeField()
     category = models.OneToOneField(Category, on_delete=models.CASCADE)
     duration = models.DurationField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.BooleanField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 
