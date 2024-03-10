@@ -20,7 +20,3 @@ class Task(models.Model):
     status = models.BooleanField()
     def __str__(self):
         return self.name
-
-
-
-
