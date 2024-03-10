@@ -12,7 +12,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
 
-    path('calendar/week/', views.WeekView, name='week-view')
+    path('calendar/week/', views.WeekView, name='week-view'),
     path('create_task', views.createTask, name='create_task'),
 
 ]
