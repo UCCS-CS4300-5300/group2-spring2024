@@ -6,7 +6,7 @@ from .forms import TaskForm
 from typing import Any
 from django.views import generic
 from calendar import HTMLCalendar
-from datetime import datetime
+from datetime import datetime, date
 from django.utils.safestring import mark_safe
 
 # Create your views here.
