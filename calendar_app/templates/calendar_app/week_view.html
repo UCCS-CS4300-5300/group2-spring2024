@@ -24,14 +24,22 @@
       padding: 10px; /* Padding around the weekday names */
       
     }
+
+    /*
     .row > div {
-        margin-bottom: 30px; /* Move day bar down */
+        margin-bottom: 30px; /* Move day bar down 
     }
+    */
 
     .weekday {
         border: 1px solid black; /* Black border */
         padding: 10px; /* Padding for spacing */
         background-color: #f0f0f0; /* Background color */
+    }
+
+    .task {
+      border-bottom: 1px solid #ccc; /* Add a bottom border between tasks */
+      padding: 10px 0; /* Add padding for spacing */
     }
 
   </style>
@@ -66,48 +74,17 @@
     </div>
     <!-- Calendar Grid -->
     <div class="row">
-      <div class="col weekday">
-        <!-- Monday Events -->
-        {% for task in tasks %}
-          <div>
-            <h3>{{ task.name }}</h3>
-            <p>Description: {{ task.description }}</p>
-            <p>Deadline: {{ task.deadlineDay|date:"l" }}</p> <!-- Display week day -->
-            <p>Time: {{ task.deadlineTime }}</p>
-            <!-- Add more task details here if needed -->
-          </div>
-        {% endfor %}
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Tuesday Events -->
-        <!-- Django loop to display events for Tuesday -->
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Wednesday Events -->
-        <!-- Django loop to display events for Wednesday -->
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Thursday Events -->
-        <!-- Django loop to display events for Thursday -->
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Friday Events -->
-        <!-- Django loop to display events for Friday -->
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Saturday Events -->
-        <!-- Django loop to display events for Saturday -->
-      </div>
-      <div class="col weekday">
-        <h3>Events</h3>
-        <!-- Sunday Events -->
-        <!-- Django loop to display events for Sunday -->
-      </div>
+      {% for day, tasks in days_tasks.items %}
+        <div class="col weekday">
+          
+          {% for task in tasks %}
+            <div class="task"><h3>{{ task.name }}</h3></div>
+            <!-- Display more task details here if needed -->
+          {% empty %}
+            <h3>No tasks</h3>
+          {% endfor %}
+        </div>
+      {% endfor %}
     </div>
   </div>
 </body>
