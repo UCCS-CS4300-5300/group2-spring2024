@@ -6,7 +6,7 @@ from .forms import TaskForm
 from typing import Any
 from django.views import generic
 from calendar import HTMLCalendar
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.utils.safestring import mark_safe
 
 # Create your views here.
@@ -34,6 +34,13 @@ def createTask(request):
 
 def WeekView(request):
     tasks = Task.objects.all()
+    current_date = datetime.now().date()
+
+    start_of_week = current_date - timedelta(days=current_date.weekday())
+
+    # Calculate the end date of the current week
+    end_of_week = start_of_week + timedelta(days=6)
+
 
     # Dictionary of day names
     days_tasks = {
@@ -52,7 +59,7 @@ def WeekView(request):
         day_of_week = task.deadlineDay.strftime('%A')
         days_tasks[day_of_week].append(task)
 
-    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks})
+    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week})
 
 
 

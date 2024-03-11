@@ -50,7 +50,7 @@
         <button class="btn btn-primary">&lt;</button> <!-- Previous week button -->
       </div>
       <div class="col">
-        <h2>Week of [Week Start Date] - [Week End Date]</h2> <!-- Display current week range -->
+        <h2>Week of {{ start_of_week|date:"F j, Y" }} - {{ end_of_week|date:"F j, Y" }}</h2> <!-- Display current week range -->
       </div>
       <div class="col">
         <button class="btn btn-primary">&gt;</button> <!-- Next week button -->
