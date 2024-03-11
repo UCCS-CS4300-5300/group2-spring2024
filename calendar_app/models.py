@@ -10,14 +10,14 @@ class CustomUser(AbstractUser):
 
 
 class Category(models.Model):
-    category = models.IntegerField()
+    name = models.CharField(max_length=20)
 
 class Task(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=1000)
     deadlineDay = models.DateField()
     deadlineTime = models.TimeField()
-    category = models.OneToOneField(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
     duration = models.DurationField()
     status = models.BooleanField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
