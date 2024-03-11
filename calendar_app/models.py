@@ -21,6 +21,6 @@ class Task(models.Model):
     category = models.OneToOneField(Category, on_delete=models.CASCADE)
     duration = models.DurationField()
     status = models.BooleanField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1) # REMOVE DEFAULT ON PUSH
     def __str__(self):
         return self.name
