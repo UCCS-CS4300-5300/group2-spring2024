@@ -2,7 +2,9 @@ from django.urls import path, reverse_lazy, include
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
 
+    
 urlpatterns = [
+    
     path('', views.index, name='index'),
     path('home/', views.index, name='home'),
     path('register/', views.register, name='index'),
@@ -14,5 +16,5 @@ urlpatterns = [
 
     path('calendar/week/', views.WeekView, name='week-view'),
     path('create_task', views.createTask, name='create_task'),
-
+    path('calendar/month/', views.MonthView.as_view(), name='month-view'),
 ]
