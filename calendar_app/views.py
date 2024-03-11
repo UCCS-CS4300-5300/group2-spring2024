@@ -67,7 +67,7 @@ class Calendar(HTMLCalendar):
     # Format month name header
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
         monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
-"August", "September", "October", "November", "December"]
+                      "August", "September", "October", "November", "December"]
         currentYear=str(currentYear)
         currentMonth=monthNames[currentMonth - 1]
         monthHeader = ''
