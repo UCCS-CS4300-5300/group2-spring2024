@@ -1,0 +1,14 @@
+{% extends 'calendar_app/base_template.html' %}
+
+
+{% block content %}
+<h2>Are you sure you want to delete {{ category.name }}?</h2>
+
+<!-- TODO redirects to home now, change later-->
+<button class="btn btn-primary float-start" onclick="window.location.href='{% url 'home'%}'">Cancel</button>
+<form action = "" method="POST">
+        {% csrf_token %}
+        <input class="btn btn-danger float-start" type="submit" name="Delete">
+</form>
+
+{% endblock %}

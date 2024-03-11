@@ -13,6 +13,12 @@ urlpatterns = [
     # path('tasks/', views.TaskListView.as_view(), name='task-list'),
     # path('tasks/<int:pk>', views.TaskDetailView.as_view(), name='task-detail'),
 
+    #category CRUD
+    path('create_category', views.createCategory, name='create_category'),
+    path('update_category/<int:category_id>', views.updateCategory, name='update_category'),
+    path('delete_category/<int:category_id>', views.deleteCategory, name='delete_category'),
+
+
     path('home/', views.index, name='home'),
     path('register/', views.register, name='index'),
 

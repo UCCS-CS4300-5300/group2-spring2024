@@ -21,3 +21,9 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
         fields = ['username', 'email', 'password']
+
+
+class CategoryForm(ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']

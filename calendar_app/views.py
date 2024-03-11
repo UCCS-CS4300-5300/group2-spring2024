@@ -1,7 +1,8 @@
 from .models import *
-from .forms import TaskForm, CustomUserCreationForm
+from .forms import * 
 from django.views import generic
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
+from django.urls import reverse
 from django.contrib.auth import login
 from typing import Any
 from django.views import generic
@@ -41,6 +42,41 @@ def createTask(request):
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
 
+
+
+def createCategory(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            # Save the form data to the database
+            task = form.save()
+            return redirect('/')
+    else:
+        form = CategoryForm()
+
+    context = {'form': form}
+    return render(request, 'calendar_app/generic_form.html', context)
+
+def updateCategory(request,category_id):
+    category = get_object_or_404(Category,pk=category_id)
+    form = CategoryForm(instance=category)
+    if request.method == 'POST':
+         form = CategoryForm(request.POST, instance=category)
+         if form.is_valid():
+             form.save()
+         return redirect(request.META['HTTP_REFERER'])
+
+    context = {'form': form}
+    return render(request, 'calendar_app/task_form.html', context)
+
+def deleteCategory(request,category_id):
+    category = get_object_or_404(Category,pk=category_id)
+    if request.method == 'POST':
+       category.delete()
+       return redirect('/')
+    context = {'category':category}
+    return render(request, 'calendar_app/delete_category_form.html', context)
+        
 # class TaskDetailView(generic.DetailView):
 #     model = Task
 #
