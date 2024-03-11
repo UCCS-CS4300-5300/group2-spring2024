@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os # For adding template directory
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -110,6 +111,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Auth for accounts
+AUTH_USER_MODEL = 'calendar_app.CustomUser'
+
+# LOGIN redirect URL for using django login view in URLS, this send the user
+# to the homepage after they login, if you want this changed, change the URL
+
+LOGIN_REDIRECT_URL = 'home'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -132,3 +140,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
