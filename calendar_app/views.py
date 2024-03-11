@@ -33,8 +33,9 @@ def createTask(request):
 
 
 def WeekView(request):
-    tasks = Task.objects.all()  # Fetch all tasks, you may need to filter them based on your requirements
+    tasks = Task.objects.all()
 
+    # Dictionary of day names
     days_tasks = {
         'Monday': [],
         'Tuesday': [],
@@ -47,9 +48,8 @@ def WeekView(request):
 
     # Group tasks by day
     for task in tasks:
-        # Get the day of the week for the task's deadline
-        day_of_week = task.deadlineDay.strftime('%A')  # e.g., 'Monday', 'Tuesday', etc.
-        # Append the task to the corresponding day's list
+        # Get name of deadline day
+        day_of_week = task.deadlineDay.strftime('%A')
         days_tasks[day_of_week].append(task)
 
     return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks})
