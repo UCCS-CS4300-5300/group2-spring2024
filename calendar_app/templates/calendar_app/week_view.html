@@ -67,9 +67,16 @@
     <!-- Calendar Grid -->
     <div class="row">
       <div class="col weekday">
-        <h3>Events</h3>
         <!-- Monday Events -->
-        <!-- Django loop to display events for Monday -->
+        {% for task in tasks %}
+          <div>
+            <h3>{{ task.name }}</h3>
+            <p>Description: {{ task.description }}</p>
+            <p>Deadline: {{ task.deadlineDay|date:"l" }}</p> <!-- Display week day -->
+            <p>Time: {{ task.deadlineTime }}</p>
+            <!-- Add more task details here if needed -->
+          </div>
+        {% endfor %}
       </div>
       <div class="col weekday">
         <h3>Events</h3>

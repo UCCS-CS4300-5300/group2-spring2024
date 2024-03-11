@@ -32,9 +32,11 @@ def createTask(request):
 
 
 
-
 def WeekView(request):
-    return render(request, 'calendar_app/week_view.html')
+    tasks = Task.objects.all()  # Fetch all tasks, you may need to filter them based on your requirements
+    return render(request, 'calendar_app/week_view.html', {'tasks': tasks})
+
+
 # Registration form / login
 def register(request):
     if request.method == 'POST':
