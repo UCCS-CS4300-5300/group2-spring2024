@@ -21,4 +21,5 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='calendar_app/accounts/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('calendar/month/', views.MonthView.as_view(), name='month-view'),
 ]
