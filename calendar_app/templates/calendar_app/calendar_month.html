@@ -4,6 +4,18 @@
 <!-- For displaying images -->
 {% load static %}
 
+<!-- Add custom styling; for MonthView table generation -->
+{% block style %}
+<style>
+.table-fixed {
+    table-layout: fixed; /* Make day cells uniform in size */
+}
+td {
+    overflow: hidden; /* Using "auto" breaks outside of the cell */
+}
+</style>
+{% endblock %}
+
 <!-- Replace block content in base_template.html -->
 {% block content %}
 

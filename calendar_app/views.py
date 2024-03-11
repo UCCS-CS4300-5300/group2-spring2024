@@ -15,8 +15,7 @@ def index(request):
     # Render index.html
     return render( request, 'calendar_app/index.html')
 
-
-
+# Task Creation view
 def createTask(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
@@ -31,11 +30,10 @@ def createTask(request):
     context = {'form': form}
     return render(request, 'calendar_app/add_task_form.html', context)
 
-
-
-
+# WeekView
 def WeekView(request):
     return render(request, 'calendar_app/week_view.html')
+
 # Registration form / login
 def register(request):
     if request.method == 'POST':
@@ -48,8 +46,7 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
-
-# Calendar class; overriding HTMLCalendar
+# Calendar class for MonthView; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None):
         self.year = year
@@ -64,11 +61,11 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            dayHtml += f'<a class="btn btn-primary btn-sm" href="#" role="button">{task.name}</a><br>'
+            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="#" role="button">{task.name}</a><br>'
         
-        # Add numerical date and tasks to cel
+        # Add numerical date and tasks to cell
         if currentDay != 0:
-            return f'<td><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
+            return f'<td class="text-nowrap"><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
         
         # Return empty otherwise
         return '<td></td>'
@@ -91,7 +88,7 @@ class Calendar(HTMLCalendar):
         # Start the HTML table row
         weekHeader = '<tr class="text-center">'
 
-        # Label the day cels
+        # Label the day cells
         for day in days:
              weekHeader += '<th scope="col">'
              weekHeader += day
@@ -142,7 +139,7 @@ class Calendar(HTMLCalendar):
         cal = f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
         
         # Start the HTML table for the weeks and days
-        cal += f'<table class="table table-bordered">'
+        cal += f'<table class="table table-bordered table-fixed">'
         
         # Format the week header
         cal += f'{self.formatweekheader()}\n'
@@ -152,7 +149,8 @@ class Calendar(HTMLCalendar):
             cal += f'{self.formatweek(week, tasks)}\n'
         
         return cal
-    
+
+# MonthView; uses ListView
 class MonthView(generic.ListView):
     model = Task
 
@@ -176,6 +174,7 @@ class MonthView(generic.ListView):
         context['calendar'] = mark_safe(html_cal)
         return context
 
+# For use with MonthView
 def get_date(req_day):
     if req_day:
         year, month = (int(x) for x in req_day.split('-'))

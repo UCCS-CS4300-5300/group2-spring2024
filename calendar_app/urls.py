@@ -12,8 +12,12 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
 
-    path('calendar/week/', views.WeekView, name='week-view'),
+    # Task CRUD URLs
     path('create_task', views.createTask, name='create_task'),
 
+    # WeekView
+    path('calendar/week/', views.WeekView, name='week-view'),
+
+    # MonthView
     path('calendar/month/', views.MonthView.as_view(), name='month-view'),
 ]
