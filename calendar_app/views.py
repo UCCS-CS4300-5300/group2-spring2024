@@ -1,4 +1,3 @@
-
 from .models import *
 from .forms import * 
 from django.views import generic
@@ -17,6 +16,20 @@ def index(request):
     # Render index.html
     return render( request, 'calendar_app/index.html')
 
+
+# Registration form / login
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('calendar_app/accounts/index.html')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'calendar_app/accounts/register.html', {'form': form})
+
+
 # Task Creation view
 def createTask(request):
     if request.method == 'POST':
@@ -31,6 +44,13 @@ def createTask(request):
 
     context = {'form': form}
     return render(request, 'calendar_app/add_task_form.html', context)
+
+class TaskDetailView(generic.DetailView):
+    model = Task
+
+class TaskListView(generic.ListView):
+    model = Task
+
 
 def WeekView(request):
     tasks = Task.objects.all()
@@ -65,17 +85,6 @@ def WeekView(request):
 
     return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
-# Registration form / login
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect(reverse('index'))  # Redirect to the index page
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
 
 def createTask(request):

@@ -20,12 +20,6 @@ class TaskForm(ModelForm):
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
 
-class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = get_user_model()
-        fields = ['username', 'email', 'password']
-
-
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
