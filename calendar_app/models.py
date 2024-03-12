@@ -9,7 +9,7 @@ class User(models.Model):
     def __str__(self):
         return self.name
 
-
+# For use with Tasks
 class Category(models.Model):
     category = models.IntegerField()
 
@@ -21,6 +21,6 @@ class Task(models.Model):
     category = models.OneToOneField(Category, on_delete=models.CASCADE)
     duration = models.DurationField()
     status = models.BooleanField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
     def __str__(self):
         return self.name
