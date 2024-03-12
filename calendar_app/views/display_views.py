@@ -2,14 +2,13 @@ from calendar import monthrange
 from datetime import date, datetime, timedelta
 
 from django.contrib.auth import login
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 from django.utils.safestring import mark_safe
 from django.views import generic
 
-from .calendar_override import Calendar
-from .forms import *
-from .models import *
+from ..calendar_override import Calendar
+from ..forms import *
+from ..models import *
 
 
 # Create your views here.
@@ -28,17 +27,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
-
-
-
-class TaskDetailView(generic.DetailView):
-    model = Task
-
-class TaskListView(generic.ListView):
-    model = Task
-
-class CategoryListView(generic.ListView):
-    model = Category
 
 
 def WeekView(request,category):
@@ -85,80 +73,6 @@ def WeekView(request,category):
     return render(request, 'calendar_app/week_view.html', context)
 
 
-
-def createTask(request):
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            # Save the form data to the database
-            task = form.save()
-            return redirect('index')
-    else:
-        form = TaskForm()
-
-    context = {'form': form}
-    return render(request, 'calendar_app/task_form.html', context)
-
-
-def createCategory(request):
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            # Save the form data to the database
-            task = form.save()
-            return redirect('index')
-    else:
-        form = CategoryForm()
-
-    context = {'form': form}
-    return render(request, 'calendar_app/generic_form.html', context)
-
-def updateCategory(request,category_id):
-    category = get_object_or_404(Category,pk=category_id)
-    form = CategoryForm(instance=category)
-    if request.method == 'POST':
-         form = CategoryForm(request.POST, instance=category)
-         if form.is_valid():
-             form.save()
-         return redirect(request.META['HTTP_REFERER'])
-
-    context = {'form': form}
-    return render(request, 'calendar_app/task_form.html', context)
-
-def deleteCategory(request,category_id):
-    category = get_object_or_404(Category,pk=category_id)
-    if request.method == 'POST':
-       category.delete()
-       return redirect('index')
-    context = {'category':category}
-    return render(request, 'calendar_app/delete_category_form.html', context)
-        
-# class TaskDetailView(generic.DetailView):
-#     model = Task
-#
-# class TaskListView(generic.ListView):
-#     model = Task
-
-# def updateTask(request, task_id ):
-#     task = Task.objects.get(pk=task_id)
-#     form = TaskForm(instance=task)
-#     if request.method == 'POST':
-#         form = TaskForm(request.POST, instance=task)
-#         if form.is_valid():
-#             form.save()
-#         return redirect('task-detail', task.id)
-#
-#     context = {'form': form}
-#     return render(request, 'calendar_app/task_form.html', context)
-#
-# def deleteTask(request, task_id):
-#     task = Task.objects.get(pk=task_id)
-#     if request.method == 'POST':
-#         task.delete()
-#         return redirect('index')
-#
-#     context = {'task': task}
-#     return render(request, 'calendar_app/delete_task_form.html', context)
 
 # MonthView; uses ListView
 class MonthView(generic.ListView):

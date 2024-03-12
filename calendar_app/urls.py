@@ -1,21 +1,23 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path, reverse_lazy
 
-from . import views
+from .views.category_views import * 
+from .views.display_views import *
+from .views.task_views import *
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('',index , name='index'),
 
 
     #category CRUD
-    path('category/create', views.createCategory, name='create-category'),
-    path('category/update/<int:category_id>', views.updateCategory, name='update-category'),
-    path('category/delete/<int:category_id>', views.deleteCategory, name='delete-category'),
-    path('category/list',views.CategoryListView.as_view(),name='category-list'),
+    path('category/create', createCategory, name='create-category'),
+    path('category/update/<int:category_id>', updateCategory, name='update-category'),
+    path('category/delete/<int:category_id>', deleteCategory, name='delete-category'),
+    path('category/list',CategoryListView.as_view(),name='category-list'),
 
-    path('task/create', views.createTask, name='create-task'),
-    path('task/', views.TaskListView.as_view(), name='task-list'),
-    path('task/<int:pk>', views.TaskDetailView.as_view(), name='task-detail'),
+    path('task/create', createTask, name='create-task'),
+    path('task/', TaskListView.as_view(), name='task-list'),
+    path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
 
     # After user registers this sends them to the homepage
     # path('register/calendar_app/index.html/', views.index, name='index'),
@@ -24,10 +26,10 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # WeekView
-    path('calendar/week/', views.WeekView,{'category':None}, name='week-view'),
-    path('calendar/week/filter/<int:category>', views.WeekView, name='filtered-week-view'),
+    path('calendar/week/', WeekView,{'category':None}, name='week-view'),
+    path('calendar/week/filter/<int:category>', WeekView, name='filtered-week-view'),
 
     # MonthView
-    path('calendar/month/', views.MonthView.as_view(), {'category':None},name='month-view'),
-    path('calendar/month/filter/<int:category>',views.MonthView.as_view(),name='filtered-month-view')
+    path('calendar/month/', MonthView.as_view(), {'category':None},name='month-view'),
+    path('calendar/month/filter/<int:category>',MonthView.as_view(),name='filtered-month-view')
 ]
