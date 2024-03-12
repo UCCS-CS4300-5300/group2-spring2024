@@ -4,8 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 
     
 urlpatterns = [
-    
-    path('', views.index, name='index'),
+    #path('', views.index, name='index'),
 
 
     #category CRUD
@@ -31,5 +30,6 @@ urlpatterns = [
     path('calendar/week/', views.WeekView, name='week-view'),
 
     # MonthView
-    path('calendar/month/', views.MonthView.as_view(), name='month-view'),
+    path('calendar/month/', views.MonthView.as_view(), {'category':None},name='month-view'),
+    path('calendar/month/filter/<int:category>',views.MonthView.as_view(),name='filtered-month-view')
 ]
