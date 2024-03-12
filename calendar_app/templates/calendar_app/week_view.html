@@ -41,17 +41,21 @@
     <div class="row">
       <!-- Week Navigation -->
       <div class="col">
-        <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Categories</button>
-          <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="{% url 'week-view' %}">All Categories</a>
-              </li>
-              {% for category in category_list %}
-                <li>
-                  <a class="dropdown-item btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
-                </li>
-              {% endfor %}
-            </ul> <!-- Categories Button -->
+        <!-- Categories Button -->
+        <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+        <ul class="dropdown-menu">
+            <li>
+            <a class="dropdown-item" href="{% url 'week-view' %}">All Categories</a>
+            </li>
+            {% for category in category_list %}
+            <li>
+                <a class="dropdown-item btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
+            </li>
+            {% endfor %}
+            <li>
+            <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+            </li>
+        </ul>
       </div>
       <div class="col">
         <button class="btn btn-primary">&lt;</button> <!-- Previous week button -->
@@ -63,7 +67,7 @@
         <button class="btn btn-primary">&gt;</button> <!-- Next week button -->
       </div>
       <div class="col">
-        <button class="btn btn-primary">Future</button> <!-- Link back to month view button -->
+        <a class="btn btn-primary" href="{% url 'month-view' %}" role="button">Month View</a> <!-- Link back to month view button -->
       </div>
     </div>
     <!-- Weekday Names -->

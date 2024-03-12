@@ -8,9 +8,10 @@ urlpatterns = [
 
 
     #category CRUD
-    path('create_category', views.createCategory, name='create_category'),
-    path('update_category/<int:category_id>', views.updateCategory, name='update_category'),
-    path('delete_category/<int:category_id>', views.deleteCategory, name='delete_category'),
+    path('category/create', views.createCategory, name='create-category'),
+    path('category/update/<int:category_id>', views.updateCategory, name='update-category'),
+    path('category/delete/<int:category_id>', views.deleteCategory, name='delete-category'),
+    path('category/list',views.CategoryListView.as_view(),name='category-list'),
 
     path('create_task', views.createTask, name='create_task'),
     path('tasks/', views.TaskListView.as_view(), name='task-list'),

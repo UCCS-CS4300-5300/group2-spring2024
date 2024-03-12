@@ -51,6 +51,9 @@ class TaskDetailView(generic.DetailView):
 class TaskListView(generic.ListView):
     model = Task
 
+class CategoryListView(generic.ListView):
+    model = Category
+
 
 def WeekView(request,category):
     if category:
