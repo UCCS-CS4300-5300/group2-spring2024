@@ -2,13 +2,14 @@ from typing import Any
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login
+
 from .models import *
 from .forms import TaskForm
-from .models import *
 from django.views import generic
 from calendar import HTMLCalendar, monthrange
-from datetime import datetime, timedelta, date
+from datetime import datetime, date, timedelta
 from django.utils.safestring import mark_safe
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -30,9 +31,38 @@ def createTask(request):
     context = {'form': form}
     return render(request, 'calendar_app/add_task_form.html', context)
 
-# WeekView
 def WeekView(request):
-    return render(request, 'calendar_app/week_view.html')
+    tasks = Task.objects.all()
+    current_date = datetime.now().date()
+
+    start_of_week = current_date - timedelta(days=current_date.weekday())
+
+    # Calculate the end date of the current week
+    end_of_week = start_of_week + timedelta(days=6)
+
+    # Create a list to store the dates for each weekday
+    weekday_dates = []
+    for i in range(7):
+        weekday_dates.append(start_of_week + timedelta(days=i))
+
+    # Dictionary of day names
+    days_tasks = {
+        'Monday': [],
+        'Tuesday': [],
+        'Wednesday': [],
+        'Thursday': [],
+        'Friday': [],
+        'Saturday': [],
+        'Sunday': [],
+    }
+
+    # Group tasks by day
+    for task in tasks:
+        # Get name of deadline day
+        day_of_week = task.deadlineDay.strftime('%A')
+        days_tasks[day_of_week].append(task)
+
+    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
 # Registration form / login
 def register(request):
@@ -41,7 +71,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('calendar_app/accounts/index.html') 
+            return redirect(reverse('index'))  # Redirect to the index page
     else:
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
