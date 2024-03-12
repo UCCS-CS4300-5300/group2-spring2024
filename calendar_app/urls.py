@@ -13,16 +13,12 @@ urlpatterns = [
     path('category/delete/<int:category_id>', views.deleteCategory, name='delete-category'),
     path('category/list',views.CategoryListView.as_view(),name='category-list'),
 
-    path('create_task', views.createTask, name='create_task'),
-    path('tasks/', views.TaskListView.as_view(), name='task-list'),
-    path('tasks/<int:pk>', views.TaskDetailView.as_view(), name='task-detail'),
-
-    path('home/', views.index, name='home'),
-    path('register/', views.register, name='index'),
+    path('task/create', views.createTask, name='create-task'),
+    path('task/', views.TaskListView.as_view(), name='task-list'),
+    path('task/<int:pk>', views.TaskDetailView.as_view(), name='task-detail'),
 
     # After user registers this sends them to the homepage
     # path('register/calendar_app/index.html/', views.index, name='index'),
-    path('register/home/', views.index, name='index'),
     path('login/', LoginView.as_view(template_name='calendar_app/accounts/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),

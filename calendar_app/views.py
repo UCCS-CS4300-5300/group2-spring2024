@@ -30,20 +30,6 @@ def register(request):
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
 
-# Task Creation view
-def createTask(request):
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            # Save the form data to the database
-            task = form.save()
-            print(task.id)
-            return redirect('/')
-    else:
-        form = TaskForm()
-
-    context = {'form': form}
-    return render(request, 'calendar_app/add_task_form.html', context)
 
 class TaskDetailView(generic.DetailView):
     model = Task
@@ -106,7 +92,7 @@ def createTask(request):
         if form.is_valid():
             # Save the form data to the database
             task = form.save()
-            return redirect('/')
+            return redirect('index')
     else:
         form = TaskForm()
 
@@ -120,7 +106,7 @@ def createCategory(request):
         if form.is_valid():
             # Save the form data to the database
             task = form.save()
-            return redirect('/')
+            return redirect('index')
     else:
         form = CategoryForm()
 
@@ -143,7 +129,7 @@ def deleteCategory(request,category_id):
     category = get_object_or_404(Category,pk=category_id)
     if request.method == 'POST':
        category.delete()
-       return redirect('/')
+       return redirect('index')
     context = {'category':category}
     return render(request, 'calendar_app/delete_category_form.html', context)
         
@@ -169,7 +155,7 @@ def deleteCategory(request,category_id):
 #     task = Task.objects.get(pk=task_id)
 #     if request.method == 'POST':
 #         task.delete()
-#         return redirect('/')
+#         return redirect('index')
 #
 #     context = {'task': task}
 #     return render(request, 'calendar_app/delete_task_form.html', context)
