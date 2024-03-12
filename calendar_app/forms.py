@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from .models import Task, Category
+from django.contrib.auth import get_user_model
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -20,3 +21,4 @@ class TaskForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
+

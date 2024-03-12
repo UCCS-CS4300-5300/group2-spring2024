@@ -67,3 +67,16 @@ class AccountCreationTest(TestCase):
         # Attempt to create a user without an email
         with self.assertRaises(ValueError):
             CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
+
+
+class TasksTests(TestCase):
+    # make a task
+    task = 0
+
+    # add to database and ensure in database
+    def test_task_creation():
+        pass
+
+    # read task and ensure it is correct in the database and readable
+    def test_task_read():
+        pass
