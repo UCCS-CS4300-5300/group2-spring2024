@@ -8,14 +8,62 @@ from django.contrib.auth import login
 from typing import Any
 from django.views import generic
 from calendar import HTMLCalendar, monthrange
-from datetime import datetime, timedelta, date
+from datetime import datetime, date, timedelta
 from django.utils.safestring import mark_safe
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
     # Render index.html
     return render( request, 'calendar_app/index.html')
 
+# Task Creation view
+def createTask(request):
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            # Save the form data to the database
+            task = form.save()
+            print(task.id)
+            return redirect('/')
+    else:
+        form = TaskForm()
+
+    context = {'form': form}
+    return render(request, 'calendar_app/add_task_form.html', context)
+
+def WeekView(request):
+    tasks = Task.objects.all()
+    current_date = datetime.now().date()
+
+    start_of_week = current_date - timedelta(days=current_date.weekday())
+
+    # Calculate the end date of the current week
+    end_of_week = start_of_week + timedelta(days=6)
+
+    # Create a list to store the dates for each weekday
+    weekday_dates = []
+    for i in range(7):
+        weekday_dates.append(start_of_week + timedelta(days=i))
+
+    # Dictionary of day names
+    days_tasks = {
+        'Monday': [],
+        'Tuesday': [],
+        'Wednesday': [],
+        'Thursday': [],
+        'Friday': [],
+        'Saturday': [],
+        'Sunday': [],
+    }
+
+    # Group tasks by day
+    for task in tasks:
+        # Get name of deadline day
+        day_of_week = task.deadlineDay.strftime('%A')
+        days_tasks[day_of_week].append(task)
+
+    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
 # Registration form / login
 def register(request):
@@ -24,7 +72,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('calendar_app/accounts/index.html')
+            return redirect(reverse('index'))  # Redirect to the index page
     else:
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
@@ -42,10 +90,6 @@ def createTask(request):
 
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
-
-# WeekView
-def WeekView(request):
-    return render(request, 'calendar_app/week_view.html')
 
 
 def createCategory(request):
@@ -123,7 +167,8 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="#" role="button">{task.name}</a><br>'
+            taskURL = '#' # Replace with actual task URL later
+            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="{taskURL}" role="button">{task.name}</a><br>'
         
         # Add numerical date and tasks to cell
         if currentDay != 0:
@@ -162,6 +207,9 @@ class Calendar(HTMLCalendar):
         return f'<thead>{weekHeader}</thead>'                  
 
     # Format month name header
+    # Kept just in case; moved to calendar_month.html with
+    # modifications to get_context_data() in MonthView
+    '''
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
         monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
@@ -192,6 +240,7 @@ class Calendar(HTMLCalendar):
         monthHeader += '</a></div>'
 
         return f'<div class="row text-center">{monthHeader}</div>'
+    '''
 
     # Format the whole current month
     def formatmonth(self, withyear=True):
@@ -246,6 +295,7 @@ class MonthView(generic.ListView):
         currentMonth=monthNames[int(currentDay.month) - 1]
         context['monthAndYear'] = f'{currentMonth} {currentYear}'
 
+        # Set next and previous months
         day = get_date(self.request.GET.get('month', None))
         context['prevMonth'] = get_prev_month(day)
         context['nextMonth'] = get_next_month(day)
@@ -267,7 +317,7 @@ def get_prev_month(day):
     # Go back a day to the previous month
     prevMonth = first - timedelta(days=1)
 
-    # Set the new month
+    # Set the new month and year as YYYY-MM
     month = 'month=' + str(prevMonth.year) + '-' + str(prevMonth.month)
     return month
 
@@ -280,6 +330,6 @@ def get_next_month(day):
     # Go forward a day to the next month
     next_month = last + timedelta(days=1)
 
-    # Set the new month
+    # Set the new month and year as YYYY-MM
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month

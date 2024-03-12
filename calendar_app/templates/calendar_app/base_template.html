@@ -74,14 +74,8 @@
               </svg>
             </a>
             
-            <ul class="dropdown-menu dropdown-menu-end">
-              <!-- Sprint 0-3 temporary drop-down menu -->
-              <li><a class="dropdown-item" href="#">Account</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Help</a></li>
-              <li><a class="dropdown-item" href="#">Send Feedback</a></li>
-              
-              <!-- Logged-in/out view (un-comment when account functionality is implemented)-->
+            <ul class="dropdown-menu dropdown-menu-end">              
+              <!-- Logged-in view -->
               {% if user.is_authenticated %}
                 <li><a class="dropdown-item" href="#">Account</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -91,11 +85,11 @@
                 <li><hr class="dropdown-divider"></li>
                 
                 <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+              <!-- Logged-out view -->
               {% else %}
                 <li><a class="dropdown-item" href="/register">Register</a></li>
                 <li><a class="dropdown-item" href="/login">Log In</a></li>
-              {% endif %}
-              
+              {% endif %}              
             </ul>
           </li> <!-- End of dropdown menu-->
         </ul> <!-- End of nav links UL -->

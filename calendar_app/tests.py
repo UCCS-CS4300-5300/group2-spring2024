@@ -3,7 +3,7 @@ from .models import *
 from datetime import date, time, timedelta
 from django.db.utils import IntegrityError
 
-# Index view template test
+# Index view template
 class IndexViewTest(TestCase):
     def test_index_view(self):
         response = self.client.get('/')
@@ -84,3 +84,18 @@ class MonthTaskDisplay(TestCase):
         self.assertContains(response, 'TestTask1') # TestTask1 is present
         self.assertContains(response, 'TestTask2') # TestTask2 is present
         self.assertContains(response, 'TestTask3') # TestTask3 is present
+
+# Account creation
+class AccountCreationTest(TestCase):
+    def test_email_field_unique(self):
+        # Create a user with a specific email
+        email = "test@example.com"
+        CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        # Attempt to create another user with the same email
+        with self.assertRaises(IntegrityError):
+            CustomUser.objects.create_user(username="testuser2", email=email, password="testpassword456")
+    
+    def test_email_field_not_blank(self):
+        # Attempt to create a user without an email
+        with self.assertRaises(ValueError):
+            CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
