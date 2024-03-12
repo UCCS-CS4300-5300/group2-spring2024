@@ -58,13 +58,13 @@
     </div>
     <!-- Weekday Names -->
     <div class="row">
-      <div class="col weekday-header">Monday</div>
-      <div class="col weekday-header">Tuesday</div>
-      <div class="col weekday-header">Wednesday</div>
-      <div class="col weekday-header">Thursday</div>
-      <div class="col weekday-header">Friday</div>
-      <div class="col weekday-header">Saturday</div>
-      <div class="col weekday-header">Sunday</div>
+      <div class="col weekday-header">Monday<br>{{ weekday_dates.0|date:"F j" }}</div>
+      <div class="col weekday-header">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</div>
+      <div class="col weekday-header">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</div>
+      <div class="col weekday-header">Thursday<br>{{ weekday_dates.3|date:"F j" }}</div>
+      <div class="col weekday-header">Friday<br>{{ weekday_dates.4|date:"F j" }}</div>
+      <div class="col weekday-header">Saturday<br>{{ weekday_dates.5|date:"F j" }}</div>
+      <div class="col weekday-header">Sunday<br>{{ weekday_dates.6|date:"F j" }}</div>
     </div>
     <!-- Calendar Grid -->
     <div class="row">

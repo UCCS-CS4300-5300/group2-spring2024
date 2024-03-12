@@ -41,6 +41,10 @@ def WeekView(request):
     # Calculate the end date of the current week
     end_of_week = start_of_week + timedelta(days=6)
 
+    # Create a list to store the dates for each weekday
+    weekday_dates = []
+    for i in range(7):
+        weekday_dates.append(start_of_week + timedelta(days=i))
 
     # Dictionary of day names
     days_tasks = {
@@ -59,7 +63,7 @@ def WeekView(request):
         day_of_week = task.deadlineDay.strftime('%A')
         days_tasks[day_of_week].append(task)
 
-    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week})
+    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
 
 
