@@ -4,14 +4,14 @@ from django.contrib.auth.views import LoginView, LogoutView
 
     
 urlpatterns = [
-    
-    path('', views.index, name='index'),
+    #path('', views.index, name='index'),
 
 
     #category CRUD
-    path('create_category', views.createCategory, name='create_category'),
-    path('update_category/<int:category_id>', views.updateCategory, name='update_category'),
-    path('delete_category/<int:category_id>', views.deleteCategory, name='delete_category'),
+    path('category/create', views.createCategory, name='create-category'),
+    path('category/update/<int:category_id>', views.updateCategory, name='update-category'),
+    path('category/delete/<int:category_id>', views.deleteCategory, name='delete-category'),
+    path('category/list',views.CategoryListView.as_view(),name='category-list'),
 
     path('create_task', views.createTask, name='create_task'),
     path('tasks/', views.TaskListView.as_view(), name='task-list'),
@@ -28,8 +28,10 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # WeekView
-    path('calendar/week/', views.WeekView, name='week-view'),
+    path('calendar/week/', views.WeekView,{'category':None}, name='week-view'),
+    path('calendar/week/filter/<int:category>', views.WeekView, name='filtered-week-view'),
 
     # MonthView
-    path('calendar/month/', views.MonthView.as_view(), name='month-view'),
+    path('calendar/month/', views.MonthView.as_view(), {'category':None},name='month-view'),
+    path('calendar/month/filter/<int:category>',views.MonthView.as_view(),name='filtered-month-view')
 ]

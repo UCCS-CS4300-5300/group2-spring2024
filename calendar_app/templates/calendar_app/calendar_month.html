@@ -37,6 +37,23 @@ td {
                 <a class="btn btn-primary" href="{% url 'week-view' %}" role="button">Week View</a>
                 <!-- Task creation button -->
                 <a class="btn btn-primary" href="{% url 'create_task' %}" role="button">Add Task</a>
+                <div class ="dropdown btn btn-primary">
+                    <!-- Dropdown for the different categories-->
+                    <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+                        <ul class="dropdown-menu">
+                            <li>
+                            <a class="dropdown-item" href="{% url 'month-view' %}">All Categories</a>
+                            </li>
+                            {% for category in category_list %}
+                            <li>
+                                <a class="dropdown-item btn" href="{% url 'filtered-month-view' category.pk%}">{{ category.name }} </a>
+                            </li>
+                            {% endfor %}
+                            <li>
+                            <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+                            </li>
+                        </ul>
+                </div>
             </div> <!-- End of left-side button group -->
         
         </div> <!-- End of left-side column -->
