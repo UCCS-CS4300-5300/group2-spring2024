@@ -21,7 +21,7 @@ class Task(models.Model):
     description = models.CharField(max_length=1000)
     deadlineDay = models.DateField()
     deadlineTime = models.TimeField()
-    category = models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category,blank=True,null=True,on_delete=models.SET_NULL)
     duration = models.DurationField()
     status = models.BooleanField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
