@@ -20,8 +20,13 @@
 
             <!-- Left-side button group (vertical) -->
             <div class="btn-group-vertical">
-                <a class="btn btn-primary" href="#" role="button">Week View</a>
-                <a class="btn btn-primary" href="#" role="button">Add Task</a>
+                <a class="btn btn-primary" href="{% url 'week-view' %}" role="button">Week View</a>
+
+                <!-- Added URL to create_task-->
+                <a class="btn btn-primary" href="{% url 'create_task' %}" role="button">Add Task</a>
+
+
+
             </div> <!-- End of left-side button group -->
         
         </div> <!-- End of left-side column -->

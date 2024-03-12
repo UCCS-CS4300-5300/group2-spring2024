@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os # For adding template directory
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -57,7 +58,9 @@ ROOT_URLCONF = 'django_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, '/templates/calendar_app/'), # Template directory
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,6 +71,12 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+# Load templates from subfolders
+TEMPLATE_LOADERS = [
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 ]
 
 WSGI_APPLICATION = 'django_project.wsgi.application'
