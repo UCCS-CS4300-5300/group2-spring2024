@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from .models import Task, Category
 from django.contrib.auth import get_user_model
 
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = get_user_model()
+        fields = ['username', 'email', 'password']
+
 
 class TaskForm(ModelForm):
     class Meta:
@@ -14,8 +19,6 @@ class TaskForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
-
-
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):

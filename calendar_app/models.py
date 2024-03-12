@@ -7,8 +7,12 @@ class CustomUser(AbstractUser):
 
      # Make email required and has to be unique in the database
      email = models.EmailField(unique=True, blank=False)
+class User(models.Model):
+    name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
-
+# For use with Tasks
 class Category(models.Model):
     name = models.CharField(max_length=20)
 
@@ -20,6 +24,6 @@ class Task(models.Model):
     category = models.ForeignKey(Category,null=True,on_delete=models.SET_NULL)
     duration = models.DurationField()
     status = models.BooleanField()
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
     def __str__(self):
         return self.name

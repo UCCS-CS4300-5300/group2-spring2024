@@ -1,3 +1,4 @@
+
 from .models import *
 from .forms import * 
 from django.views import generic
@@ -6,8 +7,8 @@ from django.urls import reverse
 from django.contrib.auth import login
 from typing import Any
 from django.views import generic
-from calendar import HTMLCalendar
-from datetime import datetime
+from calendar import HTMLCalendar, monthrange
+from datetime import datetime, timedelta, date
 from django.utils.safestring import mark_safe
 
 # Create your views here.
@@ -42,6 +43,9 @@ def createTask(request):
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
 
+# WeekView
+def WeekView(request):
+    return render(request, 'calendar_app/week_view.html')
 
 
 def createCategory(request):
@@ -119,11 +123,11 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            dayHtml += f'<a class="btn btn-primary btn-sm" href="#" role="button">{task.name}</a><br>'
+            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="#" role="button">{task.name}</a><br>'
         
-        # Add numerical date and tasks to cel
+        # Add numerical date and tasks to cell
         if currentDay != 0:
-            return f'<td><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
+            return f'<td class="text-nowrap"><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
         
         # Return empty otherwise
         return '<td></td>'
@@ -146,7 +150,7 @@ class Calendar(HTMLCalendar):
         # Start the HTML table row
         weekHeader = '<tr class="text-center">'
 
-        # Label the day cels
+        # Label the day cells
         for day in days:
              weekHeader += '<th scope="col">'
              weekHeader += day
@@ -160,7 +164,7 @@ class Calendar(HTMLCalendar):
     # Format month name header
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
         monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
-"August", "September", "October", "November", "December"]
+                      "August", "September", "October", "November", "December"]
         currentYear=str(currentYear)
         currentMonth=monthNames[currentMonth - 1]
         monthHeader = ''
@@ -187,17 +191,21 @@ class Calendar(HTMLCalendar):
         # Closing div and a/hyperlink tags
         monthHeader += '</a></div>'
 
-        return f'<div class="row text-center">{monthHeader}</div><br>'
+        return f'<div class="row text-center">{monthHeader}</div>'
 
     # Format the whole current month
     def formatmonth(self, withyear=True):
         tasks = Task.objects.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
+        cal = ''
 
         # Starting HTML; format the month
-        cal = f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
-        
+        #cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
+        # Month name/header is now in calendar_month.html because
+        # the buttons to get the next and previous months don't 
+        # work from here due to complications with string formatting
+
         # Start the HTML table for the weeks and days
-        cal += f'<table class="table table-bordered">'
+        cal += f'<table class="table table-bordered table-fixed">'
         
         # Format the week header
         cal += f'{self.formatweekheader()}\n'
@@ -207,7 +215,8 @@ class Calendar(HTMLCalendar):
             cal += f'{self.formatweek(week, tasks)}\n'
         
         return cal
-    
+
+# MonthView; uses ListView
 class MonthView(generic.ListView):
     model = Task
 
@@ -229,10 +238,48 @@ class MonthView(generic.ListView):
         # Use formatmonth to get Calendar as table
         html_cal = cal.formatmonth(withyear=True)
         context['calendar'] = mark_safe(html_cal)
+
+        # Set current month and year to pass to template for display
+        monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
+                      "August", "September", "October", "November", "December"]
+        currentYear=str(currentDay.year)
+        currentMonth=monthNames[int(currentDay.month) - 1]
+        context['monthAndYear'] = f'{currentMonth} {currentYear}'
+
+        day = get_date(self.request.GET.get('month', None))
+        context['prevMonth'] = get_prev_month(day)
+        context['nextMonth'] = get_next_month(day)
+
         return context
 
+# For use with MonthView
 def get_date(req_day):
     if req_day:
         year, month = (int(x) for x in req_day.split('-'))
         return date(year, month, day=1)
     return datetime.today()
+
+# For use with MonthView
+def get_prev_month(day):
+    # Get the starting day
+    first = day.replace(day=1)
+
+    # Go back a day to the previous month
+    prevMonth = first - timedelta(days=1)
+
+    # Set the new month
+    month = 'month=' + str(prevMonth.year) + '-' + str(prevMonth.month)
+    return month
+
+# For use with MonthView
+def get_next_month(day):
+    # Go to the last day in the month
+    days_in_month = monthrange(day.year, day.month)[1]
+    last = day.replace(day=days_in_month)
+    
+    # Go forward a day to the next month
+    next_month = last + timedelta(days=1)
+
+    # Set the new month
+    month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+    return month
