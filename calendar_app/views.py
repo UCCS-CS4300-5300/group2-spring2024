@@ -14,7 +14,7 @@ from django.urls import reverse
 # Create your views here.
 def index(request):
     # Render index.html
-    return render( request, 'calendar_app/index.html')
+    return redirect('month-view')
 
 
 # Registration form / login
