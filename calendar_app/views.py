@@ -1,9 +1,11 @@
 from .models import *
-from .forms import TaskForm, CustomUserCreationForm
+from .forms import * 
 from django.views import generic
-from typing import Any
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
+from django.urls import reverse
 from django.contrib.auth import login
+from typing import Any
+from django.views import generic
 from calendar import HTMLCalendar, monthrange
 from datetime import datetime, date, timedelta
 from django.utils.safestring import mark_safe
@@ -35,12 +37,13 @@ def createTask(request):
         if form.is_valid():
             # Save the form data to the database
             task = form.save()
+            print(task.id)
             return redirect('/')
     else:
         form = TaskForm()
 
     context = {'form': form}
-    return render(request, 'calendar_app/task_form.html', context)
+    return render(request, 'calendar_app/add_task_form.html', context)
 
 class TaskDetailView(generic.DetailView):
     model = Task
@@ -83,7 +86,82 @@ def WeekView(request):
     return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
 
-# Calendar class for MonthView; overriding HTMLCalendar
+
+def createTask(request):
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            # Save the form data to the database
+            task = form.save()
+            return redirect('/')
+    else:
+        form = TaskForm()
+
+    context = {'form': form}
+    return render(request, 'calendar_app/task_form.html', context)
+
+
+def createCategory(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            # Save the form data to the database
+            task = form.save()
+            return redirect('/')
+    else:
+        form = CategoryForm()
+
+    context = {'form': form}
+    return render(request, 'calendar_app/generic_form.html', context)
+
+def updateCategory(request,category_id):
+    category = get_object_or_404(Category,pk=category_id)
+    form = CategoryForm(instance=category)
+    if request.method == 'POST':
+         form = CategoryForm(request.POST, instance=category)
+         if form.is_valid():
+             form.save()
+         return redirect(request.META['HTTP_REFERER'])
+
+    context = {'form': form}
+    return render(request, 'calendar_app/task_form.html', context)
+
+def deleteCategory(request,category_id):
+    category = get_object_or_404(Category,pk=category_id)
+    if request.method == 'POST':
+       category.delete()
+       return redirect('/')
+    context = {'category':category}
+    return render(request, 'calendar_app/delete_category_form.html', context)
+        
+# class TaskDetailView(generic.DetailView):
+#     model = Task
+#
+# class TaskListView(generic.ListView):
+#     model = Task
+
+# def updateTask(request, task_id ):
+#     task = Task.objects.get(pk=task_id)
+#     form = TaskForm(instance=task)
+#     if request.method == 'POST':
+#         form = TaskForm(request.POST, instance=task)
+#         if form.is_valid():
+#             form.save()
+#         return redirect('task-detail', task.id)
+#
+#     context = {'form': form}
+#     return render(request, 'calendar_app/task_form.html', context)
+#
+# def deleteTask(request, task_id):
+#     task = Task.objects.get(pk=task_id)
+#     if request.method == 'POST':
+#         task.delete()
+#         return redirect('/')
+#
+#     context = {'task': task}
+#     return render(request, 'calendar_app/delete_task_form.html', context)
+
+# Calendar class; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None):
         self.year = year
