@@ -82,17 +82,6 @@ def WeekView(request):
 
     return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
 
-# Registration form / login
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect(reverse('index'))  # Redirect to the index page
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
 # Calendar class for MonthView; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
