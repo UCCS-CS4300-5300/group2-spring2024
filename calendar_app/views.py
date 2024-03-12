@@ -184,6 +184,7 @@ class MonthView(generic.ListView):
         currentMonth=monthNames[int(currentDay.month) - 1]
         context['monthAndYear'] = f'{currentMonth} {currentYear}'
 
+        # Set next and previous months
         day = get_date(self.request.GET.get('month', None))
         context['prevMonth'] = get_prev_month(day)
         context['nextMonth'] = get_next_month(day)

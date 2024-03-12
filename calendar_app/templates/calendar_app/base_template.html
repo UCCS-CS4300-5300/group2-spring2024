@@ -74,13 +74,7 @@
               </svg>
             </a>
             
-            <ul class="dropdown-menu dropdown-menu-end">
-              <!-- Sprint 0-3 temporary drop-down menu -->
-              <li><a class="dropdown-item" href="#">Account</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Help</a></li>
-              <li><a class="dropdown-item" href="#">Send Feedback</a></li>
-              
+            <ul class="dropdown-menu dropdown-menu-end">              
               <!-- Logged-in/out view (un-comment when account functionality is implemented)-->
               {% if user.is_authenticated %}
                 <li><a class="dropdown-item" href="#">Account</a></li>
