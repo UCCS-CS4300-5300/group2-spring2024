@@ -52,20 +52,27 @@ class TaskListView(generic.ListView):
     model = Task
 
 
-def WeekView(request):
-    tasks = Task.objects.all()
+def WeekView(request,category):
+    if category:
+        tasks = Task.objects.filter(category=category)
+    else:
+        tasks = Task.objects.all()
     current_date = datetime.now().date()
 
-    start_of_week = current_date - timedelta(days=current_date.weekday())
+    context = {}
 
+    start_of_week = current_date - timedelta(days=current_date.weekday())
+    
+    context['start_of_week'] = start_of_week
     # Calculate the end date of the current week
-    end_of_week = start_of_week + timedelta(days=6)
+    context['end_of_week'] = start_of_week + timedelta(days=6)
 
     # Create a list to store the dates for each weekday
     weekday_dates = []
     for i in range(7):
         weekday_dates.append(start_of_week + timedelta(days=i))
 
+    context['weekday_dates'] = weekday_dates
     # Dictionary of day names
     days_tasks = {
         'Monday': [],
@@ -83,7 +90,10 @@ def WeekView(request):
         day_of_week = task.deadlineDay.strftime('%A')
         days_tasks[day_of_week].append(task)
 
-    return render(request, 'calendar_app/week_view.html', {'days_tasks': days_tasks, 'start_of_week': start_of_week, 'end_of_week': end_of_week, 'weekday_dates': weekday_dates})
+    context['days_tasks'] = days_tasks
+
+    context['category_list'] = Category.objects.all()
+    return render(request, 'calendar_app/week_view.html', context)
 
 
 

@@ -27,7 +27,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # WeekView
-    path('calendar/week/', views.WeekView, name='week-view'),
+    path('calendar/week/', views.WeekView,{'category':None}, name='week-view'),
+    path('calendar/week/filter/<int:category>', views.WeekView, name='filtered-week-view'),
 
     # MonthView
     path('calendar/month/', views.MonthView.as_view(), {'category':None},name='month-view'),
