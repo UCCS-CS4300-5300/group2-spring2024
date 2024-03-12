@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 
 class CustomUser(AbstractUser):
      # For task list and task detail we need user to have a list of tasks as its own model to be able to display all of them on a page task list easily and that model will require "def get_absolute_url(self): return reverse('task-detail', args=[str(self.id)])".

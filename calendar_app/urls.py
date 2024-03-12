@@ -1,8 +1,8 @@
-from django.urls import path, reverse_lazy, include
-from . import views
 from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import include, path, reverse_lazy
 
-    
+from . import views
+
 urlpatterns = [
     path('', views.index, name='index'),
 

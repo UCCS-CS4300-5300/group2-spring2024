@@ -1,15 +1,16 @@
-from .models import *
-from .forms import * 
-from django.views import generic
-from django.shortcuts import render, redirect,get_object_or_404
-from django.urls import reverse
-from django.contrib.auth import login
-from typing import Any
-from django.views import generic
 from calendar import HTMLCalendar, monthrange
-from datetime import datetime, date, timedelta
-from django.utils.safestring import mark_safe
+from datetime import date, datetime, timedelta
+from typing import Any
+
+from django.contrib.auth import login
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+from django.views import generic
+
+from .forms import *
+from .models import *
+
 
 # Create your views here.
 def index(request):
