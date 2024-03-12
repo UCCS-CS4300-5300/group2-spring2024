@@ -61,9 +61,8 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="'
-            dayHtml += '#' # Change this to the link to the task's detail view
-            dayHtml += '" role="button">{task.name}</a><br>'
+            taskURL = '#' # Replace with actual task URL later
+            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="{taskURL}" role="button">{task.name}</a><br>'
         
         # Add numerical date and tasks to cell
         if currentDay != 0:
