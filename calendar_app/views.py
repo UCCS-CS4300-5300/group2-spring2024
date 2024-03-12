@@ -61,7 +61,9 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="#" role="button">{task.name}</a><br>'
+            dayHtml += f'<a class="btn btn-primary btn-sm w-100" href="'
+            dayHtml += '#' # Change this to the link to the task's detail view
+            dayHtml += '" role="button">{task.name}</a><br>'
         
         # Add numerical date and tasks to cell
         if currentDay != 0:
@@ -100,6 +102,9 @@ class Calendar(HTMLCalendar):
         return f'<thead>{weekHeader}</thead>'                  
 
     # Format month name header
+    # Kept just in case; moved to calendar_month.html with
+    # modifications to get_context_data() in MonthView
+    '''
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
         monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
@@ -130,6 +135,7 @@ class Calendar(HTMLCalendar):
         monthHeader += '</a></div>'
 
         return f'<div class="row text-center">{monthHeader}</div>'
+    '''
 
     # Format the whole current month
     def formatmonth(self, withyear=True):
@@ -206,7 +212,7 @@ def get_prev_month(day):
     # Go back a day to the previous month
     prevMonth = first - timedelta(days=1)
 
-    # Set the new month
+    # Set the new month and year as YYYY-MM
     month = 'month=' + str(prevMonth.year) + '-' + str(prevMonth.month)
     return month
 
@@ -219,6 +225,6 @@ def get_next_month(day):
     # Go forward a day to the next month
     next_month = last + timedelta(days=1)
 
-    # Set the new month
+    # Set the new month and year as YYYY-MM
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
