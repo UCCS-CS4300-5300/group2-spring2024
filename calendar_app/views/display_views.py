@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views import generic
 
@@ -23,7 +24,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('calendar_app/accounts/index.html')
+            return redirect(reverse('index'))
     else:
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})

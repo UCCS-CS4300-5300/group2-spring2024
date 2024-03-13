@@ -20,7 +20,6 @@ urlpatterns = [
     path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
 
     # After user registers this sends them to the homepage
-    # path('register/calendar_app/index.html/', views.index, name='index'),
     path('login/', LoginView.as_view(template_name='calendar_app/accounts/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
