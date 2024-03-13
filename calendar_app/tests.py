@@ -10,9 +10,11 @@ class AccountCreationTest(TestCase):
         email = "test@example.com"
         CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
         # Attempt to create another user with the same email
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError) as raised:
             CustomUser.objects.create_user(username="testuser2", email=email, password="testpassword456")
-    
+
+        #have to do this wacky workaround
+        self.assertEqual(IntegrityError, type(raised.exception))
     def test_email_field_not_blank(self):
         # Attempt to create a user without an email
         with self.assertRaises(ValueError):
