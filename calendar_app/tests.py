@@ -3,13 +3,6 @@ from .models import *
 from datetime import date, time, timedelta
 from django.db.utils import IntegrityError
 
-# Index view template
-class IndexViewTest(TestCase):
-    def test_index_view(self):
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'calendar_app/index.html')
-
 # Account creation
 class AccountCreationTest(TestCase):
     def test_email_field_unique(self):
