@@ -78,9 +78,9 @@ class TasksTests(TestCase):
     task = 0
 
     # add to database and ensure in database
-    def test_task_creation():
+    def test_task_creation(self):
         pass
 
     # read task and ensure it is correct in the database and readable
-    def test_task_read():
+    def test_task_read(self):
         pass
