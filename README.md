@@ -54,6 +54,9 @@ If you have any questions on the git structure or if replit is being a pain feel
 
 ### Branching guidelines (post sprint 1)
 To avoid having issues with interdepending code and having it work together you should only create branches off of main and not merge your branches into anyone else's branch or vice versa. If you need functionality that is not yet pushed into main then either help the person whose code yours is dependent on get theirs done or do something else in the meantime. Converesely, if you know your work is a prerequisite for otehr poeple's work please make an effort to get it done sooner rather than later. Also once your work is done and is tested and confirmed to work then don't hesitate in creating a PR to get it into main so that other people can start working on it.
+
+### Migrations
+Do not delete any migrations that are already in main, do not delete any migrations that other migrations are dependent on. We can resolve migration issues if they come up.
 ### Do not push directly to main
 Unfortuantely due to us not having permissions over the repo we are unable to push protect our main branch. However, please do not push directly to main, this can cause divergent branches and lots of pain for everybody. Pushing to main can occasionally be done for something like single line changes in production but should generally be avoided, merge requests should be used instead.
 
