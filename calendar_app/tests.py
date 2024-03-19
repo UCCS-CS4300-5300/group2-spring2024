@@ -1,7 +1,10 @@
-from django.test import TestCase
-from .models import *
 from datetime import date, time, timedelta
+
 from django.db.utils import IntegrityError
+from django.test import TestCase
+
+from .models import *
+
 
 # Account creation
 class AccountCreationTest(TestCase):
