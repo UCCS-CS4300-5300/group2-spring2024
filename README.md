@@ -52,6 +52,8 @@ make sure to push the updated requirements.txt file with the code that uses the 
 This is a guide for our group for how to develop using git/github and replit. The branching model being adopted is essentially trunk based development (read up on it if you want, but i'll kinda explain it here).
 If you have any questions on the git structure or if replit is being a pain feel free to message Moses over discord
 
+### Branching guidelines (post sprint 1)
+To avoid having issues with interdepending code and having it work together you should only create branches off of main and not merge your branches into anyone else's branch or vice versa. If you need functionality that is not yet pushed into main then either help the person whose code yours is dependent on get theirs done or do something else in the meantime. Converesely, if you know your work is a prerequisite for otehr poeple's work please make an effort to get it done sooner rather than later. Also once your work is done and is tested and confirmed to work then don't hesitate in creating a PR to get it into main so that other people can start working on it.
 ### Do not push directly to main
 Unfortuantely due to us not having permissions over the repo we are unable to push protect our main branch. However, please do not push directly to main, this can cause divergent branches and lots of pain for everybody. Pushing to main can occasionally be done for something like single line changes in production but should generally be avoided, merge requests should be used instead.
 
@@ -93,6 +95,9 @@ If you want to do anything that rewrites git history (rebasing, squashing, etc.)
 If you plan on re-using a branch after it is merged into main, make sure to rebase it off of main before you restart devleopment on that branch
 
 ### Comments/Code standards
+#### Imports
+If you added imports to a file, then before committing and pushing, run the "Organize inputs" VS code command, this helps avoid merge conflicts from import order and stuff like that, it's a small issue but also really easy to fix.
+
 This is for us to decide on, what code standards should we have, if any (maybe some would be nice). Stuff like
 - File structure
 - Varaible/method naming
