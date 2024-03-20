@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
      # That will allow task_detail.html to have a link back to the list of all tasks for the user.
      # Make email required and has to be unique in the database
      email = models.EmailField(unique=True, blank=False)
+     
 class User(models.Model):
     name = models.CharField(max_length=50)
     def __str__(self):

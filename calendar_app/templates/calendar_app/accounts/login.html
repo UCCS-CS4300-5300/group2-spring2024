@@ -1,21 +1,22 @@
 <!-- inherit from base.html-->
 {% extends "calendar_app/base_template.html" %}
+
 <!-- Replace block content in base_template.html -->
 {% block content %}
-
-<h2>Login</h2>
-<form method="post">
-
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-
-</form>
-
-<!-- Registeer if no login -->
-<form action="/register" method="get">
-    <button type="submit" class="btn">Sign Up</button>
-</form>
-
+<div style="display: flex; justify-content: center; align-items: center;">
+    <!-- Cool shadow, this sets the bg color and the "size" of the login template-->
+    <div style="background-color: #f0ead6; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <h2>Login</h2>
+        <form method="post" style="display: inline-block; text-align: left;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" style="display: block; margin: 0 auto;">Login</button>
+        </form>
+        <!-- Register if no login -->
+        <form action="/register" method="get" style="display: inline-block; text-align: center; margin-top: 20px;">
+            <button type="submit" class="btn">Sign Up</button>
+        </form>
+    </div>
+</div>
 <!-- End of block -->
 {% endblock %}
