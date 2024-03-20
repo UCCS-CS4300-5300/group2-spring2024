@@ -63,6 +63,14 @@ class LoginPageTest(TestCase):
         # Check if authenticated
         self.assertTrue(response.context['user'].is_authenticated)
 
+# Task View test
+class TaskViewTest(TestCase):
+    def testTaskPage(self):
+        url = reverse('create-task')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/task_form.html')
+
 # Month view template test
 class MonthViewTest(TestCase):
     def test_month_view(self):
