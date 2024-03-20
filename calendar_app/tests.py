@@ -44,8 +44,7 @@ class LoginPageTest(TestCase):
         self.CustomUser = CustomUser.objects.create_user(username='testuser', password='1234567!@#$%^&')
         self.CustomUser.save()
 
-    def test_login_view_success(self):
-        # This URL might need to be adjusted if your login route is different.
+    def testLoginViewSuccess(self):
         url = reverse('login')
         data = {
             'username': 'testuser',
