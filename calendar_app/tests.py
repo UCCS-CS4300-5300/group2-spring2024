@@ -1,5 +1,6 @@
 from datetime import date, time, timedelta
 from django.db.utils import IntegrityError
+from django.urls import reverse
 from django.test import TestCase
 from .models import *
 
@@ -17,10 +18,45 @@ class AccountCreationTest(TestCase):
         #have to do this wacky workaround
         self.assertEqual(IntegrityError, type(raised.exception))
 
+    # NICK WILL FIX DO NOT DELETE !!!
     #def test_email_field_not_blank(self):
     #    with self.assertRaises(ValueError) as raised:
     #        CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
     #    self.assertIn('The email field cannot be blank.', str(raised.exception))
+        
+# Login and register view tests
+class RegisterPageTest(TestCase):
+    def testRegisterView(self):
+        url = reverse('register')
+        data = {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password1': '1234567!@#$%^&',
+            'password2': '1234567!@#$%^&',
+        }
+        response = self.client.post(url, data)
+        # Check if the registration was successful and redirects as expected
+        assert response.status_code == 200  # or 302 
+
+class LoginPageTest(TestCase):
+    def setUp(self):
+        # Set up a user for testing login
+        self.CustomUser = CustomUser.objects.create_user(username='testuser', password='1234567!@#$%^&')
+        self.CustomUser.save()
+
+    def test_login_view_success(self):
+        # This URL might need to be adjusted if your login route is different.
+        url = reverse('login')
+        data = {
+            'username': 'testuser',
+            'password': '1234567!@#$%^&',
+        }
+        response = self.client.post(url, data, follow=True)
+        
+        # Check if the login was successful and redirects as expected to home page.
+        self.assertEqual(response.status_code, 200)
+        # Check if authenticated
+        self.assertTrue(response.context['user'].is_authenticated)
 
 # Month view template test
 class MonthViewTest(TestCase):

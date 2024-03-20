@@ -21,7 +21,7 @@ urlpatterns = [
     path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
 
     ###########################################################
-    path('register/', register, name='index'),
+    path('register/', register, name='register'),
     # After user registers this sends them to the homepage
     path('home/', index, name='home'),
     path('register/home/', index, name='index'),
