@@ -1,21 +1,33 @@
 <!-- inherit from base.html-->
 {% extends "calendar_app/base_template.html" %}
 
-<!-- Replace block content in base_template.html -->
 {% block content %}
-<div style="display: flex; justify-content: center; align-items: center; height: 80vh; ">
-    <div style="background-color: #A9A9A9; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+<!-- 94vh is sweet spot for these specifications-->
+<div style="display: flex; justify-content: center; align-items: center; height: 94vh;">
+    <div style="background-color: #A9A9A9; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; width: fit-content;">
         <h2>Register</h2>
-        <form method="post" style="display: inline-block; text-align: left;">
+        <form method="post" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary" style="display: block; margin: 20px auto;">Create Account</button>
+            {% for field in form %}
+            <div style="margin-bottom: 15px; width: 100%; text-align: left;">
+                <label for="{{ field.id_for_label }}" style="display: block;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <!-- Can be removed but it is useful for new users to know account guidlines -->
+                <div style="color: black; font-size: normal; margin-top: 5px;">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                <!-- error -->
+                <div style="color: red; font-size: normal; margin-top: 5px;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Create Account</button>
         </form>
         <!-- Send to login screen -->
-        <form action="/login" method="get" style="display: inline-block; text-align: center;">
-            <button type="submit" class="btn btn-secondary" style="display: block; margin: auto;">Back</button>
+        <form action="/login" method="get" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-danger">Back</button>
         </form>
     </div>
 </div>
-<!-- End of block -->
 {% endblock %}
