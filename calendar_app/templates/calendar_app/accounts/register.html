@@ -4,16 +4,16 @@
 <!-- Replace block content in base_template.html -->
 {% block content %}
 <div style="display: flex; justify-content: center; align-items: center; height: 80vh; ">
-    <div style="background-color: #f0ead6; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+    <div style="background-color: #A9A9A9; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
         <h2>Register</h2>
         <form method="post" style="display: inline-block; text-align: left;">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" style="display: block; margin: 20px auto;">Create Account</button>
+            <button type="submit" class="btn btn-primary" style="display: block; margin: 20px auto;">Create Account</button>
         </form>
         <!-- Send to login screen -->
         <form action="/login" method="get" style="display: inline-block; text-align: center;">
-            <button type="submit" class="btn" style="display: block; margin: auto;">Back</button>
+            <button type="submit" class="btn btn-secondary" style="display: block; margin: auto;">Back</button>
         </form>
     </div>
 </div>
