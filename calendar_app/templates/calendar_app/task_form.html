@@ -9,13 +9,13 @@
         <h2>Create Task</h2>
         <form method="POST" style="display: flex; flex-direction: column; align-items: center;">
             {% csrf_token %}
-            <div style="width: 100%; display: flex; flex-wrap: wrap; justify-content: center;">
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
                 {{ form.non_field_errors }}
                 {% for field in form %}
-                <!-- Inline layout for forms -->
-                <div style="flex-basis: calc(10% - 10px); padding: 5px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;">
+                <!-- Layout for forms modified for vertical alignment -->
+                <div style="width: 100%; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center;">
                     <div style="width: 100%; text-align: left;"> 
-                    <!-- Ensure labels and fields align to the left -->
+                    <!-- labels and fields align to the left -->
                         {{ field.label_tag }}<br>{{ field }}
                         {% if field.help_text %}
                         <small style="color: grey;">{{ field.help_text }}</small>
@@ -30,7 +30,7 @@
                 <input type="submit" name="Save Task" class="btn btn-primary" style="margin-top: 20px; width: 100px;">
             </div>
         </form>
-       <form action="/home" method="get" style="margin-top: 20px;">
+        <form action="/home" method="get" style="margin-top: 20px;">
             <button type="submit" class="btn btn-danger">Back</button>
         </form>
     </div> 
