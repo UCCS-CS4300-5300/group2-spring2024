@@ -53,7 +53,7 @@
             </li>
             {% for category in category_list %}
             <li>
-                <a class="dropdown-item btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
+                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
             </li>
             {% endfor %}
             <li>
