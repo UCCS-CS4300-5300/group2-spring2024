@@ -7,6 +7,7 @@ from .views.task_views import *
 
 urlpatterns = [
     path('',index , name='index'),
+    path('home/',index , name='home'),
 
 
     #category CRUD
