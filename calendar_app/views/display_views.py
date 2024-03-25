@@ -71,6 +71,7 @@ def WeekView(request,category):
     context['days_tasks'] = days_tasks
 
     context['category_list'] = Category.objects.all()
+    context['category_colors'] = get_category_color_dict()
     return render(request, 'calendar_app/week_view.html', context)
 
 
