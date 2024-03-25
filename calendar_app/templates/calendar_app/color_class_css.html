@@ -1,0 +1,7 @@
+<style>
+{% for category_id,color in category_colors.items%}
+.category-{{category_id}} {
+    background-color: {{color}};
+}
+{% endfor %}
+</style>

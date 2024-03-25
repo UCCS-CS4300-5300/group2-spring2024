@@ -88,6 +88,7 @@ class MonthView(generic.ListView):
         #get the category for the filter
         filter_category = self.kwargs.get('category')
         context['category_list'] = Category.objects.all()
+        context['category_colors'] = get_category_color_dict()
 
         # Use the current date for the calendar
         currentDay = get_date(self.request.GET.get('day', None))
@@ -147,3 +148,10 @@ def get_next_month(day):
     # Set the new month and year as YYYY-MM
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
+
+def get_category_color_dict():
+    category_list = Category.objects.all()
+    category_color_dict = {}
+    for category in category_list:
+        category_color_dict[category.id] = category.color
+    return category_color_dict
