@@ -29,7 +29,9 @@ def updateCategory(request,category_id):
          form = CategoryForm(request.POST, instance=category)
          if form.is_valid():
              form.save()
-         return redirect(request.META['HTTP_REFERER'])
+         if('HTTP_REFERER' in request.META):
+             return redirect(request.META['HTTP_REFERER'])
+         return redirect('index')
 
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
