@@ -1,7 +1,10 @@
-from django.test import TestCase,Client
-from django.urls import reverse
-from .models import *
 import datetime
+
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from .models import *
+
 
 class CategoryCRUDTestCase(TestCase):
     def setUp(self):
@@ -9,7 +12,7 @@ class CategoryCRUDTestCase(TestCase):
         self.category1 = Category.objects.create(name="Category 1")
         self.category2 = Category.objects.create(name="Category 2")
         self.categorizedTask = Task.objects.create(name="Categorized Task",description="ex",deadlineDay="2024-03-24",deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.category1,status=False)
-        self.uncategorizedTask= Task.objects.create(name="Uncategroized Task",description="ex",deadlineDay="2024-03-24",deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False)
+        self.uncategorizedTask= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay="2024-03-24",deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False)
     def test_categories_created(self):
         categories = Category.objects.all()
 
@@ -43,7 +46,7 @@ class CategoryCRUDTestCase(TestCase):
         self.assertEquals(response.status_code,200)
         self.assertTemplateUsed(response,'calendar_app/create_category_form.html')
 
-        response = self.client.post(url,{'name':'New Category'})
+        response = self.client.post(url,{'name':'New Category','color':'#000000'})
         self.assertEquals(response.status_code,302)
         self.assertEquals(Category.objects.count(),3)
         self.assertIn(Category.objects.get(name='New Category'),Category.objects.all())
@@ -55,7 +58,7 @@ class CategoryCRUDTestCase(TestCase):
         self.assertTemplateUsed(response,'calendar_app/update_category_form.html')
         self.assertContains(response,self.category1.name)
 
-        response = self.client.post(url,{'name':'Updated Category'})
+        response = self.client.post(url,{'name':'Updated Category','color':'#000000'})
         self.assertEquals(response.status_code,302)
         self.assertEquals(Category.objects.count(),2)
         self.assertIn(Category.objects.get(name='Updated Category'),Category.objects.all())
