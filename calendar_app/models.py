@@ -16,6 +16,9 @@ class User(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
 class Task(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=1000)
