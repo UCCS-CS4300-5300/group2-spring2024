@@ -41,7 +41,7 @@ class CategoryCRUDTestCase(TestCase):
         url = reverse('create-category')
         response = self.client.get(url)
         self.assertEquals(response.status_code,200)
-        self.assertTemplateUsed(response,'calendar_app/generic_form.html')
+        self.assertTemplateUsed(response,'calendar_app/create_category_form.html')
 
         response = self.client.post(url,{'name':'New Category'})
         self.assertEquals(response.status_code,302)
@@ -52,7 +52,7 @@ class CategoryCRUDTestCase(TestCase):
         url = reverse('update-category',args=[self.category1.id])
         response = self.client.get(url)
         self.assertEquals(response.status_code,200)
-        self.assertTemplateUsed(response,'calendar_app/task_form.html')
+        self.assertTemplateUsed(response,'calendar_app/update_category_form.html')
         self.assertContains(response,self.category1.name)
 
         response = self.client.post(url,{'name':'Updated Category'})
@@ -75,7 +75,7 @@ class CategoryCRUDTestCase(TestCase):
         self.assertTemplateUsed(response,'calendar_app/calendar_month.html')
         for category in Category.objects.all():
             self.assertContains(response,category.name)
-            
+
     def test_category_filtering_week(self):
         url = reverse('filtered-week-view',args=[self.category1.id])
         response = self.client.get(url)
