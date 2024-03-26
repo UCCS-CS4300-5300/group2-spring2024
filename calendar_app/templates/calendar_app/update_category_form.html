@@ -4,14 +4,16 @@
 <!-- Replace block content in base_template.html -->
 {% block content %}
 
+{% load crispy_forms_tags %}
+<div class='mx-5 col-6 mt-4 '> 
+<h1> Edit {{category.name}} </h1>
 <form action='' method="POST">
 
     {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" name="Save Form">
+        {{ form |crispy}}
+    <input class="btn btn-primary" type="submit" name="Save Form">
 
 </form>
+</div>
 
 {% endblock %}
