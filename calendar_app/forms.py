@@ -1,3 +1,5 @@
+from colorfield.fields import ColorField
+from colorfield.widgets import ColorWidget
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
@@ -25,4 +27,7 @@ class TaskForm(ModelForm):
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ['name','color']
+        widgets = {
+            'color': forms.CharField(widget=ColorWidget)
+        }
