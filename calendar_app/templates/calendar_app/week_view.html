@@ -88,10 +88,10 @@
     <div class="row">
       {% for day, tasks in days_tasks.items %}
         <div class="col weekday">
-          
           {% for task in tasks %}
-            <div class="task {% if task.category%}category-{{task.category.id}} {% endif %}"><h3>{{ task.name }}</h3></div>
-            <!-- Display more task details here if needed -->
+            <button class="task {% if task.category%}category-{{task.category.id}} {% endif %}">
+              <h3>{{ task.name }}</h3>
+            </button>
           {% empty %}
             <h3>No tasks</h3>
           {% endfor %}
