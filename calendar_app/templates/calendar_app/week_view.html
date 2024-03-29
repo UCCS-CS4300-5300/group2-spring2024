@@ -87,7 +87,6 @@
     
     <!-- Weekday Names -->
     <div class="row">
-      
       <div class="col weekday-header">Monday<br>{{ weekday_dates.0|date:"F j" }}</div>
       <div class="col weekday-header">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</div>
       <div class="col weekday-header">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</div>
@@ -96,6 +95,7 @@
       <div class="col weekday-header">Saturday<br>{{ weekday_dates.5|date:"F j" }}</div>
       <div class="col weekday-header">Sunday<br>{{ weekday_dates.6|date:"F j" }}</div>
     </div>
+    
     <!-- Calendar Grid -->
     <div class="row">
       
@@ -109,8 +109,10 @@
           {% empty %}
             <h3>No tasks</h3>
           {% endfor %}
+
         </div>
       {% endfor %}
+    
     </div>
   </div>
 </body>
