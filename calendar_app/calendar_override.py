@@ -70,7 +70,7 @@ class Calendar(HTMLCalendar):
     # modifications to get_context_data() in MonthView
     '''
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
-        monthNames = ["Janauary", "February", "March", "April", "May", "June", "July", 
+        monthNames = ["January", "February", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
         currentYear=str(currentYear)
         currentMonth=monthNames[currentMonth - 1]
