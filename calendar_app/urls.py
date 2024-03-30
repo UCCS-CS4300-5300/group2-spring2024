@@ -8,6 +8,8 @@ from .views.account_views import *
 
 urlpatterns = [
     path('', index , name='index'),
+    path('',index , name='index'),
+    path('home/',index , name='home'),
 
 
     #category CRUD
@@ -17,6 +19,8 @@ urlpatterns = [
     path('category/list',CategoryListView.as_view(),name='category-list'),
 
     path('task/create', createTask, name='create-task'),
+    path('task/update/<int:task_id>', updateTask, name='update-task'),
+    path('task/delete/<int:task_id>', deleteTask, name='delete-task'),
     path('task/', TaskListView.as_view(), name='task-list'),
     path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
 

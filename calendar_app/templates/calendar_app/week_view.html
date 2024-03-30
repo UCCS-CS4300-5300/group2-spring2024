@@ -7,6 +7,10 @@
 <!-- Replace block content in base_template.html -->
 {% block content %}
 
+<!-- Add custom styling for category color -->
+{% block style %}
+{% include './color_class_css.html'%}
+{% endblock %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +53,7 @@
             </li>
             {% for category in category_list %}
             <li>
-                <a class="dropdown-item btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
+                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
             </li>
             {% endfor %}
             <li>
@@ -86,7 +90,7 @@
         <div class="col weekday">
           
           {% for task in tasks %}
-            <div class="task"><h3>{{ task.name }}</h3></div>
+            <div class="task {% if task.category%}category-{{task.category.id}} {% endif %}"><h3>{{ task.name }}</h3></div>
             <!-- Display more task details here if needed -->
           {% empty %}
             <h3>No tasks</h3>

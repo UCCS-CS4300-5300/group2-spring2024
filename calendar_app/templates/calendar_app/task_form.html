@@ -36,3 +36,14 @@
     </div> 
 </div>
 {% endblock %}
+{% load crispy_forms_tags %}
+<div class='mx-5 col-6 mt-4'> 
+<form action='' method="POST">
+
+    {% csrf_token %}
+        {{ form |crispy}}
+    <input class="btn btn-primary" type="submit" name="Save Task">
+
+</form>
+</div>
+{% endblock %}

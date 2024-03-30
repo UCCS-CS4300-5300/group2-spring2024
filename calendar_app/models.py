@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -16,6 +17,10 @@ class User(models.Model):
 # For use with Tasks
 class Category(models.Model):
     name = models.CharField(max_length=20)
+    color = ColorField(default='#0d6efd')
+
+    def __str__(self):
+        return self.name
 
 class Task(models.Model):
     name = models.CharField(max_length=50)

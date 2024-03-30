@@ -14,7 +14,10 @@ td {
     overflow: hidden; /* Using "auto" breaks outside of the cell */
 }
 </style>
+
+{% include './color_class_css.html'%}
 {% endblock %}
+
 
 <!-- Replace block content in base_template.html -->
 {% block content %}
@@ -46,7 +49,7 @@ td {
                             </li>
                             {% for category in category_list %}
                             <li>
-                                <a class="dropdown-item btn" href="{% url 'filtered-month-view' category.pk%}">{{ category.name }} </a>
+                                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-month-view' category.pk%}">{{ category.name }} </a>
                             </li>
                             {% endfor %}
                             <li>

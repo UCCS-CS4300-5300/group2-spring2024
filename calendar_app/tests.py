@@ -1,4 +1,6 @@
 from datetime import date, time, timedelta
+from datetime import date, time, timedelta, timezone
+from django.urls import reverse
 from django.db.utils import IntegrityError
 from django.urls import reverse
 from django.test import TestCase
@@ -70,6 +72,11 @@ class TaskViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'calendar_app/task_form.html')
+    # """ def test_email_field_not_blank(self):
+    #     # Attempt to create a user without an email
+    #     with self.assertRaises(ValueError) as raised:
+    #         CustomUser.objects.create_user(username="testuser3", email=None, password="testpassword789")
+    #     self.assertEqual(ValueError, type(raised.exception)) """
 
 # Month view template test
 class MonthViewTest(TestCase):
@@ -99,7 +106,7 @@ class MonthTaskDisplay(TestCase):
                                            deadlineDay=date(2024,3,30),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=3),
                                            user=self.customUser,status=False)
-    
+
     def test_month_task_display(self):
         # Get and verify template being used is correct
         response = self.client.get('/calendar/month/')
@@ -121,14 +128,51 @@ class AccountCreationTest(TestCase):
             CustomUser.objects.create_user(username="testuser2", email=email, password="testpassword456")
 
 
+    def test_email_field_not_blank(self):
+        # Attempt to create a user without an email
+        with self.assertRaises(ValueError):
+            CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
+
+
 class TasksTests(TestCase):
-    # make a task
-    task = 0
-
-    # add to database and ensure in database
+    # User and Task for Testing CRUD operations
+    def setUp(self):
+        email = "test@example.com"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        # Make tasks
+        self.newTask = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                           deadlineDay=date(2024, 3, 12), deadlineTime=time(23, 59),
+                                           category=None, duration=timedelta(days=0, hours=2),
+                                           user=self.customUser, status=False)
+    # Test Task creation
     def test_task_creation(self):
-        pass
+        self.assertEqual(Task.objects.count(), 1)
+        self.assertEqual(Task.objects.get(id=self.newTask.id).name, 'TestTask1')
 
-    # read task and ensure it is correct in the database and readable
-    def test_task_read(self):
-        pass
+    # Test Task details read
+    def test_task_details(self):
+        response = self.client.get(reverse('task-detail', args=[self.newTask.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'TestTask1')
+
+    # Test Task update
+    def test_task_update(self):
+        updated_data = {
+            'name': 'Updated Test Task',
+            'description': 'This is an updated test task',
+            'deadlineDay': '2024-03-22',
+            'deadlineTime': '13:00:00',
+            'status': True
+        }
+        self.client.force_login(self.customUser)
+        response = self.client.post(reverse('update-task', args=[self.newTask.id]), data=updated_data)
+        self.assertEqual(response.status_code, 302)
+        self.newTask.refresh_from_db()
+        self.assertEqual(self.newTask.name, 'TestTask1')
+
+    # Test Task deletion
+    def test_task_deletion(self):
+        self.client.force_login(self.customUser)
+        response = self.client.post(reverse('delete-task', args=[self.newTask.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Task.objects.count(), 0)

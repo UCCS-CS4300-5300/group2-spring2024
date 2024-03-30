@@ -20,7 +20,7 @@ def createCategory(request):
         form = CategoryForm()
 
     context = {'form': form}
-    return render(request, 'calendar_app/generic_form.html', context)
+    return render(request, 'calendar_app/create_category_form.html', context)
 
 def updateCategory(request,category_id):
     category = get_object_or_404(Category,pk=category_id)
@@ -29,10 +29,10 @@ def updateCategory(request,category_id):
          form = CategoryForm(request.POST, instance=category)
          if form.is_valid():
              form.save()
-         return redirect(request.META['HTTP_REFERER'])
+         return redirect('category-list')
 
-    context = {'form': form}
-    return render(request, 'calendar_app/task_form.html', context)
+    context = {'form': form,'category':category}
+    return render(request, 'calendar_app/update_category_form.html', context)
 
 def deleteCategory(request,category_id):
     category = get_object_or_404(Category,pk=category_id)

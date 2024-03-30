@@ -1,8 +1,12 @@
 {% extends 'calendar_app/base_template.html' %}
 
 {% block content %}
-<h1>Task Name: {{ task.title  }}</h1>
 
-<p><strong>Description:</strong> {{ task.description }}</p>
 <p><strong>Task:<a href="{{ task.get_absolute_url }}">{{ task.name }} </a>
+<p><strong>Description:</strong> {{ task.description }}</p>
+<p><strong>Time:</strong> {{ task.deadlineTime }}</p>
+<p><strong>Day:</strong> {{ task.deadlineDay }}</p>
+<p><strong>Category:</strong> {{ task.category }}</p>
+<a class="btn btn-primary" href="{% url 'update-task' task.id %}" role="button">Update</a>
+<a class="btn btn-danger" href="{% url 'delete-task' task.id %}" role="button">Delete</a>
 {% endblock %}

@@ -71,6 +71,7 @@ def WeekView(request,category):
     context['days_tasks'] = days_tasks
 
     context['category_list'] = Category.objects.all()
+    context['category_colors'] = get_category_color_dict()
     return render(request, 'calendar_app/week_view.html', context)
 
 
@@ -88,6 +89,7 @@ class MonthView(generic.ListView):
         #get the category for the filter
         filter_category = self.kwargs.get('category')
         context['category_list'] = Category.objects.all()
+        context['category_colors'] = get_category_color_dict()
 
         # Use the current date for the calendar
         currentDay = get_date(self.request.GET.get('day', None))
@@ -147,3 +149,26 @@ def get_next_month(day):
     # Set the new month and year as YYYY-MM
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
+
+#returns a dict of the background and text color for each category
+def get_category_color_dict() -> dict[int, tuple[str, str]]:
+    category_list = Category.objects.all()
+    category_color_dict = {}
+    for category in category_list:
+        category_color_dict[category.id] = (category.color, get_text_color(category.color))
+    return category_color_dict
+
+#https://stackoverflow.com/a/77647094
+#gets what the color of the text should be based on text color based on provided algorithm
+def get_text_color(backColor:str) -> str:
+    if len(backColor) != 7:
+        return "#000000"
+    r = float(int(backColor[1:3], 16))
+    g = float(int(backColor[3:5], 16))
+    b = float(int(backColor[5:7], 16))
+    luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+    if luminance > 0.5:
+        return "#000000"
+    else:
+        return "#ffffff"
+        
