@@ -124,15 +124,15 @@ class MonthTaskDisplay(TestCase):
         currMonthDate = datetime.now().replace(day=1)
 
         # Make tasks in current month; days are arbitrary
-        self.newTask = Task.objects.create(name='TestTask1',description='TestDesc1',
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
                                            deadlineDay=date(currMonthDate.year,currMonthDate.month,4),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=2),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask2',description='TestDesc2',
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
                                            deadlineDay=date(currMonthDate.year,currMonthDate.month,16),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=1),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask3',description='TestDesc3',
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
                                            deadlineDay=date(currMonthDate.year,currMonthDate.month,28),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=3),
                                            user=self.customUser,status=False)
@@ -143,9 +143,14 @@ class MonthTaskDisplay(TestCase):
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, 'TestTask1') # TestTask1 is present
-        self.assertContains(response, 'TestTask2') # TestTask2 is present
-        self.assertContains(response, 'TestTask3') # TestTask3 is present
+        self.assertContains(response, self.newTask1.name) # TestTask1 is present
+        self.assertContains(response, self.newTask2.name) # TestTask2 is present
+        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+
+        # Check for individual tasks' detail links in response
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
 
 # Test for tasks in next month in month view;
 # modified version of MonthTaskDisplay
@@ -161,15 +166,15 @@ class NextMonthTaskDisplay(TestCase):
         nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
 
         # Make next month tasks; days are arbitrary
-        self.newTask = Task.objects.create(name='TestTask1',description='TestDesc1',
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
                                            deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=4),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask2',description='TestDesc2',
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
                                            deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=2),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask3',description='TestDesc3',
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
                                            deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=8),
                                            user=self.customUser,status=False)
@@ -189,9 +194,14 @@ class NextMonthTaskDisplay(TestCase):
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, 'TestTask1') # TestTask1 is present
-        self.assertContains(response, 'TestTask2') # TestTask2 is present
-        self.assertContains(response, 'TestTask3') # TestTask3 is present
+        self.assertContains(response, self.newTask1.name) # TestTask1 is present
+        self.assertContains(response, self.newTask2.name) # TestTask2 is present
+        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+
+        # Check for individual tasks' detail links in response
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
 
 # Test for tasks in previous month in month view;
 # modified version of MonthTaskDisplay
@@ -207,15 +217,15 @@ class PrevMonthTaskDisplay(TestCase):
         prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
 
         # Make previous month tasks; days are arbitrary
-        self.newTask = Task.objects.create(name='TestTask1',description='TestDesc1',
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
                                            deadlineDay=date(prevMonthDate.year,prevMonthDate.month,6),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=4),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask2',description='TestDesc2',
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
                                            deadlineDay=date(prevMonthDate.year,prevMonthDate.month,15),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=2),
                                            user=self.customUser,status=False)
-        self.newTask = Task.objects.create(name='TestTask3',description='TestDesc3',
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
                                            deadlineDay=date(prevMonthDate.year,prevMonthDate.month,25),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=8),
                                            user=self.customUser,status=False)
@@ -235,9 +245,14 @@ class PrevMonthTaskDisplay(TestCase):
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, 'TestTask1') # TestTask1 is present
-        self.assertContains(response, 'TestTask2') # TestTask2 is present
-        self.assertContains(response, 'TestTask3') # TestTask3 is present
+        self.assertContains(response, self.newTask1.name) # TestTask1 is present
+        self.assertContains(response, self.newTask2.name) # TestTask2 is present
+        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+
+        # Check for individual tasks' detail links in response
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
 
 # Account creation
 class AccountCreationTest(TestCase):
