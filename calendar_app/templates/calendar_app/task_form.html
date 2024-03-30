@@ -1,8 +1,41 @@
 <!-- inherit from base.html-->
 {% extends "calendar_app/base_template.html" %}
 
-<!-- Replace block content in base_template.html -->
 {% block content %}
+<!-- Center the form on the screen with a vertical height of 80vh -->
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+    <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <!-- Title for the form -->
+        <h2>Create Task</h2>
+        <form method="POST" style="display: flex; flex-direction: column; align-items: center;">
+            {% csrf_token %}
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <!-- Layout for forms modified for vertical alignment -->
+                <div style="width: 100%; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; text-align: left;"> 
+                    <!-- labels and fields align to the left -->
+                        {{ field.label_tag }}<br>{{ field }}
+                        {% if field.help_text %}
+                        <small style="color: grey;">{{ field.help_text }}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Centered submit button below fields -->
+            <div style="width: 100%; display: flex; justify-content: center;">
+                <input type="submit" name="Save Task" class="btn btn-primary" style="margin-top: 20px; width: 100px;">
+            </div>
+        </form>
+        <form action="/home" method="get" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-danger">Back</button>
+        </form>
+    </div> 
+</div>
+{% endblock %}
 {% load crispy_forms_tags %}
 <div class='mx-5 col-6 mt-4'> 
 <form action='' method="POST">

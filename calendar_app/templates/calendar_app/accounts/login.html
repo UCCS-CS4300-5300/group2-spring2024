@@ -1,21 +1,35 @@
 <!-- inherit from base.html-->
 {% extends "calendar_app/base_template.html" %}
+
 <!-- Replace block content in base_template.html -->
 {% block content %}
-
-<h2>Login</h2>
-<form method="post">
-
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-
-</form>
-
-<!-- Registeer if no login -->
-<form action="/register" method="get">
-    <button type="submit" class="btn">Sign Up</button>
-</form>
-
-<!-- End of block -->
+<!-- Creates the login "box", then centeres it at the middle of the screen 80vh is the sweet spot -->
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+    <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <h2>Login</h2>
+        <form method="post" style="display: flex; flex-direction: column; align-items: left;">
+            {% csrf_token %}
+            <div style="width: 100%;">
+                <!-- Custom styling for form fields -->
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div style="margin-bottom: 15px;">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small style="color: grey;">{{ field.help_text }}</small>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Login  -->
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px; width: 100px; align-self: center;">Login</button>
+        </form>
+        <!-- Register  -->
+        <form action="/register" method="get" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-secondary" style="width: 100px;">Sign-Up</button>
+        </form>
+    </div> 
+</div>
 {% endblock %}
