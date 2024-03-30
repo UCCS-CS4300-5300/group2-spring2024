@@ -92,7 +92,7 @@ class MonthView(generic.ListView):
         context['category_colors'] = get_category_color_dict()
 
         # Use the current date for the calendar
-        currentDay = get_date(self.request.GET.get('day', None))
+        currentDay = get_date(self.request.GET.get('month', None))
 
         # Instantiate Calendar with current year+date
         cal = Calendar(currentDay.year, currentDay.month,filter_category)
@@ -105,7 +105,7 @@ class MonthView(generic.ListView):
         context['calendar'] = mark_safe(html_cal)
 
         # Set current month and year to pass to template for display
-        monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
+        monthNames = ["January", "February", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
         currentYear=str(currentDay.year)
         currentMonth=monthNames[int(currentDay.month) - 1]
