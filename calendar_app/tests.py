@@ -1,11 +1,11 @@
-from datetime import date, time, timedelta
-from datetime import date, time, timedelta, timezone
-from django.urls import reverse
+from datetime import date, datetime, time, timedelta, timezone
+
 from django.db.utils import IntegrityError
-from django.urls import reverse
 from django.test import TestCase
+from django.urls import reverse
+
 from .models import *
-from datetime import datetime
+
 
 # Account creation
 class AccountCreationTest(TestCase):
