@@ -2,6 +2,7 @@ from calendar import HTMLCalendar
 
 from .models import Task
 
+from django.urls import reverse
 
 # Calendar class; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
@@ -22,7 +23,7 @@ class Calendar(HTMLCalendar):
         
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            taskURL = '#' # Replace with actual task URL later
+            taskURL = reverse('task-detail', args=[task.id])
             colorClass = "btn-primary"
             if task.category:
                 colorClass = f"category-{task.category.id}"
@@ -69,7 +70,7 @@ class Calendar(HTMLCalendar):
     # modifications to get_context_data() in MonthView
     '''
     def formatmonthname(self,currentYear,currentMonth,withyear=True):
-        monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", 
+        monthNames = ["January", "February", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
         currentYear=str(currentYear)
         currentMonth=monthNames[currentMonth - 1]
