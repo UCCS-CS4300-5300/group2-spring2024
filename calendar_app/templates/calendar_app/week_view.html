@@ -72,17 +72,16 @@
       </div> <!-- End of left-side button group -->
       </div>
       <div class="col">
-        <button class="btn btn-primary">&lt;</button> <!-- Previous week button -->
+        <button id="prev-week-btn" class="btn btn-primary">&lt;</button> <!-- Previous week button -->
       </div>
       <div class="col">
         <h3>Week of {{ start_of_week|date:"F j, Y" }} - {{ end_of_week|date:"F j, Y" }}</h3> <!-- Display current week range -->
       </div>
       <div class="col">
-        <button class="btn btn-primary">&gt;</button> <!-- Next week button -->
+        <button id="next-week-btn" class="btn btn-primary">&gt;</button> <!-- Next week button -->
       </div>
       <div class="col">
-        <button id="prev-week-btn" class="btn btn-primary">Previous Week</button>
-        <button id="next-week-btn" class="btn btn-primary">Next Week</button>
+        <!-- Extra column to center elements -->
       </div>
     </div>
     
