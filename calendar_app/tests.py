@@ -367,3 +367,35 @@ class TasksTests(TestCase):
         response = self.client.post(reverse('delete-task', args=[self.newTask.id]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Task.objects.count(), 0)
+
+class WeekTest(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+
+        # Get the current day
+        currentDay = datetime.now().date()
+
+        # Make test tasks in current week
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day),deadlineTime=time(12,0),
+                                           category=None,duration=timedelta(hours=1),
+                                           user=self.customUser,status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day + 3),deadlineTime=time(0,1),
+                                           category=None,duration=timedelta(hours=2),
+                                           user=self.customUser,status=False)
+
+    def test_week_task_display(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('week-view'))
+        self.assertTemplateUsed(response, 'calendar_app/week_view.html')
+
+        self.assertContains(response, self.newTask1.name)
+        self.assertContains(response, self.newTask2.name)
+
+
+        # Check for individual tasks' detail links in response
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
