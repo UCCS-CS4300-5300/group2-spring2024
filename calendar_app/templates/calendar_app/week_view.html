@@ -1,7 +1,7 @@
 <!-- inherit from base.html-->
 {% extends "calendar_app/base_template.html" %}
 
-<!-- For displaying images -->
+<!-- For displaying images/scripts -->
 {% load static %}
 
 <!-- Replace block content in base_template.html -->
@@ -81,12 +81,13 @@
         <button class="btn btn-primary">&gt;</button> <!-- Next week button -->
       </div>
       <div class="col">
-        
+        <button id="prev-week-btn" class="btn btn-primary">Previous Week</button>
+        <button id="next-week-btn" class="btn btn-primary">Next Week</button>
       </div>
     </div>
     
     <!-- Weekday Names -->
-    <div class="row">
+    <div class="row" id="week-header">
       <div class="col weekday-header">Monday<br>{{ weekday_dates.0|date:"F j" }}</div>
       <div class="col weekday-header">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</div>
       <div class="col weekday-header">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</div>
@@ -97,7 +98,7 @@
     </div>
     
     <!-- Calendar Grid -->
-    <div class="row">
+    <div class="row" id="week-grid">
       
       {% for day, tasks in days_tasks.items %}
         <div class="col weekday">
@@ -115,6 +116,7 @@
     
     </div>
   </div>
+  <script src="{% static 'js/week_navigation.js' %}"></script>
 </body>
 </html>
 
