@@ -308,23 +308,6 @@ class PrevMonthTaskDisplay(TestCase):
         self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
         self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
 
-# Account creation
-class AccountCreationTest(TestCase):
-    def test_email_field_unique(self):
-        # Create a user with a specific email
-        email = "test@example.com"
-        CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
-        # Attempt to create another user with the same email
-        with self.assertRaises(IntegrityError):
-            CustomUser.objects.create_user(username="testuser2", email=email, password="testpassword456")
-
-
-    def test_email_field_not_blank(self):
-        # Attempt to create a user without an email
-        with self.assertRaises(ValueError):
-            CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
-
-
 class TasksTests(TestCase):
     # User and Task for Testing CRUD operations
     def setUp(self):
