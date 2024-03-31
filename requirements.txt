@@ -1,11 +1,16 @@
 asgiref==3.7.2
 beautifulsoup4==4.12.3
+colorama==0.4.6
+coverage==7.4.4
 crispy-bootstrap4==2024.1
 Django==4.2.10
 django-bootstrap-v5==1.0.11
 django-colorfield==0.11.0
 django-crispy-forms==2.1
+mando==0.7.1
 pillow==10.2.0
+radon==6.0.1
+six==1.16.0
 soupsieve==2.5
 sqlparse==0.4.4
 typing_extensions==4.9.0
