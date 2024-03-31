@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views import generic
 
+from django.utils.http import urlencode
+
 from ..calendar_override import Calendar
 from ..forms import *
 from ..models import *
@@ -30,7 +32,14 @@ def register(request):
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
 
-def WeekView(request,category):
+def week_view(request, category, year=None, month=None, day=None):
+    if year and month and day:
+        # Use the provided year, month, day if present
+        current_date = datetime(year=year, month=month, day=day)
+    else:
+        # Default to the current date if no parameters are provided
+        current_date = datetime.now()
+
     if category:
         tasks = Task.objects.filter(category=category)
     else:
@@ -40,6 +49,7 @@ def WeekView(request,category):
     context = {}
 
     start_of_week = current_date - timedelta(days=current_date.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
     
     context['start_of_week'] = start_of_week
     # Calculate the end date of the current week
@@ -72,6 +82,18 @@ def WeekView(request,category):
 
     context['category_list'] = Category.objects.all()
     context['category_colors'] = get_category_color_dict()
+
+    # Add context variables for navigation
+    prev_week = start_of_week - timedelta(weeks=1)
+    next_week = start_of_week + timedelta(weeks=1)
+
+    # Construct URLs for the prev and next week buttons
+    prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
+    next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
+
+    context['prev_week_url'] = prev_week_url
+    context['next_week_url'] = next_week_url
+
     return render(request, 'calendar_app/week_view.html', context)
 
 
