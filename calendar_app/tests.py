@@ -359,6 +359,7 @@ class WeekTest(TestCase):
 
         # Get the current day
         currentDay = datetime.now().date()
+        
 
         # Make test tasks in current week
         self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
@@ -375,10 +376,10 @@ class WeekTest(TestCase):
         response = self.client.get(reverse('week-view'))
         self.assertTemplateUsed(response, 'calendar_app/week_view.html')
 
+        # Check that tasks exist
         self.assertContains(response, self.newTask1.name)
         self.assertContains(response, self.newTask2.name)
 
-
-        # Check for individual tasks' detail links in response
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
+        # Check URLs for task detail views
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id]))
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id]))

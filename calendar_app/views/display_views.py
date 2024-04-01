@@ -44,7 +44,6 @@ def week_view(request, category, year=None, month=None, day=None):
         tasks = Task.objects.filter(category=category)
     else:
         tasks = Task.objects.all()
-    current_date = datetime.now().date()
 
     context = {}
 
