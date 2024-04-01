@@ -4,10 +4,9 @@ from datetime import date, datetime, timedelta
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
-
-from django.utils.http import urlencode
 
 from ..calendar_override import Calendar
 from ..forms import *
@@ -48,6 +47,9 @@ def week_view(request, category, year=None, month=None, day=None):
 
     context = {}
 
+    context['year'] = current_date.year
+    context['month'] = current_date.month
+    context['day'] = current_date.day
     # Calculate start and end of currently viewed week
     start_of_week = current_date - timedelta(days=current_date.weekday())
     end_of_week = start_of_week + timedelta(days=6)
@@ -57,7 +59,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['end_of_week'] = end_of_week
 
     # Get tasks in current week
-    tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
+    tasks = tasks.filter(deadlineDay__range=[start_of_week, end_of_week])
 
     # Create a list to store the dates for each weekday
     weekday_dates = []

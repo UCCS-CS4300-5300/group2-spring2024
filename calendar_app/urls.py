@@ -1,10 +1,11 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path, reverse_lazy
+
 from . import views
-from .views.category_views import * 
+from .views.account_views import *
+from .views.category_views import *
 from .views.display_views import *
 from .views.task_views import *
-from .views.account_views import *
 
 urlpatterns = [
     path('', index , name='index'),
