@@ -35,8 +35,14 @@ urlpatterns = [
     ###########################################################
 
     # WeekView
-    path('calendar/week/', WeekView,{'category':None}, name='week-view'),
-    path('calendar/week/filter/<int:category>', WeekView, name='filtered-week-view'),
+    # Default path for the current week with optional category filtering
+    path('calendar/week/', week_view, {'category': None, 'year': None, 'month': None, 'day': None}, name='week-view'),
+    path('calendar/week/filter/<int:category>/', week_view, {'year': None, 'month': None, 'day': None}, name='filtered-week-view'),
+    
+    # Paths for navigating to specific weeks, with and without category filtering
+    path('calendar/week/<int:year>/<int:month>/<int:day>/', week_view, {'category': None}, name='week-view-date'),
+    path('calendar/week/filter/<int:category>/<int:year>/<int:month>/<int:day>/', week_view, name='filtered-week-view-date'),
+
 
     # MonthView
     path('calendar/month/', MonthView.as_view(), {'category':None},name='month-view'),

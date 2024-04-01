@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views import generic
 
+from django.utils.http import urlencode
+
 from ..calendar_override import Calendar
 from ..forms import *
 from ..models import *
@@ -29,21 +31,33 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
+# Week View
+def week_view(request, category, year=None, month=None, day=None):
+    if year and month and day:
+        # Use the provided year, month, day if present
+        current_date = datetime(year=year, month=month, day=day)
+    else:
+        # Default to the current date if no parameters are provided by URL
+        current_date = datetime.now()
 
-def WeekView(request,category):
+    # If a catagory is chosen, filter based on it
     if category:
         tasks = Task.objects.filter(category=category)
     else:
         tasks = Task.objects.all()
-    current_date = datetime.now().date()
 
     context = {}
 
+    # Calculate start and end of currently viewed week
     start_of_week = current_date - timedelta(days=current_date.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
     
+    # Add start/end to context
     context['start_of_week'] = start_of_week
-    # Calculate the end date of the current week
-    context['end_of_week'] = start_of_week + timedelta(days=6)
+    context['end_of_week'] = end_of_week
+
+    # Get tasks in current week
+    tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
 
     # Create a list to store the dates for each weekday
     weekday_dates = []
@@ -62,16 +76,29 @@ def WeekView(request,category):
         'Sunday': [],
     }
 
-    # Group tasks by day
+    # Group tasks by their specific date
     for task in tasks:
-        # Get name of deadline day
-        day_of_week = task.deadlineDay.strftime('%A')
-        days_tasks[day_of_week].append(task)
-
+        task_day = task.deadlineDay.strftime('%A')
+        if task_day in days_tasks:
+            days_tasks[task_day].append(task)
+            
     context['days_tasks'] = days_tasks
 
+    # Add catagories to context
     context['category_list'] = Category.objects.all()
     context['category_colors'] = get_category_color_dict()
+
+    # Create context variables for navigation
+    prev_week = start_of_week - timedelta(weeks=1)
+    next_week = start_of_week + timedelta(weeks=1)
+
+    # Construct URLs for the prev and next week buttons
+    prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
+    next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
+
+    context['prev_week_url'] = prev_week_url
+    context['next_week_url'] = next_week_url
+
     return render(request, 'calendar_app/week_view.html', context)
 
 
