@@ -99,6 +99,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['prev_week_url'] = prev_week_url
     context['next_week_url'] = next_week_url
 
+    context['current_date'] = current_date
     return render(request, 'calendar_app/week_view.html', context)
 
 
