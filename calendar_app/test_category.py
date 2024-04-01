@@ -8,11 +8,12 @@ from .models import *
 
 class CategoryCRUDTestCase(TestCase):
     def setUp(self):
+        currentdate = str(datetime.date.today())
         self.Client = Client()
         self.category1 = Category.objects.create(name="Category 1")
         self.category2 = Category.objects.create(name="Category 2")
-        self.categorizedTask = Task.objects.create(name="Categorized Task",description="ex",deadlineDay="2024-03-24",deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.category1,status=False)
-        self.uncategorizedTask= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay="2024-03-24",deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False)
+        self.categorizedTask = Task.objects.create(name="Categorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.category1,status=False)
+        self.uncategorizedTask= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False)
     def test_categories_created(self):
         categories = Category.objects.all()
 

@@ -57,11 +57,11 @@
               <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
                   <ul class="dropdown-menu">
                       <li>
-                      <a class="dropdown-item" href="{% url 'week-view' %}">All Categories</a>
+                      <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">All Categories</a>
                       </li>
                       {% for category in category_list %}
                       <li>
-                          <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-week-view' category.pk%}">{{ category.name }} </a>
+                          <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
                       </li>
                       {% endfor %}
                       <li>
