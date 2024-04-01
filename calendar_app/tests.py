@@ -366,7 +366,7 @@ class WeekTest(TestCase):
                                            category=None,duration=timedelta(hours=1),
                                            user=self.customUser,status=False)
         self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day + 3),deadlineTime=time(0,1),
+                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day - 1),deadlineTime=time(0,1),
                                            category=None,duration=timedelta(hours=2),
                                            user=self.customUser,status=False)
 
