@@ -47,12 +47,16 @@ def week_view(request, category, year=None, month=None, day=None):
 
     context = {}
 
+    # Calculate start and end of currently viewed week
     start_of_week = current_date - timedelta(days=current_date.weekday())
     end_of_week = start_of_week + timedelta(days=6)
     
+    # Add start/end to context
     context['start_of_week'] = start_of_week
-    # Calculate the end date of the current week
-    context['end_of_week'] = start_of_week + timedelta(days=6)
+    context['end_of_week'] = end_of_week
+
+    # Get tasks in a certain week
+    tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
 
     # Create a list to store the dates for each weekday
     weekday_dates = []
@@ -70,13 +74,20 @@ def week_view(request, category, year=None, month=None, day=None):
         'Saturday': [],
         'Sunday': [],
     }
-
+    """
     # Group tasks by day
     for task in tasks:
         # Get name of deadline day
         day_of_week = task.deadlineDay.strftime('%A')
         days_tasks[day_of_week].append(task)
+    """
 
+    # Group tasks by their specific date
+    for task in tasks:
+        task_day = task.deadlineDay.strftime('%A')  # Get the weekday name of the task's date
+        if task_day in days_tasks:
+            days_tasks[task_day].append(task)
+            
     context['days_tasks'] = days_tasks
 
     context['category_list'] = Category.objects.all()
