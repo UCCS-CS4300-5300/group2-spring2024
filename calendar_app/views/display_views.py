@@ -121,6 +121,8 @@ class MonthView(generic.ListView):
 
         #get the category for the filter
         filter_category = self.kwargs.get('category')
+        if filter_category:
+            context['filter_category'] = filter_category
         context['category_list'] = Category.objects.all()
         context['category_colors'] = get_category_color_dict()
 
@@ -147,6 +149,7 @@ class MonthView(generic.ListView):
         # Set next and previous months
         day = get_date(self.request.GET.get('month', None))
         context['prevMonth'] = get_prev_month(day)
+        context['thisMonth'] = f'month={currentYear}-{currentDay.month}'
         context['nextMonth'] = get_next_month(day)
 
         return context

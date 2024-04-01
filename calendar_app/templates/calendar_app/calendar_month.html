@@ -45,11 +45,11 @@ td {
                     <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
                         <ul class="dropdown-menu">
                             <li>
-                            <a class="dropdown-item" href="{% url 'month-view' %}">All Categories</a>
+                            <a class="dropdown-item" href="{% url 'month-view' %}?{{ thisMonth }}">All Categories</a>
                             </li>
                             {% for category in category_list %}
                             <li>
-                                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-month-view' category.pk%}">{{ category.name }} </a>
+                                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-month-view' category.pk%}?{{ thisMonth }}">{{ category.name }} </a>
                             </li>
                             {% endfor %}
                             <li>
@@ -67,7 +67,7 @@ td {
             <div class="row text-center">
                 <!-- Prev month -->
                 <div class="col-1">
-                    <a class="btn btn-primary btn-sm" href="{% url 'month-view' %}?{{ prevMonth }}" role="button">
+                    <a class="btn btn-primary btn-sm" href="{% if filter_category %}{% url 'filtered-month-view' filter_category%}?{{ prevMonth }} {% else %}{% url 'month-view' %}?{{ prevMonth }}{% endif %}" role="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg>
                     </a>
                 </div>
@@ -79,7 +79,7 @@ td {
 
                 <!-- Next month -->
                 <div class="col-1">
-                    <a class="btn btn-primary btn-sm" href="{% url 'month-view' %}?{{ nextMonth }}" role="button">
+                    <a class="btn btn-primary btn-sm" href="{% if filter_category %}{% url 'filtered-month-view' filter_category%}?{{ nextMonth }} {% else %}{% url 'month-view' %}?{{ nextMonth }}{% endif %}" role="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg>
                     </a>
                 </div>
