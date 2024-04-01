@@ -95,8 +95,12 @@ def week_view(request, category, year=None, month=None, day=None):
     next_week = start_of_week + timedelta(weeks=1)
 
     # Construct URLs for the prev and next week buttons
-    prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
-    next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
+    if category:
+        prev_week_url = reverse('filtered-week-view-date', args=[category,prev_week.year, prev_week.month, prev_week.day])
+        next_week_url = reverse('filtered-week-view-date', args=[category,next_week.year, next_week.month, next_week.day])
+    else:
+        prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
+        next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
 
     context['prev_week_url'] = prev_week_url
     context['next_week_url'] = next_week_url
