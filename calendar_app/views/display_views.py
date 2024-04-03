@@ -4,10 +4,9 @@ from datetime import date, datetime, timedelta
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
-
-from django.utils.http import urlencode
 
 from ..calendar_override import Calendar
 from ..forms import *
@@ -48,6 +47,9 @@ def week_view(request, category, year=None, month=None, day=None):
 
     context = {}
 
+    context['year'] = current_date.year
+    context['month'] = current_date.month
+    context['day'] = current_date.day
     # Calculate start and end of currently viewed week
     start_of_week = current_date - timedelta(days=current_date.weekday())
     end_of_week = start_of_week + timedelta(days=6)
@@ -57,7 +59,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['end_of_week'] = end_of_week
 
     # Get tasks in current week
-    tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
+    tasks = tasks.filter(deadlineDay__range=[start_of_week, end_of_week])
 
     # Create a list to store the dates for each weekday
     weekday_dates = []
@@ -93,8 +95,12 @@ def week_view(request, category, year=None, month=None, day=None):
     next_week = start_of_week + timedelta(weeks=1)
 
     # Construct URLs for the prev and next week buttons
-    prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
-    next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
+    if category:
+        prev_week_url = reverse('filtered-week-view-date', args=[category,prev_week.year, prev_week.month, prev_week.day])
+        next_week_url = reverse('filtered-week-view-date', args=[category,next_week.year, next_week.month, next_week.day])
+    else:
+        prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
+        next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
 
     context['prev_week_url'] = prev_week_url
     context['next_week_url'] = next_week_url
@@ -116,6 +122,8 @@ class MonthView(generic.ListView):
 
         #get the category for the filter
         filter_category = self.kwargs.get('category')
+        if filter_category:
+            context['filter_category'] = filter_category
         context['category_list'] = Category.objects.all()
         context['category_colors'] = get_category_color_dict()
 
@@ -142,6 +150,7 @@ class MonthView(generic.ListView):
         # Set next and previous months
         day = get_date(self.request.GET.get('month', None))
         context['prevMonth'] = get_prev_month(day)
+        context['thisMonth'] = f'month={currentYear}-{currentDay.month}'
         context['nextMonth'] = get_next_month(day)
 
         return context
