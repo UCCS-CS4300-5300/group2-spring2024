@@ -1,12 +1,35 @@
 {% extends 'calendar_app/base_template.html' %}
 
 {% block content %}
+<!-- Container div -->
+<div class="container-lg">
 
-<p><strong>Task:<a href="{{ task.get_absolute_url }}">{{ task.name }} </a>
-<p><strong>Description:</strong> {{ task.description }}</p>
-<p><strong>Time:</strong> {{ task.deadlineTime }}</p>
-<p><strong>Day:</strong> {{ task.deadlineDay }}</p>
-<p><strong>Category:</strong> {{ task.category }}</p>
-<a class="btn btn-primary" href="{% url 'update-task' task.id %}" role="button">Update</a>
-<a class="btn btn-danger" href="{% url 'delete-task' task.id %}" role="button">Delete</a>
+    <!-- Page name and task name -->
+    <p><h1>Task Details: <a href="{{ task.get_absolute_url }}">{{ task.name }}</a></h1></p>
+
+    <!-- Task description -->
+    <p>
+        <strong>Description:</strong><br/>
+        <div class="container-md">
+            {{ task.description }}
+        </div>
+    </p> <!-- End of task description -->
+
+    <!-- More task details -->
+    <p>
+        <strong>Deadline Day:</strong> {{ task.deadlineDay }}<br/>
+        <strong>Deadline Time:</strong> {{ task.deadlineTime }}<br/>
+        <strong>Duration:</strong> {{ task.duration }}<br/>
+        <strong>Category:</strong> {{ task.category }}
+    </p> <!-- End of task details -->
+
+    <!-- Buttons -->
+    <p>
+        <a class="btn btn-primary" href="{% url 'index' %}" role="button">Home</a>
+        <a class="btn btn-primary" href="{% url 'update-task' task.id %}" role="button">Update</a>
+        <a class="btn btn-danger" href="{% url 'delete-task' task.id %}" role="button">Delete</a>
+    </p> <!-- End of buttons -->
+    
+</div> <!-- End of container div -->
+
 {% endblock %}
