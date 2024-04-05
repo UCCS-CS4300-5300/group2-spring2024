@@ -109,7 +109,7 @@
           <!-- For loop to get tasks -->
           {% for day, tasks in days_tasks.items %}
             <!-- Day cel -->
-            <td>
+            <td scope="col" class="col-1">
               <!-- Task buttons -->
               {% for task in tasks %}
                 <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
