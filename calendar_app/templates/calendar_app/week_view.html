@@ -8,6 +8,11 @@
 {% block style %}
   {% include './color_class_css.html'%}
   <style>
+    .table {
+      table-layout: fixed;
+      word-wrap: break-word;
+      hyphens: auto; /* This doesn't work yet */
+    }
     .task {
       border-width: 0; /* Remove button borders to match month view */
     }
