@@ -6,14 +6,18 @@
     <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
         <!-- Title for the deletion confirmation -->
         <h2>Are you sure you want to delete {{ task.name }}?</h2>
-        <form action="{% url 'delete_task' user.task.id %}" method="POST" style="display: flex; flex-direction: column; align-items: center;">
+
+        <!-- Form -->
+        <!-- Needed to replace "user.task.id" with "task.id" to un-break page in sprint 3 -->
+        <form action="{% url 'delete-task' task.id %}" method="POST" style="display: flex; flex-direction: column; align-items: center;">
             {% csrf_token %}
             <!-- Centered submit button for confirmation -->
             <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;">
                 <input type="submit" value="Delete" class="btn btn-danger" style="margin-top: 20px; width: 100px;">
             </div>
+            <!-- Cancel button; leads back to task details -->
             <div style="width: 100%; display: flex; justify-content: center;">
-                <a class="btn btn-primary" href="{{ project.portfolio.get_absolute_url }}" role="button" style="width: 100px; text-align: center;">Cancel</a>
+                <a class="btn btn-primary" href="{% url 'task-detail' task.id %}" role="button" style="width: 100px; text-align: center;">Cancel</a>
             </div>
         </form>
     </div> 
@@ -23,8 +27,9 @@
 
     <form action="{% url 'delete-task' task.id %}" method="POST">
         {% csrf_token %}
+        <!-- Delete button -->
         <input type="submit" value="Submit">
-        <a class="btn btn-primary" href="{{ task.get_absolute_url }}" role="button">Cancel</a>
-    </form>
 
-{% endblock %}
+        <!-- Cancel button; leads back to task details -->
+        <a class="btn btn-primary" href="{% url 'task-detail' task.id %}" role="button">Cancel</a>
+    </form>

@@ -1,17 +1,25 @@
 {% extends 'calendar_app/base_template.html' %}
 
 {% block content %}
-<h1>Tasks List</h1>
-{% if tasks_list %}
-    <ul>
-        {% for task in tasks_list %}
-        <li>
-            <a href="{{ task.get_absolute_url }}">{{ task.title }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-{% else %}
-<p>There are no tasks to complete.</p>
-{% endif %}
+
+<!-- Container div -->
+<div class="container-lg">
+    
+    <p><h1>Tasks List</h1></p>
+
+    {% if tasks_list %}
+        <ul>
+            {% for task in tasks_list %}
+            <li>
+                <a href="{{ task.get_absolute_url }}">{{ task.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+    <p>There are no tasks to complete.</p>
+    {% endif %}
+    
+</div> <!-- End of container div -->
+
 {% endblock %}
 
