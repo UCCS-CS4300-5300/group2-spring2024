@@ -8,24 +8,8 @@
 {% block style %}
   {% include './color_class_css.html'%}
   <style>
-    
-    .weekday-header {
-      background-color: #007bff; /* Blue background color */
-      color: #ffffff; /* White text color */
-      padding: 10px; /* Padding around the weekday names */
-    }
-
-    .weekday {
-        border: 1px solid #dee2e6; /* Grey border to match month view */
-        padding: 10px; /* Padding for spacing */
-        background-color: white; /* Background color (white to match month view ) */
-    }
-
     .task {
-      /*border-bottom: 1px solid #ccc;*/ /* Add a bottom border between tasks */
       border-width: 0; /* Remove button borders to match month view */
-      padding: 5px 0; /* Add padding for spacing */
-      width: 100%; /* Uniform button width */
     }
   </style>
 {% endblock %}
@@ -57,6 +41,7 @@
         <div class ="dropdown btn btn-primary">
           <!-- Filter button -->
           <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+            <!-- Dropdown menu UL -->
             <ul class="dropdown-menu">
               <!-- All categories button -->
               <li>
@@ -66,7 +51,7 @@
               <!-- List of categories to filter by -->
               {% for category in category_list %}
               <li>
-                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
+                <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
               </li>
               {% endfor %}
               
@@ -74,8 +59,8 @@
               <li>
                 <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
               </li>
-            </ul>
-        </div>
+            </ul> <!-- End of dropdown menu UL -->
+        </div> <!-- End of category/filtering dropdown -->
       </div> <!-- End of left-side button group -->
     </div> <!-- End of left-side column -->
 
@@ -103,35 +88,42 @@
         </div>
       </div> <!-- End of week navigation -->
 
-      <!-- Weekday names/header -->
-      <div class="row text-center" id="week-header">
-        <div class="col weekday-header">Monday<br>{{ weekday_dates.0|date:"F j" }}</div>
-        <div class="col weekday-header">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</div>
-        <div class="col weekday-header">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</div>
-        <div class="col weekday-header">Thursday<br>{{ weekday_dates.3|date:"F j" }}</div>
-        <div class="col weekday-header">Friday<br>{{ weekday_dates.4|date:"F j" }}</div>
-        <div class="col weekday-header">Saturday<br>{{ weekday_dates.5|date:"F j" }}</div>
-        <div class="col weekday-header">Sunday<br>{{ weekday_dates.6|date:"F j" }}</div>
-      </div>
-    
-      <!-- Calendar Grid -->
-      <div class="row" id="week-grid">
-        
-        {% for day, tasks in days_tasks.items %}
-          <div class="col weekday text-center">
-            
-            {% for task in tasks %}
-              <button class="btn btn-primary task p-1 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
-                <p>{{ task.name }}</p>
-              </button>
-            {% empty %}
-              <p>No tasks</p>
-            {% endfor %}
+      <!-- Calendar table -->
+      <table class="table table-bordered table-fixed text-center">
+        <!-- Week header -->
+        <!-- Table head for styling -->
+        <thead>
+          <tr>
+            <th scope="col">Monday<br>{{ weekday_dates.0|date:"F j" }}</th>
+            <th scope="col">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</th>
+            <th scope="col">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</th>
+            <th scope="col">Thursday<br>{{ weekday_dates.3|date:"F j" }}</th>
+            <th scope="col">Friday<br>{{ weekday_dates.4|date:"F j" }}</th>
+            <th scope="col">Saturday<br>{{ weekday_dates.5|date:"F j" }}</th>
+            <th scope="col">Sunday<br>{{ weekday_dates.6|date:"F j" }}</th>
+          </tr>
+        </thead><!-- End of week header -->
 
-          </div>
-        {% endfor %}
-      </div> <!-- End of calendar grid -->
-
+        <!-- Week days -->
+        <tr>
+          <!-- For loop to get tasks -->
+          {% for day, tasks in days_tasks.items %}
+            <!-- Day cel -->
+            <td>
+              <!-- Task buttons -->
+              {% for task in tasks %}
+                <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
+                  {{ task.name }}
+                </button>
+              <!-- Text for if there are no tasks -->
+              {% empty %}
+                No tasks
+              {% endfor %}
+              <!-- End of task buttons -->
+            </td> <!-- End of day cel -->
+          {% endfor %}
+        </tr> <!-- End of week days -->
+      </table><!-- End of calendar table -->
     </div> <!-- End of right-side column -->
   </div> <!-- End of row containing columns -->
 </div> <!-- End of container div -->
