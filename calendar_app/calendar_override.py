@@ -29,7 +29,7 @@ class Calendar(HTMLCalendar):
             if task.category:
                 colorClass = f"category-{task.category.id}"
             if task.status:
-                taskName = '<s>' + taskName + '</s>'
+                taskName = f'<s>{taskName}</s>'
             dayHtml += f'<a class="btn {colorClass} btn-sm w-100" href="{taskURL}" role="button">{taskName}</a><br>'
         
         # Add numerical date and tasks to cell
