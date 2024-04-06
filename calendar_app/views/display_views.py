@@ -115,6 +115,19 @@ class MonthView(generic.ListView):
     
     # Override need to use task_list.html as filename
     template_name = 'calendar_app/calendar_month.html'
+
+    # Working on getting the current day to be outlined in the calender and week
+    # views, -nick
+    def formatDay(self, day, weekday):
+        today = date.today()
+        # Current date, this will get filled with a string that will match what is needed to outline in our
+        # html
+        curDate = str(day)
+        # returning the html
+        if day == today.day and self.year == today.year and self.month == today.month:
+           return f"<td class='today'>{curDate}</td>"
+        else:
+           return f"<td>{curDate}</td>"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -207,4 +220,5 @@ def get_text_color(backColor:str) -> str:
         return "#000000"
     else:
         return "#ffffff"
-        
+    
+    
