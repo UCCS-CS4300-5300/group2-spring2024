@@ -31,7 +31,7 @@ class Calendar(HTMLCalendar):
         
         # Add numerical date and tasks to cell
         if currentDay != 0:
-            return f'<td class="text-nowrap"><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
+            return f'<td><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
         
         # Return empty otherwise
         return '<td></td>'
