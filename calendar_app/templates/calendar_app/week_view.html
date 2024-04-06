@@ -16,6 +16,9 @@
     .task {
       border-width: 0; /* Remove button borders to match month view */
     }
+    day {
+      font-weight: normal;
+    }
   </style>
 {% endblock %}
 
@@ -99,13 +102,13 @@
         <!-- Table head for styling -->
         <thead>
           <tr>
-            <th scope="col">Monday<br>{{ weekday_dates.0|date:"F j" }}</th>
-            <th scope="col">Tuesday<br>{{ weekday_dates.1|date:"F j" }}</th>
-            <th scope="col">Wednesday<br>{{ weekday_dates.2|date:"F j" }}</th>
-            <th scope="col">Thursday<br>{{ weekday_dates.3|date:"F j" }}</th>
-            <th scope="col">Friday<br>{{ weekday_dates.4|date:"F j" }}</th>
-            <th scope="col">Saturday<br>{{ weekday_dates.5|date:"F j" }}</th>
-            <th scope="col">Sunday<br>{{ weekday_dates.6|date:"F j" }}</th>
+            <th scope="col">M<br><day>{{ weekday_dates.0|date:"F j" }}</day></th>
+            <th scope="col">T<br><day>{{ weekday_dates.1|date:"F j" }}</day></th>
+            <th scope="col">W<br><day>{{ weekday_dates.2|date:"F j" }}</day></th>
+            <th scope="col">T<br><day>{{ weekday_dates.3|date:"F j" }}</day></th>
+            <th scope="col">F<br><day>{{ weekday_dates.4|date:"F j" }}</day></th>
+            <th scope="col">S<br><day>{{ weekday_dates.5|date:"F j" }}</day></th>
+            <th scope="col">S<br><day>{{ weekday_dates.6|date:"F j" }}</day></th>
           </tr>
         </thead><!-- End of week header -->
 
@@ -117,12 +120,12 @@
             <td scope="col" class="col-1">
               <!-- Task buttons -->
               {% for task in tasks %}
-                <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
+                <button class="btn btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
                   {{ task.name }}
                 </button>
               <!-- Text for if there are no tasks -->
               {% empty %}
-                No tasks
+                <p class="text-muted">No tasks</p>
               {% endfor %}
               <!-- End of task buttons -->
             </td> <!-- End of day cel -->
