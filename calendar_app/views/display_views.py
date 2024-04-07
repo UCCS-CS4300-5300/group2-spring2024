@@ -1,3 +1,4 @@
+import re
 from calendar import monthrange
 from datetime import date, datetime, timedelta
 
@@ -158,31 +159,40 @@ class MonthView(generic.ListView):
         # Highlighting today's date if we're in the current month
         today = date.today()
         if currentDay.year == today.year and currentDay.month == today.month:
-            search_pattern = f'<td><p class="text-end">{today.day}</p><p></p></td>'
+            # A regex pattern to matching HTML tags
+            search_pattern = f'<td[^>]*><p class="text-end">{today.day}</p><p></p></td>'
             replacement = f'<td class="today"><p class="text-end">{today.day}</p><p></p></td>'
-            html_cal = html_cal.replace(search_pattern, replacement, 1)
+            html_cal = re.sub(search_pattern, replacement, html_cal, flags=re.DOTALL)
 
         current_date = datetime.now()
         start_of_week = current_date - timedelta(days=current_date.weekday())
         end_of_week = start_of_week + timedelta(days=6)
         tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
 
-        # Logic to highlight today's date and wrap the task cell around it if there are tasks for today
+        # Check if there are tasks for today and we're in the current month
         if currentDay.year == today.year and currentDay.month == today.month:
-            # Check if there are tasks for today
-            if today.day in [task.deadlineDay.day for task in tasks]:
-            # Search pattern for today's date
-                search_pattern = f'<td><p class="text-end">{today.day}</p><p>'
-                # Replacement HTML for today's date
-                replacement = f'<td class="today"><p class="text-end">{today.day}</p><p>'
-                # Append the task HTML to the replacement string
-                for task in tasks:
-                    if task.deadlineDay.day == today.day:
-                        replacement += f'<p class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</p><br>'
-                replacement += '</p></td>'
-                # Replace the search pattern with the replacement HTML
-                html_cal = html_cal.replace(search_pattern, replacement, 1)
-        
+            # regex for finding wityhout replacing <td>
+            search_pattern_today = f'<td[^>]*><p class="text-end">{today.day}</p>'
+            today_class_addition = f'<td class="today"><p class="text-end">{today.day}</p>'
+            html_cal = re.sub(search_pattern_today, today_class_addition, html_cal, flags=re.DOTALL)
+
+            # Iterate over each task and perform replacements with regex
+            for task in tasks:
+                if task.deadlineDay.day == today.day:
+                    # regex pattern to match the cell of todays date without replacing the <td> tag itself
+                    search_pattern_tasks = f'(<td[^>]*class="today"[^>]*>.*?<p class="text-end">{today.day}</p>)(.*?)(</td>)'
+                    match = re.search(search_pattern_tasks, html_cal, flags=re.DOTALL)
+                    if match:
+                        # if match then insert
+                        before_tasks = match.group(1) # The opening part of the cell with date
+                        after_tasks = match.group(3) # The closing tag of the cell
+                        task_html = ''.join(
+                            f'<a href="/task/{task.id}" class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</a><br>'
+                            for task in tasks if task.deadlineDay.day == today.day)
+                        replacement = f'{before_tasks}{task_html}{after_tasks}'
+                        # Use regex to replace the content inside the cell not the cell itself
+                        html_cal = html_cal.replace(match.group(0), replacement, 1)
+    
         context['calendar'] = mark_safe(html_cal)
 
         # Set current month and year to pass to template for display
