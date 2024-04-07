@@ -115,14 +115,14 @@ class MonthView(generic.ListView):
     
     # Override need to use task_list.html as filename
     template_name = 'calendar_app/calendar_month.html'
-
+    
     # Working on getting the current day to be outlined in the calender and week
     # views, -nick
-    def formatDay(self, day, weekday):
+    def formatDay(self, day):
         today = date.today()
         # Current date, this will get filled with a string that will match what is needed to outline in our
         # html
-        curDate = str(day)
+        curDate = str(day) if day != 0 else ""
         # returning the html
         if day == today.day and self.year == today.year and self.month == today.month:
            return f"<td class='today'>{curDate}</td>"
@@ -143,13 +143,24 @@ class MonthView(generic.ListView):
         currentDay = get_date(self.request.GET.get('month', None))
 
         # Instantiate Calendar with current year+date
-        cal = Calendar(currentDay.year, currentDay.month,filter_category)
+        cal = Calendar(currentDay.year, currentDay.month, filter_category)
         
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
 
         # Use formatmonth to get Calendar as table
         html_cal = cal.formatmonth(withyear=True)
+
+        today = date.today()
+        if currentDay.year == today.year and currentDay.month == today.month:
+            # search pattern for todays date
+            search_pattern = f'<td><p class="text-end">{today.day}</p><p></p></td>'
+            # replacement string with class='today'
+            replacement = f'<td class="today"><p class="text-end">{today.day}</p><p></p></td>'
+        
+        # Replace the first occurrence of the search pattern with the replacement
+        html_cal = html_cal.replace(search_pattern, replacement, 1)
+
         context['calendar'] = mark_safe(html_cal)
 
         # Set current month and year to pass to template for display
