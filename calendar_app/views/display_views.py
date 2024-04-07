@@ -171,17 +171,18 @@ class MonthView(generic.ListView):
         if currentDay.year == today.year and currentDay.month == today.month:
             # Check if there are tasks for today
             if today.day in [task.deadlineDay.day for task in tasks]:
-                # Search pattern for today's date
+            # Search pattern for today's date
                 search_pattern = f'<td><p class="text-end">{today.day}</p><p>'
                 # Replacement HTML for today's date
                 replacement = f'<td class="today"><p class="text-end">{today.day}</p><p>'
                 # Append the task HTML to the replacement string
                 for task in tasks:
                     if task.deadlineDay.day == today.day:
-                        replacement += f'<p class="btn category-{task.category.id} btn-sm w-100" href="/task/{task.id}" role="button">{task.name}</p><br>'
+                        replacement += f'<p class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</p><br>'
                 replacement += '</p></td>'
+                # Replace the search pattern with the replacement HTML
                 html_cal = html_cal.replace(search_pattern, replacement, 1)
-                
+        
         context['calendar'] = mark_safe(html_cal)
 
         # Set current month and year to pass to template for display
