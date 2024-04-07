@@ -154,14 +154,30 @@ class MonthView(generic.ListView):
         today = date.today()
         # we are in the current month
         html_cal = cal.formatmonth(withyear=True)
-        
+
         # Highlighting today's date if we're in the current month
         today = date.today()
         if currentDay.year == today.year and currentDay.month == today.month:
             search_pattern = f'<td><p class="text-end">{today.day}</p><p></p></td>'
             replacement = f'<td class="today"><p class="text-end">{today.day}</p><p></p></td>'
             html_cal = html_cal.replace(search_pattern, replacement, 1)
+
+        current_date = datetime.now()
+        start_of_week = current_date - timedelta(days=current_date.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        tasks = Task.objects.all().filter(deadlineDay__range=[start_of_week, end_of_week])
+
         # logic to highlight with a task:
+        if currentDay.year == today.year and currentDay.month == today.month:
+            today_cell = f'<td class="today"><p class="text-end">{today.day}</p><p>'
+            # Check if there are tasks for today
+            if today.day in [task.deadlineDay.day for task in tasks]:
+                # Append the task HTML to the replacement string
+                for task in tasks:
+                    if task.deadlineDay.day == today.day:
+                        today_cell += f'<p><a class="btn category-{task.category.id} btn-sm w-100" href="/task/{task.id}" role="button">{task.name}</a><br></p>'
+            today_cell += '</p></td>'
+            html_cal = html_cal.replace(search_pattern, today_cell, 1)
         
         context['calendar'] = mark_safe(html_cal)
 
