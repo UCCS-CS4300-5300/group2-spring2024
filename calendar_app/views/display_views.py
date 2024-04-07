@@ -131,7 +131,7 @@ class MonthView(generic.ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        
         #get the category for the filter
         filter_category = self.kwargs.get('category')
         if filter_category:
@@ -153,17 +153,16 @@ class MonthView(generic.ListView):
 
         today = date.today()
         # we are in the current month
+        html_cal = cal.formatmonth(withyear=True)
+        
+        # Highlighting today's date if we're in the current month
+        today = date.today()
         if currentDay.year == today.year and currentDay.month == today.month:
-            # search pattern for todays date
             search_pattern = f'<td><p class="text-end">{today.day}</p><p></p></td>'
-            # replacement string with class='today'
             replacement = f'<td class="today"><p class="text-end">{today.day}</p><p></p></td>'
-            # Replace the first occurrence of the search pattern with the replacement
             html_cal = html_cal.replace(search_pattern, replacement, 1)
-        else: # we are not in the current moth
-            html_cal = cal.formatmonth(withyear=True)
-
-
+        # logic to highlight with a task:
+        
         context['calendar'] = mark_safe(html_cal)
 
         # Set current month and year to pass to template for display
