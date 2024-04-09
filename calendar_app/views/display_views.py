@@ -51,7 +51,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['month'] = current_date.month
     context['day'] = current_date.day
     # Calculate start and end of currently viewed week
-    start_of_week = current_date - timedelta(days=current_date.weekday())
+    start_of_week = current_date - timedelta(days=(current_date.weekday() + 1) % 7)
     end_of_week = start_of_week + timedelta(days=6)
     
     # Add start/end to context
@@ -105,6 +105,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['prev_week_url'] = prev_week_url
     context['next_week_url'] = next_week_url
 
+    context['current_date'] = current_date
     return render(request, 'calendar_app/week_view.html', context)
 
 
