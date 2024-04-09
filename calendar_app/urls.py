@@ -47,5 +47,6 @@ urlpatterns = [
 
     # MonthView
     path('calendar/month/', MonthView.as_view(), {'category':None},name='month-view'),
-    path('calendar/month/filter/<int:category>',MonthView.as_view(),name='filtered-month-view')
+    path('calendar/month/filter/<int:category>/', MonthView.as_view(), name='filtered-month-view'),
+    #path('calendar/month/filter/<int:category>',MonthView.as_view(),name='filtered-month-view')
 ]

@@ -383,3 +383,17 @@ class WeekTest(TestCase):
         # Check URLs for task detail views
         self.assertContains(response, reverse('task-detail', args=[self.newTask1.id]))
         self.assertContains(response, reverse('task-detail', args=[self.newTask2.id]))
+
+class TestCurrentDay(TestCase):
+     def testDateHtmlGeneration(self):
+        response = self.client.get(reverse('month-view'))
+        self.assertEqual(response.status_code, 200)
+
+        # Get today's date in the format that matches the HTML output
+        today_date = datetime.now().day
+
+        # Construct the HTML snippet for today's date
+        expected_html = f'<td class="today"><p class="text-end">{today_date}</p><p></p></td>'
+
+        # Check if the expected HTML snippet is in the response content
+        self.assertIn(expected_html, response.content.decode('utf-8'))

@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
+from django.shortcuts import get_object_or_404
 
 from ..calendar_override import Calendar
 from ..forms import *
@@ -130,13 +131,34 @@ class MonthView(generic.ListView):
         else:
            return f"<td>{curDate}</td>"
     
+    def get_queryset(self):
+        # Retrieve the category from URL path
+        filter_category = self.kwargs.get('category', None)
+        
+        # Determine the current months date range from query parameter
+        month_param = self.request.GET.get('month', datetime.now().strftime('%Y-%m'))
+        year, month = map(int, month_param.split('-'))
+        start_of_month = datetime(year, month, 1)
+        end_of_month = datetime(year, month, monthrange(year, month)[1])
+
+        # Apply both category filter 
+        if filter_category:
+            return Task.objects.filter(category_id=filter_category, deadlineDay__range=[start_of_month, end_of_month])
+        
+        return Task.objects.filter(deadlineDay__range=[start_of_month, end_of_month])
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         #get the category for the filter
-        filter_category = self.kwargs.get('category')
-        if filter_category:
-            context['filter_category'] = filter_category
+        filter_category_id = self.kwargs.get('category', None)
+        if filter_category_id:
+            context['filter_category_id'] = filter_category_id
+            context['filter_category'] = get_object_or_404(Category, pk=filter_category_id)
+        else:
+            context['filter_category_id'] = None
+            context['filter_category'] = None
+
         context['category_list'] = Category.objects.all()
         context['category_colors'] = get_category_color_dict()
 
@@ -144,7 +166,7 @@ class MonthView(generic.ListView):
         currentDay = get_date(self.request.GET.get('month', None))
 
         # Instantiate Calendar with current year+date
-        cal = Calendar(currentDay.year, currentDay.month, filter_category)
+        cal = Calendar(currentDay.year, currentDay.month, filter_category_id)
         
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
@@ -167,7 +189,7 @@ class MonthView(generic.ListView):
         current_date = datetime.now()
         start_of_week = current_date - timedelta(days=current_date.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
+        
 
         # Check if there are tasks for today and we're in the current month
         if currentDay.year == today.year and currentDay.month == today.month:
@@ -175,6 +197,7 @@ class MonthView(generic.ListView):
             search_pattern_today = f'<td[^>]*><p class="text-end">{today.day}</p>'
             today_class_addition = f'<td class="today"><p class="text-end">{today.day}</p>'
             html_cal = re.sub(search_pattern_today, today_class_addition, html_cal, flags=re.DOTALL)
+            tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
 
             # Iterate over each task and perform replacements with regex
             for task in tasks:
@@ -187,14 +210,14 @@ class MonthView(generic.ListView):
                         before_tasks = match.group(1) # The opening part of the cell with date
                         after_tasks = match.group(3) # The closing tag of the cell
                         task_html = ''.join(
-                            f'<a href="/task/{task.id}" class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</a><br>'
+                            #f'<a href="/task/{task.id}" class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</a><br>'
+                            f'<a href="/task/{task.id}" class="btn category-{task.category.id if task.category else "no-category"} btn-sm w-100" role="button">{task.name}</a><br>'
                             for task in tasks if task.deadlineDay.day == today.day)
                         replacement = f'{before_tasks}{task_html}{after_tasks}'
                         # Use regex to replace the content inside the cell not the cell itself
                         html_cal = html_cal.replace(match.group(0), replacement, 1)
     
         context['calendar'] = mark_safe(html_cal)
-
         # Set current month and year to pass to template for display
         monthNames = ["January", "February", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
