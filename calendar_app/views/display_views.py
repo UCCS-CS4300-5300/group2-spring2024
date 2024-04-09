@@ -134,24 +134,27 @@ class MonthView(generic.ListView):
     def get_queryset(self):
         # Retrieve the category from URL path
         filter_category = self.kwargs.get('category', None)
-        
+    
         # Determine the current months date range from query parameter
         month_param = self.request.GET.get('month', datetime.now().strftime('%Y-%m'))
         year, month = map(int, month_param.split('-'))
         start_of_month = datetime(year, month, 1)
         end_of_month = datetime(year, month, monthrange(year, month)[1])
 
-        # Apply both category filter 
         if filter_category:
             return Task.objects.filter(category_id=filter_category, deadlineDay__range=[start_of_month, end_of_month])
-        
-        return Task.objects.filter(deadlineDay__range=[start_of_month, end_of_month])
+        else:
+            return Task.objects.filter(deadlineDay__range=[start_of_month, end_of_month])
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         #get the category for the filter
         filter_category_id = self.kwargs.get('category', None)
+    
+        # Assuming Calendar class needs to be aware of filtered tasks
+        currentDay = get_date(self.request.GET.get('month', None))
+        context['filter_category_id'] = filter_category_id
         if filter_category_id:
             context['filter_category_id'] = filter_category_id
             context['filter_category'] = get_object_or_404(Category, pk=filter_category_id)
@@ -162,12 +165,13 @@ class MonthView(generic.ListView):
         context['category_list'] = Category.objects.all()
         context['category_colors'] = get_category_color_dict()
 
-        # Use the current date for the calendar
-        currentDay = get_date(self.request.GET.get('month', None))
-
-        # Instantiate Calendar with current year+date
-        cal = Calendar(currentDay.year, currentDay.month, filter_category_id)
         
+        # Use the current date for the calendar
+        currentDay = get_date(self.request.GET.get('month', None))   
+        # Instantiate Calendar with current year+date     
+        cal = Calendar(currentDay.year, currentDay.month, filter_category_id)
+        context['calendar_instance'] = Calendar(currentDay.year, currentDay.month, self.kwargs.get('category', None))
+
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
 
@@ -197,7 +201,9 @@ class MonthView(generic.ListView):
             search_pattern_today = f'<td[^>]*><p class="text-end">{today.day}</p>'
             today_class_addition = f'<td class="today"><p class="text-end">{today.day}</p>'
             html_cal = re.sub(search_pattern_today, today_class_addition, html_cal, flags=re.DOTALL)
-            tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
+            # Below is what was causing errors!
+            #tasks = Task.objects.filter(deadlineDay__range=[start_of_week, end_of_week])
+            tasks = self.object_list  # This should already be filtered by get_queryset
 
             # Iterate over each task and perform replacements with regex
             for task in tasks:
@@ -218,6 +224,7 @@ class MonthView(generic.ListView):
                         html_cal = html_cal.replace(match.group(0), replacement, 1)
     
         context['calendar'] = mark_safe(html_cal)
+
         # Set current month and year to pass to template for display
         monthNames = ["January", "February", "March", "April", "May", "June", "July", 
                       "August", "September", "October", "November", "December"]
@@ -230,7 +237,7 @@ class MonthView(generic.ListView):
         context['prevMonth'] = get_prev_month(day)
         context['thisMonth'] = f'month={currentYear}-{currentDay.month}'
         context['nextMonth'] = get_next_month(day)
-
+        context['tasks'] = self.object_list
         return context
 
 # For use with MonthView
