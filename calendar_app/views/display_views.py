@@ -53,7 +53,7 @@ def week_view(request, category, year=None, month=None, day=None):
     context['month'] = current_date.month
     context['day'] = current_date.day
     # Calculate start and end of currently viewed week
-    start_of_week = current_date - timedelta(days=current_date.weekday())
+    start_of_week = current_date - timedelta(days=(current_date.weekday() + 1) % 7)
     end_of_week = start_of_week + timedelta(days=6)
     
     # Add start/end to context
@@ -104,9 +104,21 @@ def week_view(request, category, year=None, month=None, day=None):
         prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
         next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
 
+    # NICK TESTING ##################################
+    days_tasks = {start_of_week + timedelta(days=i): [] for i in range(7)}
+    for task in tasks:
+        if task.deadlineDay in days_tasks:
+            days_tasks[task.deadlineDay].append(task)
+
+    curdate = datetime.now()
+    current_day_name = curdate.strftime('%A') 
+    # Add this to your context
+    context['current_day_name'] = current_day_name
+    ##################################################
     context['prev_week_url'] = prev_week_url
     context['next_week_url'] = next_week_url
-
+    context['current_day'] = current_date
+    context['current_date'] = current_date
     return render(request, 'calendar_app/week_view.html', context)
 
 

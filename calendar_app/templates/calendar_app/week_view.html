@@ -19,6 +19,11 @@
     plain {
       font-weight: normal;
     }
+    .table-fixed td.today {
+      border: -2px solid lightgray !important; /* Outline today's date */
+      background-color: lightgray !important; /* Add light blue background to the current date cell */
+      font-weight: bold !important; /* Make the current date bold */
+    }
   </style>
 {% endblock %}
 
@@ -117,7 +122,12 @@
           <!-- For loop to get tasks -->
           {% for day, tasks in days_tasks.items %}
             <!-- Day cel -->
-            <td scope="col" class="col-1">
+              {% if day == current_day_name %}
+                <!-- Apply "today" class only to the current day -->
+                <td scope="col" class="col-1 today">
+              {% else %}
+                <td scope="col" class="col-1">
+              {% endif %}
               <!-- Task buttons -->
               <p>
                 {% for task in tasks %}
@@ -136,5 +146,9 @@
     </div> <!-- End of right-side column -->
   </div> <!-- End of row containing columns -->
 </div> <!-- End of container div -->
-
+<!-- Debugging -->
+<!--<p>weekday_date: {{ weekday_date }}</p>-->
+<!--<p>weekday_date: {{ weekday_date|date:"Y-m-d" }}</p>-->
+<!--<p>current_day: {{ current_day|date:"Y-m-d" }}</p>-->
+<p>Current Day Name: {{ current_day_name }}</p>
 {% endblock %}
