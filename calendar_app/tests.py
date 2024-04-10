@@ -404,6 +404,6 @@ class TestCurrentDay(TestCase):
 
         today_date = datetime.now().day
 
-        # This checks for the presence of the class "today" but not for the  tasks or button structure
+        # This checks for the class "today" but not for the tasks or button structure
         self.assertTrue('class="col-1 today"' in response.content.decode('utf-8'))
 
