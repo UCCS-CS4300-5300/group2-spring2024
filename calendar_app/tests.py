@@ -385,7 +385,7 @@ class WeekTest(TestCase):
         self.assertContains(response, reverse('task-detail', args=[self.newTask2.id]))
 
 class TestCurrentDay(TestCase):
-     def testDateHtmlGeneration(self):
+    def testDateHtmlGenerationMonth(self):
         response = self.client.get(reverse('month-view'))
         self.assertEqual(response.status_code, 200)
 
@@ -397,3 +397,13 @@ class TestCurrentDay(TestCase):
 
         # Check if the expected HTML snippet is in the response content
         self.assertIn(expected_html, response.content.decode('utf-8'))
+
+    def testDateHtmlGenerationWeek(self):
+        response = self.client.get(reverse('week-view')) 
+        self.assertEqual(response.status_code, 200)
+
+        today_date = datetime.now().day
+
+        # This checks for the presence of the class "today" but not for the  tasks or button structure
+        self.assertTrue('class="col-1 today"' in response.content.decode('utf-8'))
+
