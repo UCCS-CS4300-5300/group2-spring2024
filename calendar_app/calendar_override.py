@@ -1,15 +1,17 @@
 from calendar import HTMLCalendar
 
+from django.urls import reverse
+
 from .models import Task
 
-from django.urls import reverse
 
 # Calendar class; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
-    def __init__(self, year=None, month=None,filter_category=None):
+    def __init__(self, year=None, month=None,filter_category=None,user=None):
         self.year = year
         self.month = month
         self.filter_category = filter_category
+        self.user = user
         super(Calendar, self).__init__()
 
     # Format days and filter tasks by day
@@ -107,6 +109,8 @@ class Calendar(HTMLCalendar):
     # Format the whole current month
     def formatmonth(self, withyear=True):
         tasks = Task.objects.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
+        if self.user:
+            tasks = tasks.filter(user=self.user.id)
         cal = ''
 
         # Starting HTML; format the month

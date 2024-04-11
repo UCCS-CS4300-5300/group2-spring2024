@@ -18,7 +18,7 @@ class User(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=20)
     color = ColorField(default='#0d6efd')
-
+    user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 

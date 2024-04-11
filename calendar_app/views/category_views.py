@@ -3,18 +3,24 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 
 from ..forms import CategoryForm
-from ..models import Category
+from ..models import Category, CustomUser
 
 
 class CategoryListView(generic.ListView):
     model = Category
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 
 def createCategory(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
             # Save the form data to the database
-            task = form.save()
+            category = form.save()
+            if isinstance(request.user , CustomUser):
+                category.user = request.user
+                category.save()
             return redirect('index')
     else:
         form = CategoryForm()
