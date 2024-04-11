@@ -64,6 +64,17 @@ td {
                 </div>
             </div> <!-- End of left-side button group -->
         
+            <!-- Start of Leftside button group 2 -->
+            <!-- List of tasks -->
+            <div class="btn-group-vertical">
+                <a> Scheduled Tasks </a>
+                {% for task in task_list %}
+                <li>
+                    <a type="button" class="btn btn-warning" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
+
+                </li>
+                {% endfor %}
+            </div> <!-- End of List of tasks -->
         </div> <!-- End of left-side column -->
 
         <!-- Right-side calendar column -->
