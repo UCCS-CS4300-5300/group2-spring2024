@@ -72,13 +72,18 @@ td {
             <!-- Start of Leftside button group 2 -->
             <!-- List of tasks -->
             <div class="btn-group-vertical">
-                 <a type="button" class="btn btn-primary" href="{% url 'task-list' %}"> All Tasks </a>
-                <a> Monthly Tasks </a>
-                {% for task in task_list %}
+                <a type="button" class="btn btn-primary" href="{% url 'task-list' %}"> All Tasks </a>
+                <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Tasks</button>
+                <ul class="dropdown-menu">
+            {% for task in task_list %}
                 <li>
                     <a type="button" class="btn btn-secondary" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
                 </li>
-                {% endfor %}
+            {% endfor %}
+
+                </ul>
+
+
             </div> <!-- End of List of tasks -->
         </div> <!-- End of left-side column -->
 
