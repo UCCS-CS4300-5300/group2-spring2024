@@ -63,14 +63,20 @@ td {
                         </ul>
                 </div>
             </div> <!-- End of left-side button group -->
-        
+
+            <!-- Line Break between sidebar button stacks -->
+            <br>
+            </br>
+            <!-- End of Line Break -->
+
             <!-- Start of Leftside button group 2 -->
             <!-- List of tasks -->
             <div class="btn-group-vertical">
-                <a> Scheduled Tasks </a>
+                 <a type="button" class="btn btn-primary" href="{% url 'task-list' %}"> All Tasks </a>
+                <a> Monthly Tasks </a>
                 {% for task in task_list %}
                 <li>
-                    <a type="button" class="btn btn-light" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
+                    <a type="button" class="btn btn-secondary" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
                 </li>
                 {% endfor %}
             </div> <!-- End of List of tasks -->
