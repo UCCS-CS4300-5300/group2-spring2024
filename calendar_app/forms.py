@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from .models import Category, Task
+from .models import Category, CustomUser, Task
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -20,9 +20,12 @@ class TaskForm(ModelForm):
         model = Task
         fields = ('name', 'description', 'deadlineDay', 'deadlineTime', 'category', 'duration', 'status')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,*args, **kwargs):
+        filterUser = kwargs.pop('user',None)
+        filterUser = filterUser if isinstance(filterUser,CustomUser) else None
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
+        self.fields['category'].queryset = Category.objects.filter(user=filterUser)
 
 class CategoryForm(ModelForm):
     class Meta:
