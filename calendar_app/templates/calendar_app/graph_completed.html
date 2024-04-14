@@ -101,9 +101,14 @@
                     </a>
                 </div>
             </div> <!-- End of month header -->
-            
+
+            {% if noGraph %}
+            <p class="text-center p-2">There are no completed tasks for this month.</p>
+            {% else %}
             <!-- Graph image -->
             <img src="data:image/png;base64,{{ graph }}" style="max-width:100%;">
+            {% endif %}
+
         </div> <!-- End of right-side column -->
     </div> <!-- End of row containing columns -->
 </div>

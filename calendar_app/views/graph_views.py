@@ -25,41 +25,53 @@ def graphMonthlyTasksCompleted(request, year=None, month=None, day=None):
                   "August", "September", "October", "November", "December"]
     currentYear = currentDate.year
     currentMonth = currentDate.month
-    currentMonthName=monthNames[int(currentDate.month) - 1]
+    currentMonthName=monthNames[int(currentMonth) - 1]
     context['monthAndYear'] = f'{currentMonthName} {currentYear}'
 
     # Set next and previous months
     day = get_date(request.GET.get('month', None))
     context['prevMonth'] = get_prev_month(day)
-    context['thisMonth'] = f'month={currentYear}-{currentDate.month}'
+    context['thisMonth'] = f'month={currentYear}-{currentMonth}'
     context['nextMonth'] = get_next_month(day)
 
+    # Update month if needed
+    selectedMonth = request.GET.get('month')
+    if selectedMonth:
+        currentYear, currentMonth = selectedMonth.split('-')
+        currentMonthName=monthNames[int(currentMonth) - 1]
+        context['monthAndYear'] = f'{currentMonthName} {currentYear}'
+    
     # Get completed (status=True) Task objects
     tasksCompleted = Task.objects.filter(deadlineDay__month=currentMonth,deadlineDay__year=currentYear,status=True).values('deadlineDay').annotate(numCompleted=Count('deadlineDay'))
 
-    # Create graph with matplotlib
-    # Number of tasks on y vs day completed on x
-    yAxis = [result['numCompleted'] for result in tasksCompleted]
-    xAxis = [result['deadlineDay'] for result in tasksCompleted]
+    # Check if there are actually completed tasks
+    if tasksCompleted:
+        # Create graph with matplotlib
+        # Number of tasks on y vs day completed on x
+        yAxis = [result['numCompleted'] for result in tasksCompleted]
+        xAxis = [result['deadlineDay'] for result in tasksCompleted]
 
-    # Set aspect ratio, y axis scale, and labels
-    mplt.figure(figsize=(16, 9))
-    mplt.bar(xAxis,yAxis)
-    mplt.yticks(range(max(yAxis) + 1))
-    mplt.xticks(xAxis) # Only shows labels for days with tasks completed; otherwise, the bars and dates won't align cleanly
-    mplt.ylabel('Tasks Completed')
-    mplt.xlabel('Deadline Day')
+        # Set aspect ratio, margins, axis scale/ticks, and labels
+        mplt.figure(figsize=(16, 9))
+        mplt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9)
+        mplt.bar(xAxis,yAxis)
+        mplt.yticks(range(max(yAxis) + 1))
+        mplt.xticks(xAxis) # Only shows labels for days with tasks completed; otherwise, the bars and dates won't align cleanly
+        mplt.ylabel('Tasks Completed')
+        mplt.xlabel('Deadline Day')
 
-    # Make BytesIO virtual file
-    vFileBuffer = BytesIO()
-    mplt.savefig(vFileBuffer, format='png')
-    vFileGraph = vFileBuffer.getvalue()
-    vFileBuffer.close()
+        # Make BytesIO virtual file
+        vFileBuffer = BytesIO()
+        mplt.savefig(vFileBuffer, format='png')
+        vFileGraph = vFileBuffer.getvalue()
+        vFileBuffer.close()
 
-    # Convert graph and pass to HTML template
-    completedGraph = base64.b64encode(vFileGraph).decode('utf-8')
+        # Convert graph and pass to HTML template
+        completedGraph = base64.b64encode(vFileGraph).decode('utf-8')
 
-    # Add graph to context
-    context['graph'] = completedGraph
+        # Add graph to context
+        context['graph'] = completedGraph
+    else:
+        context['noGraph'] = True
 
     return render(request, 'calendar_app/graph_completed.html', context)
