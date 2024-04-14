@@ -78,6 +78,10 @@ class TaskViewTest(TestCase):
     #         CustomUser.objects.create_user(username="testuser3", email=None, password="testpassword789")
     #     self.assertEqual(ValueError, type(raised.exception)) """
 
+#############################################################################
+# Month view tests
+#############################################################################
+
 # Month view template test
 # Modified to check current month
 class MonthViewTest(TestCase):
@@ -308,6 +312,10 @@ class PrevMonthTaskDisplay(TestCase):
         self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
         self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
 
+#############################################################################
+# End of month view tests
+#############################################################################
+
 class TasksTests(TestCase):
     # User and Task for Testing CRUD operations
     def setUp(self):
@@ -407,3 +415,194 @@ class TestCurrentDay(TestCase):
         # This checks for the class "today" but not for the tasks or button structure
         self.assertTrue('class="col-1 today"' in response.content.decode('utf-8'))
 
+#############################################################################
+# Graph tests (Completed tasks)
+#############################################################################
+        
+# Current month view template test
+class GraphCompletedMonthViewTest(TestCase):
+    def test_graph_completed_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the current year, month, and month name
+        currYear = currMonthDate.year
+        currMonth = currMonthDate.month
+        currMonthName = months[currMonth-1] # Indices start at 0
+
+        # Check URL, response status, and template
+        response = self.client.get(reverse('graph-monthly-tasks-completed'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for correct year and month
+        self.assertContains(response, currYear)
+        self.assertContains(response, currMonthName)
+
+# Next view template test
+# Modified version of GraphCompletedMonthViewTest
+class GraphCompletedNextMonthViewTest(TestCase):
+    def test_graph_completed_next_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+
+        # Get the current year, month, and month name
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+        nextMonthName = months[nextMonth-1] # Indices start at 0
+
+        # Next month URL; argument is the same as used in
+        # the calendar_month.html template
+        nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
+
+        # Check URL, response status, and template
+        response = self.client.get(nextMonthURL)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for correct year and month
+        self.assertContains(response, nextYear)
+        self.assertContains(response, nextMonthName)
+
+# Previous view template test
+# Modified version of GraphCompletedMonthViewTest
+class GraphCompletedPrevMonthViewTest(TestCase):
+    def test_graph_completed_prev_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year, month, and month name
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+        prevMonthName = months[prevMonth-1] # Indices start at 0
+
+        # Previous month URL; argument is the same as used in
+        # the calendar_month.html template
+        prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
+
+        # Check URL, response status, and template
+        response = self.client.get(prevMonthURL)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for correct year and month
+        self.assertContains(response, prevYear)
+        self.assertContains(response, prevMonthName)
+
+#############################################################################
+# End of graph tests (Completed tasks)
+#############################################################################     
+        
+#############################################################################
+# Graph tests (Complete vs incomplete tasks)
+#############################################################################
+
+# Current month view template test
+class GraphProgressMonthViewTest(TestCase):
+    def test_graph_progress_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the current year, month, and month name
+        currYear = currMonthDate.year
+        currMonth = currMonthDate.month
+        currMonthName = months[currMonth-1] # Indices start at 0
+
+        # Check URL, response status, and template
+        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for correct year and month
+        self.assertContains(response, currYear)
+        self.assertContains(response, currMonthName)
+
+# Next view template test
+# Modified version of GraphProgressMonthViewTest
+class GraphProgressNextMonthViewTest(TestCase):
+    def test_graph_progress_next_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+
+        # Get the current year, month, and month name
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+        nextMonthName = months[nextMonth-1] # Indices start at 0
+
+        # Next month URL; argument is the same as used in
+        # the calendar_month.html template
+        nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
+
+        # Check URL, response status, and template
+        response = self.client.get(nextMonthURL)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for correct year and month
+        self.assertContains(response, nextYear)
+        self.assertContains(response, nextMonthName)
+
+# Previous view template test
+# Modified version of GraphProgressMonthViewTest
+class GraphProgressPrevMonthViewTest(TestCase):
+    def test_graph_progress_prev_month_view(self):
+        # List of month names
+        months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December',]
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year, month, and month name
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+        prevMonthName = months[prevMonth-1] # Indices start at 0
+
+        # Previous month URL; argument is the same as used in
+        # the calendar_month.html template
+        prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
+
+        # Check URL, response status, and template
+        response = self.client.get(prevMonthURL)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for correct year and month
+        self.assertContains(response, prevYear)
+        self.assertContains(response, prevMonthName)
+
+#############################################################################
+# End of graph tests (Complete vs incomplete tasks)
+#############################################################################
