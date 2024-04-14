@@ -214,19 +214,19 @@ class CategoryUserPermissionsTestCase(TestCase):
 
     def test_permissions_assigned(self):
         self.assertTrue(self.user1.has_perm('view_category',self.user1Category))
-        self.assertTrue(self.user1.has_perm('edit_category',self.user1Category))
+        self.assertTrue(self.user1.has_perm('change_category',self.user1Category))
         self.assertTrue(self.user1.has_perm('delete_category',self.user1Category))
 
         self.assertFalse(self.user1.has_perm('view_category',self.user2Category))
-        self.assertFalse(self.user1.has_perm('edit_category',self.user2Category))
+        self.assertFalse(self.user1.has_perm('change_category',self.user2Category))
         self.assertFalse(self.user1.has_perm('delete_category',self.user2Category))
 
         self.assertTrue(self.user1.has_perm('view_task',self.user1Task))
-        self.assertTrue(self.user1.has_perm('edit_task',self.user1Task))
+        self.assertTrue(self.user1.has_perm('change_task',self.user1Task))
         self.assertTrue(self.user1.has_perm('delete_task',self.user1Task))
 
         self.assertFalse(self.user1.has_perm('view_task',self.user2Task))
-        self.assertFalse(self.user1.has_perm('edit_task',self.user2Task))
+        self.assertFalse(self.user1.has_perm('change_task',self.user2Task))
         self.assertFalse(self.user1.has_perm('delete_task',self.user2Task))
     
     def test_permissions_enforced(self):
@@ -260,4 +260,4 @@ class CategoryUserPermissionsTestCase(TestCase):
         
         response = self.client.get(reverse('delete-category'),args=[self.user2Category.id])
         self.assertEquals(response.status_code,403)
-        
+

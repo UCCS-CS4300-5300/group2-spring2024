@@ -1,6 +1,7 @@
 from colorfield.fields import ColorField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from guardian.shortcuts import assign_perm, get_perms, remove_perm
 
 
 class CustomUser(AbstractUser):
@@ -21,6 +22,23 @@ class Category(models.Model):
     user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
+    
+    '''class Meta:
+        permissions = (
+            ('change_category', 'Edit Category'),
+            ('delete_category', 'Delete Category'),
+            ('view_category', 'View Category'),
+        )'''
+
+    def save(self,*args,**kwargs):
+        #assign permissions to owner
+        if (not self.pk):
+            super(Category,self).save(*args,**kwargs)
+            print('assigning permissions')
+            assign_perm('view_category',self.user,self)
+            assign_perm('change_category',self.user,self)
+            assign_perm('delete_category',self.user,self)
+        super(Category,self).save(*args,**kwargs)
 
 class Task(models.Model):
     name = models.CharField(max_length=50)
@@ -34,3 +52,21 @@ class Task(models.Model):
     user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
     def __str__(self):
         return self.name
+    
+    """ class Meta:
+        permissions = (
+            ('change_task', 'Edit Task'),
+            ('delete_task', 'Delete Task'),
+            ('view_task', 'View Task'),
+        ) """
+
+    def save(self,*args,**kwargs):
+        if self.category:
+            if not self.category.user == self.user:
+                raise ValueError("Category user must be the same as the task user")
+            #assign permissions to owner
+        if (not self.pk):
+            assign_perm('view_task',kwargs['user'],self)
+            assign_perm('change_task',kwargs['user'],self)
+            assign_perm('delete_task',kwargs['user'],self)
+        super(Task,self).save(*args,**kwargs)

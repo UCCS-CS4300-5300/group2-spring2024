@@ -28,10 +28,10 @@ class TaskPermissionTestCase(TestCase):
 
     def test_permissions_assigned(self):
         self.assertTrue(self.user.has_perm('view_task', self.task))
-        self.assertTrue(self.user.has_perm('edit_task', self.task))
+        self.assertTrue(self.user.has_perm('change_task', self.task))
         self.assertTrue(self.user.has_perm('delete_task', self.task))
         self.assertTrue(self.user2.has_perm('view_task', self.task2))
-        self.assertTrue(self.user2.has_perm('edit_task', self.task2))
+        self.assertTrue(self.user2.has_perm('change_task', self.task2))
         self.assertTrue(self.user2.has_perm('delete_task', self.task2))
 
 
