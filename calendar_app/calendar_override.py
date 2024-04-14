@@ -1,6 +1,7 @@
 from calendar import HTMLCalendar
 
 from django.urls import reverse
+from guardian.shortcuts import get_objects_for_user
 
 from .models import Task
 
@@ -108,9 +109,12 @@ class Calendar(HTMLCalendar):
 
     # Format the whole current month
     def formatmonth(self, withyear=True):
-        tasks = Task.objects.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
         if self.user:
-            tasks = tasks.filter(user=self.user.id)
+            tasks = get_objects_for_user(self.user, 'calendar_app.view_task')
+        else:
+            tasks = Task.objects.all()
+        tasks = tasks.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
+
         cal = ''
 
         # Starting HTML; format the month

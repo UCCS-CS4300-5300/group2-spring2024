@@ -34,11 +34,11 @@ class Category(models.Model):
         #assign permissions to owner
         if (not self.pk):
             super(Category,self).save(*args,**kwargs)
-            print('assigning permissions')
             assign_perm('view_category',self.user,self)
             assign_perm('change_category',self.user,self)
             assign_perm('delete_category',self.user,self)
-        super(Category,self).save(*args,**kwargs)
+        else:
+            super(Category,self).save(*args,**kwargs)
 
 class Task(models.Model):
     name = models.CharField(max_length=50)
@@ -66,7 +66,9 @@ class Task(models.Model):
                 raise ValueError("Category user must be the same as the task user")
             #assign permissions to owner
         if (not self.pk):
-            assign_perm('view_task',kwargs['user'],self)
-            assign_perm('change_task',kwargs['user'],self)
-            assign_perm('delete_task',kwargs['user'],self)
-        super(Task,self).save(*args,**kwargs)
+            super(Task,self).save(*args,**kwargs)
+            assign_perm('view_task',self.user,self)
+            assign_perm('change_task',self.user,self)
+            assign_perm('delete_task',self.user,self)
+        else:
+            super(Task,self).save(*args,**kwargs)
