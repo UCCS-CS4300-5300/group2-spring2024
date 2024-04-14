@@ -122,18 +122,33 @@ def graphMonthlyTaskProgress(request, year=None, month=None, day=None):
         xAxis = [result['deadlineDay'] for result in tasksTotal]
 
         # Pad if necessary
-        if max(yAxisIncomplete) < len(xAxis):
+        if len(yAxisIncomplete) > 0:
+            if max(yAxisIncomplete) < len(xAxis):
+                yAxisIncomplete = np.pad(yAxisIncomplete, (0, len(xAxis) - len(yAxisIncomplete)), mode='constant', constant_values=0)
+            elif max(yAxisIncomplete) > len(xAxis):
+                xAxis = np.pad(xAxis, (0, len(yAxisIncomplete) - len(xAxis)), mode='constant', constant_values=0)
+        else:
             yAxisIncomplete = np.pad(yAxisIncomplete, (0, len(xAxis) - len(yAxisIncomplete)), mode='constant', constant_values=0)
-        elif max(yAxisIncomplete) > len(xAxis):
-            xAxis = np.pad(xAxis, (0, len(yAxisIncomplete) - len(xAxis)), mode='constant', constant_values=0)
-        
+        if len(yAxisComplete) > 0:
+            if max(yAxisComplete) < len(xAxis):
+                yAxisComplete = np.pad(yAxisComplete, (0, len(xAxis) - len(yAxisComplete)), mode='constant', constant_values=0)
+            elif max(yAxisComplete) > len(xAxis):
+                xAxis = np.pad(xAxis, (0, len(yAxisComplete) - len(xAxis)), mode='constant', constant_values=0)
+        else:
+            yAxisComplete = np.pad(yAxisComplete, (0, len(xAxis) - len(yAxisComplete)), mode='constant', constant_values=0)
+
+        # Set highest yAxis
+        if len(yAxisIncomplete) > len(yAxisComplete):
+            yAxisMax = len(yAxisIncomplete)
+        else:
+            yAxisMax = len(yAxisComplete)
 
         # Set aspect ratio, margins, axis scale/ticks, labels, and legend
         mplt.figure(figsize=(16, 9))
         mplt.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9)
-        mplt.plot(xAxis, yAxisIncomplete, marker='o', color='r', linestyle='-')
-        mplt.plot(xAxis, yAxisComplete, marker='o', color='r', linestyle='-')
-        mplt.yticks(range(max(yAxisIncomplete | yAxisComplete) + 1))
+        mplt.plot(xAxis, yAxisIncomplete, marker='o', color='r', linestyle='-', label='Incomplete Tasks')
+        mplt.plot(xAxis, yAxisComplete, marker='o', color='b', linestyle='-', label='Complete Tasks')
+        mplt.yticks(range(yAxisMax + 1))
         mplt.xticks(xAxis) # Only shows labels for days with tasks completed; otherwise, the bars and dates won't align cleanly
         mplt.ylabel('Number of Tasks')
         mplt.xlabel('Deadline Day')
