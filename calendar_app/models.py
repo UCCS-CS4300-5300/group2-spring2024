@@ -19,7 +19,7 @@ class User(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=20)
     color = ColorField(default='#0d6efd')
-    user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, null=False, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
     
@@ -49,7 +49,7 @@ class Task(models.Model):
     category = models.ForeignKey(Category,blank=True,null=True,on_delete=models.SET_NULL)
     duration = models.DurationField()
     status = models.BooleanField()
-    user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
+    user = models.ForeignKey(CustomUser, null=False, on_delete=models.CASCADE) # Changed to use CustomUser instead of User
     def __str__(self):
         return self.name
     
