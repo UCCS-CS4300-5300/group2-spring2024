@@ -3,11 +3,10 @@ from calendar import monthrange
 from datetime import date, datetime, timedelta
 
 from django.contrib.auth import login
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views import generic
-from django.shortcuts import get_object_or_404
 
 from ..calendar_override import Calendar
 from ..forms import *
@@ -45,6 +44,9 @@ def week_view(request, category, year=None, month=None, day=None):
         tasks = Task.objects.filter(category=category)
     else:
         tasks = Task.objects.all()
+    
+    if request.user:
+        tasks = tasks.filter(user=request.user.id)
 
     context = {}
 
@@ -88,7 +90,8 @@ def week_view(request, category, year=None, month=None, day=None):
     context['days_tasks'] = days_tasks
 
     # Add catagories to context
-    context['category_list'] = Category.objects.all()
+    if request.user:
+        context['category_list'] = Category.objects.filter(user=request.user.id)
     context['category_colors'] = get_category_color_dict()
 
     # Create context variables for navigation
@@ -152,37 +155,34 @@ class MonthView(generic.ListView):
         start_of_month = datetime(year, month, 1)
         end_of_month = datetime(year, month, monthrange(year, month)[1])
 
+        tasks = Task.objects.all()
         if filter_category:
-            return Task.objects.filter(category_id=filter_category, deadlineDay__range=[start_of_month, end_of_month])
+            tasks = tasks.filter(category_id=filter_category, deadlineDay__range=[start_of_month, end_of_month])
         else:
-            return Task.objects.filter(deadlineDay__range=[start_of_month, end_of_month])
-    
+            tasks = tasks.filter(deadlineDay__range=[start_of_month, end_of_month])
+            tasks = tasks.filter(user=self.request.user.id)
+        return tasks
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         #get the category for the filter
         filter_category_id = self.kwargs.get('category', None)
     
-        # Assuming Calendar class needs to be aware of filtered tasks
-        currentDay = get_date(self.request.GET.get('month', None))
-        context['filter_category_id'] = filter_category_id
         if filter_category_id:
             context['filter_category_id'] = filter_category_id
             context['filter_category'] = get_object_or_404(Category, pk=filter_category_id)
-        else:
-            context['filter_category_id'] = None
-            context['filter_category'] = None
 
-        context['category_list'] = Category.objects.all()
+        if self.request.user:
+            context['category_list'] = Category.objects.filter(user=self.request.user.id)
+        
         context['category_colors'] = get_category_color_dict()
 
-        
-        # Use the current date for the calendar
+        # Assuming Calendar class needs to be aware of filtered tasks
         currentDay = get_date(self.request.GET.get('month', None))   
-        # Instantiate Calendar with current year+date     
-        cal = Calendar(currentDay.year, currentDay.month, filter_category_id)
-        context['calendar_instance'] = Calendar(currentDay.year, currentDay.month, self.kwargs.get('category', None))
 
+        # Instantiate Calendar with current year+date
+        cal = Calendar(currentDay.year, currentDay.month,filter_category_id,self.request.user)
+        
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
 

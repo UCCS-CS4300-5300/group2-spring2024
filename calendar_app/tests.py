@@ -174,6 +174,7 @@ class MonthTaskDisplay(TestCase):
         email = "testuser@uccs.edu"
         self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
 
+        self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -214,6 +215,7 @@ class NextMonthTaskDisplay(TestCase):
         email = "testuser@uccs.edu"
         self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
 
+        self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
         # Get the next month
@@ -265,6 +267,7 @@ class PrevMonthTaskDisplay(TestCase):
         email = "testuser@uccs.edu"
         self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
 
+        self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
         # Get the previous month
@@ -313,6 +316,7 @@ class TasksTests(TestCase):
     def setUp(self):
         email = "test@example.com"
         self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.client.login(username='testuser1', password='testpassword123')
         # Make tasks
         self.newTask = Task.objects.create(name='TestTask1', description='TestDesc1',
                                            deadlineDay=date(2024, 3, 12), deadlineTime=time(23, 59),
@@ -357,6 +361,7 @@ class WeekTest(TestCase):
         email = "testuser@uccs.edu"
         self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
 
+        self.client.login(username='testuser', password='testpassword123')
         # Get the current day
         currentDay = datetime.now().date()
         
@@ -374,6 +379,7 @@ class WeekTest(TestCase):
     def test_week_task_display(self):
         # Get and verify template being used is correct
         response = self.client.get(reverse('week-view'))
+    
         self.assertTemplateUsed(response, 'calendar_app/week_view.html')
 
         # Check that tasks exist
