@@ -12,7 +12,9 @@ import matplotlib.pyplot as mplt
 from io import BytesIO
 import base64
 
-def graphTasksCompleted(request, year=None, month=None, day=None):
+from .display_views import get_date, get_prev_month, get_next_month
+
+def graphMonthlyTasksCompleted(request, year=None, month=None, day=None):
     context = {}
 
     # Get current date
@@ -25,6 +27,12 @@ def graphTasksCompleted(request, year=None, month=None, day=None):
     currentMonth = currentDate.month
     currentMonthName=monthNames[int(currentDate.month) - 1]
     context['monthAndYear'] = f'{currentMonthName} {currentYear}'
+
+    # Set next and previous months
+    day = get_date(request.GET.get('month', None))
+    context['prevMonth'] = get_prev_month(day)
+    context['thisMonth'] = f'month={currentYear}-{currentDate.month}'
+    context['nextMonth'] = get_next_month(day)
 
     # Get completed (status=True) Task objects
     tasksCompleted = Task.objects.filter(deadlineDay__month=currentMonth,deadlineDay__year=currentYear,status=True).values('deadlineDay').annotate(numCompleted=Count('deadlineDay'))

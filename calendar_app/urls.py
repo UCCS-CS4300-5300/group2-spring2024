@@ -25,7 +25,6 @@ urlpatterns = [
     path('task/delete/<int:task_id>', deleteTask, name='delete-task'),
     path('task/', TaskListView.as_view(), name='task-list'),
     path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
-    path('task/completed/', graphTasksCompleted, name='graph-tasks-completed'),
 
     ###########################################################
     path('register/', register, name='register'),
@@ -51,4 +50,7 @@ urlpatterns = [
     path('calendar/month/', MonthView.as_view(), {'category':None},name='month-view'),
     path('calendar/month/filter/<int:category>/', MonthView.as_view(), name='filtered-month-view'),
     #path('calendar/month/filter/<int:category>',MonthView.as_view(),name='filtered-month-view')
+
+    # Monthly graphs
+    path('graph/completed/month/', graphMonthlyTasksCompleted, name='graph-monthly-tasks-completed'),
 ]
