@@ -6,6 +6,7 @@ from .views.account_views import *
 from .views.category_views import *
 from .views.display_views import *
 from .views.task_views import *
+from .views.graph_views import *
 
 urlpatterns = [
     path('', index , name='index'),
@@ -24,6 +25,7 @@ urlpatterns = [
     path('task/delete/<int:task_id>', deleteTask, name='delete-task'),
     path('task/', TaskListView.as_view(), name='task-list'),
     path('task/<int:pk>', TaskDetailView.as_view(), name='task-detail'),
+    path('task/completed/', graphTasksCompleted, name='graph-tasks-completed'),
 
     ###########################################################
     path('register/', register, name='register'),
