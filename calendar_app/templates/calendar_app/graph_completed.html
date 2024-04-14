@@ -28,23 +28,22 @@
                 <a class="btn btn-primary" href="{% url 'week-view' %}" role="button">Week View</a>
                 <!-- Task creation button -->
                 <a class="btn btn-primary" href="{% url 'create-task' %}" role="button">Add Task</a>
-                <div class ="dropdown btn btn-primary disabled">
-                    <!-- Dropdown for the different categories-->
-                    <button class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
-                        <ul class="dropdown-menu">
-                            <li>
+                <!-- Dropdown for the different categories (DISABLED) -->
+                <button class="btn btn-primary dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+                    <ul class="dropdown-menu">
+                        <li>
                             <a class="dropdown-item" href="{% url 'month-view' %}?{{ thisMonth }}">All Categories</a>
-                            </li>
-                            {% for category in category_list %}
-                            <li>
-                                <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-month-view' category.pk %}?{{ thisMonth }}">{{ category.name }}</a>
-                            </li>
-                            {% endfor %}
-                            <li>
+                        </li>
+                        {% for category in category_list %}
+                        <li>
+                            <a class="dropdown-item category-{{category.id}} btn" href="{% url 'filtered-month-view' category.pk %}?{{ thisMonth }}">{{ category.name }}</a>
+                        </li>
+                        {% endfor %}
+                        <li>
                             <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
-                            </li>
-                        </ul>
-                </div>
+                        </li>
+                    </ul>
+                <!-- End of dropdown for the different categories (DISABLED) -->
             </div> <!-- End of left-side calendar button group -->
 
             <!-- Line Break between sidebar button stacks -->
@@ -55,7 +54,7 @@
             <!-- Left-side task list button group -->
             <div class="btn-group-vertical w-100">
                 <a type="button" class="btn btn-primary" href="{% url 'task-list' %}">All Tasks</a>
-                <button class="btn btn-primary dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">Tasks</button>
+                <button class="btn btn-primary dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">Month Tasks</button>
                 <ul class="dropdown-menu">
                 {% for task in task_list %}
                     <li>
@@ -74,7 +73,7 @@
             <div class="btn-group-vertical w-100">
                 <!-- Month and week view buttons -->
                 <a class="btn btn-primary disabled" href="{% url 'graph-monthly-tasks-completed' %}" role="button">Monthly Completed</a>
-                <a class="btn btn-primary" href="{% url 'week-view' %}" role="button">Monthly Complete vs Incomplete</a>
+                <a class="btn btn-primary" href="{% url 'graph-monthly-task-complete-vs-incomplete' %}" role="button">Monthly Complete vs Incomplete</a>
             </div> <!-- End of left-side calendar button group -->
 
         </div> <!-- End of left-side column -->
