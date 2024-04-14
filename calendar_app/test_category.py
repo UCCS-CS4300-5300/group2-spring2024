@@ -187,6 +187,16 @@ class CategoryUserFilteringTestCase(TestCase):
         self.assertContains(response,self.user1Task.name)
         self.assertNotContains(response,self.user2Task.name)
 
+    #tests that make sure nothing can be seen/edited if not logged in
+    def test_user_filtering_not_logged_in(self):
+        self.client.logout()
+        response = self.client.get(reverse('week-view'))
+        self.assertNotContains(response,self.user1Task.name)
+
+        response = self.client.get(reverse('month-view'))
+        self.assertNotContains(response,self.user1Task.name)
+
+
 class CategoryUserPermissionsTestCase(TestCase):
     def setUp(self):
         currentdate = str(datetime.date.today())
@@ -255,9 +265,9 @@ class CategoryUserPermissionsTestCase(TestCase):
         self.assertTemplateUsed(response,'calendar_app/category_list.html')
         self.assertNotContains(response,self.user2Category.name)
 
-        response = self.client.get(reverse('update-category'),args=[self.user2Category.id])
+        response = self.client.get(reverse('update-category',args=[self.user2Category.id]))
         self.assertEquals(response.status_code,403)
         
-        response = self.client.get(reverse('delete-category'),args=[self.user2Category.id])
+        response = self.client.get(reverse('delete-category',args=[self.user2Category.id]))
         self.assertEquals(response.status_code,403)
 
