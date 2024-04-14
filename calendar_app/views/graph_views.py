@@ -122,21 +122,15 @@ def graphMonthlyTaskProgress(request, year=None, month=None, day=None):
         xAxis = [result['deadlineDay'] for result in tasksTotal]
 
         # Pad if necessary
-        if len(yAxisIncomplete) > 0:
-            if max(yAxisIncomplete) < len(xAxis):
-                yAxisIncomplete = np.pad(yAxisIncomplete, (0, len(xAxis) - len(yAxisIncomplete)), mode='constant', constant_values=0)
-            elif max(yAxisIncomplete) > len(xAxis):
-                xAxis = np.pad(xAxis, (0, len(yAxisIncomplete) - len(xAxis)), mode='constant', constant_values=0)
-        else:
+        if len(yAxisIncomplete) < len(xAxis):
             yAxisIncomplete = np.pad(yAxisIncomplete, (0, len(xAxis) - len(yAxisIncomplete)), mode='constant', constant_values=0)
-        if len(yAxisComplete) > 0:
-            if max(yAxisComplete) < len(xAxis):
-                yAxisComplete = np.pad(yAxisComplete, (0, len(xAxis) - len(yAxisComplete)), mode='constant', constant_values=0)
-            elif max(yAxisComplete) > len(xAxis):
-                xAxis = np.pad(xAxis, (0, len(yAxisComplete) - len(xAxis)), mode='constant', constant_values=0)
-        else:
+        elif len(yAxisIncomplete) > len(xAxis):
+            xAxis = np.pad(xAxis, (0, len(yAxisIncomplete) - len(xAxis)), mode='constant', constant_values=0)
+        if len(yAxisComplete) < len(xAxis):
             yAxisComplete = np.pad(yAxisComplete, (0, len(xAxis) - len(yAxisComplete)), mode='constant', constant_values=0)
-
+        elif len(yAxisComplete) > len(xAxis):
+            xAxis = np.pad(xAxis, (0, len(yAxisComplete) - len(xAxis)), mode='constant', constant_values=0)
+        
         # Set highest yAxis
         if len(yAxisIncomplete) > len(yAxisComplete):
             yAxisMax = len(yAxisIncomplete)
