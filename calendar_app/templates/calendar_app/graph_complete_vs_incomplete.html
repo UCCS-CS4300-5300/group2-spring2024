@@ -6,21 +6,6 @@
 
 <!-- Add custom styling; for MonthView table generation -->
 {% block style %}
-<style>
-.table-fixed {
-    table-layout: fixed; /* Make day cells uniform in size */
-}
-td {
-    overflow: hidden; /* Using "auto" breaks outside of the cell */
-}
-.table-fixed td.today {
-    border: 1px solid lightgray; /* Outline today's date */
-    background-color: lightgray; /* Add light blue background to the current date cell */
-    font-weight: bold; /* Make the current date bold */
-}
-</style>
-
-{% include './color_class_css.html'%}
 {% endblock %}
 
 
@@ -29,24 +14,22 @@ td {
 
 <!-- Container div -->
 <div class="container-lg">
-    <!-- Page name heading -->
-    <p><h1>Month View Calendar</h1></p>
-
+    <p><h1>Monthly Complete vs Incomplete Tasks</h1></p>
     <!-- Main content (Left buttons and calendar) -->
     <!-- Row containing columns -->
     <div class="row">
         <!-- Left-side column -->
         <div class="col-2">
 
-            <!-- Left-side button group (vertical) -->
+            <!-- Left-side calendar button group (vertical) -->
             <div class="btn-group-vertical w-100">
                 <!-- Month and week view buttons -->
-                <a class="btn btn-primary disabled" href="{% url 'month-view' %}" role="button">Month View</a>
+                <a class="btn btn-primary" href="{% url 'month-view' %}" role="button">Month View</a>
                 <a class="btn btn-primary" href="{% url 'week-view' %}" role="button">Week View</a>
                 <!-- Task creation button -->
                 <a class="btn btn-primary" href="{% url 'create-task' %}" role="button">Add Task</a>
-                <!-- Dropdown for the different categories-->
-                <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+                <!-- Dropdown for the different categories (DISABLED) -->
+                <button class="btn btn-primary dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
                     <ul class="dropdown-menu">
                         <li>
                             <a class="dropdown-item" href="{% url 'month-view' %}?{{ thisMonth }}">All Categories</a>
@@ -60,24 +43,24 @@ td {
                             <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
                         </li>
                     </ul>
-                <!-- End of dropdown for the different categories -->
-            </div> <!-- End of left-side button group -->
+                <!-- End of dropdown for the different categories (DISABLED) -->
+            </div> <!-- End of left-side calendar button group -->
 
             <!-- Line Break between sidebar button stacks -->
             <br>
             </br>
             <!-- End of Line Break -->
 
-            <!-- Start of left-side task list button group -->
+            <!-- Left-side task list button group -->
             <div class="btn-group-vertical w-100">
                 <a type="button" class="btn btn-primary" href="{% url 'task-list' %}">All Tasks</a>
-                <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Month Tasks</button>
+                <button class="btn btn-primary dropdown-toggle disabled" href="#" role="button" data-bs-toggle="dropdown">Month Tasks</button>
                 <ul class="dropdown-menu">
-                    {% for task in task_list %}
+                {% for task in task_list %}
                     <li>
                         <a type="button" class="btn btn-secondary" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
                     </li>
-                    {% endfor %}
+                {% endfor %}
                 </ul>
             </div> <!-- End of left-side task list button group -->
 
@@ -90,18 +73,18 @@ td {
             <div class="btn-group-vertical w-100">
                 <!-- Month and week view buttons -->
                 <a class="btn btn-primary" href="{% url 'graph-monthly-tasks-completed' %}" role="button">Monthly Completed</a>
-                <a class="btn btn-primary" href="{% url 'graph-monthly-task-complete-vs-incomplete' %}" role="button">Monthly Complete vs Incomplete</a>
+                <a class="btn btn-primary disabled" href="{% url 'graph-monthly-task-complete-vs-incomplete' %}" role="button">Monthly Complete vs Incomplete</a>
             </div> <!-- End of left-side calendar button group -->
 
         </div> <!-- End of left-side column -->
 
-        <!-- Right-side calendar column -->
+        <!-- Right-side graph column -->
         <div class="col-10">
             <!-- Month header -->
             <div class="row text-center">
                 <!-- Prev month -->
                 <div class="col-1">
-                    <a class="btn btn-primary btn-sm" href="{% if filter_category_id %}{% url 'filtered-month-view' filter_category_id %}?{{ prevMonth }} {% else %}{% url 'month-view' %}?{{ prevMonth }}{% endif %}" role="button">
+                    <a class="btn btn-primary btn-sm" href="{% url 'graph-monthly-task-complete-vs-incomplete' %}?{{ prevMonth }}" role="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg>
                     </a>
                 </div>
@@ -112,18 +95,21 @@ td {
 
                 <!-- Next month -->
                 <div class="col-1">
-                    <a class="btn btn-primary btn-sm" href="{% if filter_category_id %}{% url 'filtered-month-view' filter_category_id %}?{{ nextMonth }} {% else %}{% url 'month-view' %}?{{ nextMonth }}{% endif %}" role="button">
+                    <a class="btn btn-primary btn-sm" href="{% url 'graph-monthly-task-complete-vs-incomplete' %}?{{ nextMonth }}" role="button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg>
                     </a>
                 </div>
             </div> <!-- End of month header -->
-          
-            <!-- Calendar generated by MonthView -->
-            <table class="table-fixed">
-                {{ calendar }}
-            </table>
-        </div> <!-- End of right-side calendar column -->
+
+            {% if noTasks %}
+            <p class="text-center p-2">There are no tasks for this month.</p>
+            {% else %}
+            <!-- Graph image -->
+            <img src="data:image/png;base64,{{ graph }}" style="max-width:100%;">
+            {% endif %}
+
+        </div> <!-- End of right-side column -->
     </div> <!-- End of row containing columns -->
-</div> <!-- End of container div -->
+</div>
 
 {% endblock %}
