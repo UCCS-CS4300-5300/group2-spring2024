@@ -571,7 +571,7 @@ class GraphCompletedNoTasksPrevMonthTest(TestCase):
         self.assertIn('no completed tasks', response.content.decode())
 
 # GRAPH GENERATION TESTS ####################################################
-'''
+
 # Current month graph generation test
 class GraphCompletedBase64Test(TestCase):
     def setUp(self):
@@ -581,8 +581,48 @@ class GraphCompletedBase64Test(TestCase):
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
-        # Get the next month
+
+        # Make next month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_completed_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('graph-monthly-tasks-completed'))
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
+        self.assertIn('data:image/png;base64,', response.content.decode())
+
+# Next month graph generation test
+class GraphCompletedNextMonthBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next year and month
         nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+
+        # Next month URL; argument is the same as used in
+        # the graph_completed.html template
+        self.nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
 
         # Make next month tasks; days are arbitrary
         # 3 completed
@@ -599,19 +639,55 @@ class GraphCompletedBase64Test(TestCase):
                                            category=None,duration=timedelta(days=0, hours=8),
                                            user=self.customUser,status=True)
 
-    def test_graph_completed_base64(self):
+    def test_graph_completed_next_month_base64(self):
         # Get and verify template being used is correct
-        response = self.client.get(reverse('graph-monthly-tasks-completed'))
+        response = self.client.get(self.nextMonthURL)
         self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
 
-        # The tasks are in the database but the graph isn't showing
-        #print(self.newTask2.name)
-
-        # Check for base64 string (it shouldn't be generated if there are errors)
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
         self.assertIn('data:image/png;base64,', response.content.decode())
-'''
-# Next month graph generation test
+
 # Prev month graph generation test
+class GraphCompletedPrevMonthBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous year and month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+
+        # Previous month URL; argument is the same as used in
+        # the graph_completed.html template
+        self.prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
+
+        # Make previous month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_completed_prev_month_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(self.prevMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
+        self.assertIn('data:image/png;base64,', response.content.decode())
 
 #############################################################################
 # End of graph tests (Completed tasks) ######################################
@@ -661,7 +737,7 @@ class GraphProgressNextMonthViewTest(TestCase):
         # Get the next month
         nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
 
-        # Get the current year, month, and month name
+        # Get the next year, month, and month name
         nextYear = nextMonthDate.year
         nextMonth = nextMonthDate.month
         nextMonthName = months[nextMonth-1] # Indices start at 0
@@ -774,8 +850,121 @@ class GraphProgressNoTasksPrevMonthTest(TestCase):
 # GRAPH GENERATION TESTS ####################################################
 
 # Current month graph generation test
+class GraphProgressBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Make next month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_progress_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
+        self.assertIn('data:image/png;base64,', response.content.decode())
+
 # Next month graph generation test
+class GraphProgressNextMonthBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next year and month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+
+        # Next month URL; argument is the same as used in
+        # the graph_completed.html template
+        self.nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
+
+        # Make next month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_progress_next_month_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(self.nextMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
+        self.assertIn('data:image/png;base64,', response.content.decode())
+
 # Prev month graph generation test
+class GraphProgressPrevMonthBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous year and month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+
+        # Previous month URL; argument is the same as used in
+        # the graph_completed.html template
+        self.prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
+
+        # Make previous month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_progress_prev_month_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(self.prevMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for base64 string (shouldn't be generated if there are errors or no tasks)
+        self.assertIn('data:image/png;base64,', response.content.decode())
 
 #############################################################################
 # End of graph tests (Complete vs incomplete tasks) #########################
