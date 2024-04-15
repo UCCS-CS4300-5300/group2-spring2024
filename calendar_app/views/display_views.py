@@ -5,7 +5,6 @@ from datetime import date, datetime, timedelta
 from django.contrib.auth import login
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
 
