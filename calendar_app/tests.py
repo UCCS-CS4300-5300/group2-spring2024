@@ -3,6 +3,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 from .models import *
 
@@ -416,8 +417,10 @@ class TestCurrentDay(TestCase):
         self.assertTrue('class="col-1 today"' in response.content.decode('utf-8'))
 
 #############################################################################
-# Graph tests (Completed tasks)
+# Graph tests (Completed tasks) #############################################
 #############################################################################
+        
+# TEMPLATE TESTS ############################################################
         
 # Current month view template test
 class GraphCompletedMonthViewTest(TestCase):
@@ -507,13 +510,118 @@ class GraphCompletedPrevMonthViewTest(TestCase):
         self.assertContains(response, prevYear)
         self.assertContains(response, prevMonthName)
 
+# NO TASKS TESTS ############################################################
+
+# Test for if there are NO tasks in current month
+class GraphCompletedNoTasksTest(TestCase):
+    def test_graph_completed_no_tasks(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('graph-monthly-tasks-completed'))
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for the "no completed tasks" message
+        self.assertIn('no completed tasks', response.content.decode())
+
+# Test for if there are NO tasks in next month
+class GraphCompletedNoTasksNextMonthTest(TestCase):
+    def test_graph_completed_next_month_no_tasks(self):
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year and month
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+
+        # Next month URL; argument is the same as used in
+        # the calendar_month.html template
+        nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
+
+        # Get and verify template being used is correct
+        response = self.client.get(nextMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for the "no completed tasks" message
+        self.assertIn('no completed tasks', response.content.decode())
+
+# Test for if there are NO tasks in prev month
+class GraphCompletedNoTasksPrevMonthTest(TestCase):
+    def test_graph_completed_prev_month_no_tasks(self):
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year and month
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+
+        # Previous month URL; argument is the same as used in
+        # the calendar_month.html template
+        prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
+        
+        # Get and verify template being used is correct
+        response = self.client.get(prevMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # Check for the "no completed tasks" message
+        self.assertIn('no completed tasks', response.content.decode())
+
+# GRAPH GENERATION TESTS ####################################################
+'''
+# Current month graph generation test
+class GraphCompletedBase64Test(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+
+        # Make next month tasks; days are arbitrary
+        # 3 completed
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=True)
+
+    def test_graph_completed_base64(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('graph-monthly-tasks-completed'))
+        self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
+
+        # The tasks are in the database but the graph isn't showing
+        #print(self.newTask2.name)
+
+        # Check for base64 string (it shouldn't be generated if there are errors)
+        self.assertIn('data:image/png;base64,', response.content.decode())
+'''
+# Next month graph generation test
+# Prev month graph generation test
+
 #############################################################################
-# End of graph tests (Completed tasks)
+# End of graph tests (Completed tasks) ######################################
 #############################################################################     
         
 #############################################################################
-# Graph tests (Complete vs incomplete tasks)
+# Graph tests (Complete vs incomplete tasks) ################################
 #############################################################################
+
+# TEMPLATE TESTS ############################################################
 
 # Current month view template test
 class GraphProgressMonthViewTest(TestCase):
@@ -603,6 +711,72 @@ class GraphProgressPrevMonthViewTest(TestCase):
         self.assertContains(response, prevYear)
         self.assertContains(response, prevMonthName)
 
+# GRAPH GENERATION TESTS ####################################################
+
+# Test for if there are NO tasks in current month
+class GraphProgressNoTasksTest(TestCase):
+    def test_graph_progress_no_tasks(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for the "no tasks" message
+        self.assertIn('no tasks', response.content.decode())
+
+# Test for if there are NO tasks in next month
+class GraphProgressNoTasksNextMonthTest(TestCase):
+    def test_graph_progress_next_month_no_tasks(self):
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year and month
+        nextYear = nextMonthDate.year
+        nextMonth = nextMonthDate.month
+
+        # Next month URL; argument is the same as used in
+        # the calendar_month.html template
+        nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
+        
+        # Get and verify template being used is correct
+        response = self.client.get(nextMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for the "no tasks" message
+        self.assertIn('no tasks', response.content.decode())
+
+# Test for if there are NO tasks in prev month
+class GraphProgressNoTasksPrevMonthTest(TestCase):
+    def test_graph_progress_prev_month_no_tasks(self):
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+
+        # Get the previous month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Get the current year and month
+        prevYear = prevMonthDate.year
+        prevMonth = prevMonthDate.month
+
+        # Previous month URL; argument is the same as used in
+        # the calendar_month.html template
+        prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
+        
+        # Get and verify template being used is correct
+        response = self.client.get(prevMonthURL)
+        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+
+        # Check for the "no tasks" message
+        self.assertIn('no tasks', response.content.decode())
+
+# GRAPH GENERATION TESTS ####################################################
+
+# Current month graph generation test
+# Next month graph generation test
+# Prev month graph generation test
+
 #############################################################################
-# End of graph tests (Complete vs incomplete tasks)
+# End of graph tests (Complete vs incomplete tasks) #########################
 #############################################################################
