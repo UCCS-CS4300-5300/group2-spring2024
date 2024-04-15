@@ -5,8 +5,10 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
 colorama==0.4.6
 contourpy==1.2.1
+contourpy==1.2.1
 coverage==7.4.4
 crispy-bootstrap4==2024.1
+cycler==0.12.1
 cycler==0.12.1
 Django==4.2.10
 django-bootstrap-v5==1.0.11

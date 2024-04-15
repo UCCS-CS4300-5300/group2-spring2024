@@ -42,7 +42,7 @@
     <!-- Left-side column -->
     <div class="col-2">
       <!-- Left-side button group (vertical) -->
-      <div class="btn-group-vertical">
+      <div class="btn-group-vertical w-100">
         <!-- Month and week view buttons -->
         <a class="btn btn-primary" href="{% url 'month-view' %}" role="button">Month View</a>
         <a class="btn btn-primary disabled" href="{% url 'week-view' %}" role="button">Week View</a>
@@ -51,29 +51,28 @@
         <a class="btn btn-primary" href="{% url 'create-task' %}" role="button">Add Task</a>
         
         <!-- Category/filtering dropdown -->
-        <div class ="dropdown btn btn-primary">
-          <!-- Filter button -->
-          <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
-            <!-- Dropdown menu UL -->
-            <ul class="dropdown-menu">
-              <!-- All categories button -->
-              <li>
-                <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">All Categories</a>
-              </li>
+        <!-- Filter button -->
+        <button class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+          <!-- Dropdown menu UL -->
+          <ul class="dropdown-menu">
+            <!-- All categories button -->
+            <li>
+              <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">All Categories</a>
+            </li>
               
-              <!-- List of categories to filter by -->
-              {% for category in category_list %}
-              <li>
-                <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
-              </li>
-              {% endfor %}
+            <!-- List of categories to filter by -->
+            {% for category in category_list %}
+            <li>
+              <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
+            </li>
+            {% endfor %}
               
-              <!-- Edit categories button -->
-              <li>
-                <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
-              </li>
-            </ul> <!-- End of dropdown menu UL -->
-        </div> <!-- End of category/filtering dropdown -->
+            <!-- Edit categories button -->
+            <li>
+              <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+            </li>
+          </ul> <!-- End of dropdown menu UL -->
+        <!-- End of category/filtering dropdown -->
       </div> <!-- End of left-side button group -->
     </div> <!-- End of left-side column -->
 

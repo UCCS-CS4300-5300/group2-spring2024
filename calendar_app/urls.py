@@ -6,6 +6,7 @@ from .views.account_views import *
 from .views.category_views import *
 from .views.display_views import *
 from .views.task_views import *
+from .views.graph_views import *
 
 urlpatterns = [
     path('', index , name='index'),
@@ -49,4 +50,8 @@ urlpatterns = [
     path('calendar/month/', MonthView.as_view(), {'category':None},name='month-view'),
     path('calendar/month/filter/<int:category>/', MonthView.as_view(), name='filtered-month-view'),
     #path('calendar/month/filter/<int:category>',MonthView.as_view(),name='filtered-month-view')
+
+    # Monthly graphs
+    path('graph/completed/month/', graphMonthlyTasksCompleted, name='graph-monthly-tasks-completed'),
+    path('graph/progress/month/', graphMonthlyTaskProgress, name='graph-monthly-task-complete-vs-incomplete'),
 ]
