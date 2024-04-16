@@ -186,3 +186,88 @@ class CategoryUserFilteringTestCase(TestCase):
 
         self.assertContains(response,self.user1Task.name)
         self.assertNotContains(response,self.user2Task.name)
+
+    #tests that make sure nothing can be seen/edited if not logged in
+    def test_user_filtering_not_logged_in(self):
+        self.client.logout()
+        response = self.client.get(reverse('week-view'))
+        self.assertNotContains(response,self.user1Task.name)
+
+        response = self.client.get(reverse('month-view'))
+        self.assertNotContains(response,self.user1Task.name)
+
+
+class CategoryUserPermissionsTestCase(TestCase):
+    def setUp(self):
+        currentdate = str(datetime.date.today())
+        self.user1 = CustomUser.objects.create_user(username='testuser',password='password12345',email="test@test.com")
+        self.user2 = CustomUser.objects.create_user(username='testuser2',password='password12345',email="test2@test.com")
+        self.client = Client()
+        self.user1Category = Category.objects.create(name="Category 1",user=self.user1)
+        self.user2Category = Category.objects.create(name="Category 2",user=self.user2)
+        self.user1Task = Task.objects.create(name="Categorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.user1Category,status=False,user=self.user1)
+        self.user2Task= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),category=self.user2Category,status=False,user=self.user2)
+
+    #test that all interactions that need login causes redirect to login page
+    def test_login_redirects(self):
+        response = self.client.get(reverse('create-category'))
+        self.assertEquals(response.status_code,302)
+        self.assertRedirects(response,'/login/?next=/category/create')
+
+        response = self.client.get(reverse('update-category',args=[self.user1Category.id]))
+        self.assertEquals(response.status_code,302)
+        self.assertRedirects(response,'/login/?next=/category/update/'+str(self.user1Category.id))
+
+        response = self.client.get(reverse('delete-category',args=[self.user1Category.id]))
+        self.assertEquals(response.status_code,302)
+        self.assertRedirects(response,'/login/?next=/category/delete/'+str(self.user1Category.id))
+
+    def test_permissions_assigned(self):
+        self.assertTrue(self.user1.has_perm('view_category',self.user1Category))
+        self.assertTrue(self.user1.has_perm('change_category',self.user1Category))
+        self.assertTrue(self.user1.has_perm('delete_category',self.user1Category))
+
+        self.assertFalse(self.user1.has_perm('view_category',self.user2Category))
+        self.assertFalse(self.user1.has_perm('change_category',self.user2Category))
+        self.assertFalse(self.user1.has_perm('delete_category',self.user2Category))
+
+        self.assertTrue(self.user1.has_perm('view_task',self.user1Task))
+        self.assertTrue(self.user1.has_perm('change_task',self.user1Task))
+        self.assertTrue(self.user1.has_perm('delete_task',self.user1Task))
+
+        self.assertFalse(self.user1.has_perm('view_task',self.user2Task))
+        self.assertFalse(self.user1.has_perm('change_task',self.user2Task))
+        self.assertFalse(self.user1.has_perm('delete_task',self.user2Task))
+    
+    def test_permissions_enforced(self):
+        #check can access own categories
+        self.client.login(username='testuser',password='password12345')
+        response = self.client.get(reverse('category-list'))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/category_list.html')
+        self.assertContains(response,self.user1Category.name)
+
+        response = self.client.get(reverse('create-category'))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/create_category_form.html')
+
+        response = self.client.get(reverse('update-category',args=[self.user1Category.id]))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/update_category_form.html')
+
+        response = self.client.get(reverse('delete-category',args=[self.user1Category.id]))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/delete_category_form.html')
+
+        #check cannot access other user's categories
+        response = self.client.get(reverse('category-list'))
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/category_list.html')
+        self.assertNotContains(response,self.user2Category.name)
+
+        response = self.client.get(reverse('update-category',args=[self.user2Category.id]))
+        self.assertEquals(response.status_code,403)
+        
+        response = self.client.get(reverse('delete-category',args=[self.user2Category.id]))
+        self.assertEquals(response.status_code,403)
+
