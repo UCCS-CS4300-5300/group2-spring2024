@@ -50,7 +50,7 @@ class RegisterPageTest(TestCase):
 class LoginPageTest(TestCase):
     def setUp(self):
         # Set up a user for testing login
-        self.CustomUser = CustomUser.objects.create_user(username='testuser', password='1234567!@#$%^&')
+        self.CustomUser = CustomUser.objects.create_user(username='testuser', password='1234567!@#$%^&',email='test@test.com')
         self.CustomUser.save()
 
     def testLoginViewSuccess(self):
@@ -58,6 +58,7 @@ class LoginPageTest(TestCase):
         data = {
             'username': 'testuser',
             'password': '1234567!@#$%^&',
+            'email': 'test@test.com',
         }
         response = self.client.post(url, data, follow=True)
         
@@ -69,6 +70,8 @@ class LoginPageTest(TestCase):
 # Task View test
 class TaskViewTest(TestCase):
     def testTaskPage(self):
+        self.user = CustomUser.objects.create_user(username='testuser', password='pass',email='email@test.com')
+        self.client.login(username='testuser', password='pass')
         url = reverse('create-task')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

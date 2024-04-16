@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     "crispy_bootstrap4",
     'colorfield',
+    'guardian',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -119,6 +120,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Auth for accounts
 AUTH_USER_MODEL = 'calendar_app.CustomUser'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 # LOGIN redirect URL for using django login view in URLS, this send the user
 # to the homepage after they login, if you want this changed, change the URL
