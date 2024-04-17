@@ -7,6 +7,12 @@ from django.utils.safestring import mark_safe
 
 from .. import forms  # Import forms from the forms.py file up a directory
 
+def login_view(request):
+    context = {
+        'title': 'Login',
+        'button_text': 'Login',
+    }
+    return render(request, 'calendar_app/login.html', context)
 
 # Registration form / login
 def register(request):

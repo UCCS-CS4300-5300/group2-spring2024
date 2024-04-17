@@ -1,14 +1,29 @@
-{% extends 'calendar_app/base_template.html' %}
+{% extends "calendar_app/base_template.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container text-left">
-    <div class="btn-group-vertical">
-        <a> Tasks </a>
-        {% for task in task_list %}
-        <li>
-            <a type="button" class="btn btn-primary" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
-        </li>
-        {% endfor %}
+<!-- Center the task list in the middle of the screen with a vertical height of 80vh -->
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+    <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; width: 32.5%;">
+        <h2>Tasks</h2>
+        {% if task_list %}
+            <ul style="list-style: none; padding: 0;">
+                {% for task in task_list %}
+                <li>
+                    <a type="button" class="btn btn-primary btn-sm w-100" 
+                        href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="margin-top: 10px;">{{ task.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <strong>No tasks available.</strong> Create tasks for them to be listed here.
+            </div>
+        {% endif %}
+        <!-- Back Button -->
+        <div style="margin-top: 20px;">
+            <a href="{% url 'home' %}" class="btn btn-secondary" style="width: 100px;">Back</a>
+        </div>
     </div>
 </div>
 {% endblock %}
