@@ -15,6 +15,9 @@ Create a New Category
             {{ form|crispy }} <!-- Crispy form rendering -->
             <input type="submit" value="Save" class="btn btn-primary" style="margin-top: 20px; width: 100px;"> 
         </form>
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'category-list' %}" class="btn btn-secondary" style="margin-top: 10px; width: 100px;">Back</a>
+        </div>
     </div>
 </div>
 {% endblock %}
