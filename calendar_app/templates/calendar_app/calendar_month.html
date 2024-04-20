@@ -46,10 +46,10 @@ td {
                 <!-- Task creation button -->
                 <a class="btn btn-primary" href="{% url 'create-task' %}" role="button">Add Task</a>
                 <!-- Dropdown for the different categories-->
-                <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Filter</button>
-                    <ul class="dropdown-menu">
+                <button class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
+                    <ul class="dropdown-menu w-100 text-center">
                         <li>
-                            <a class="dropdown-item" href="{% url 'month-view' %}?{{ thisMonth }}">All Categories</a>
+                            <a class="dropdown-item" href="{% url 'month-view' %}?{{ thisMonth }}">Clear Filter</a>
                         </li>
                         {% for category in category_list %}
                         <li>
@@ -57,7 +57,10 @@ td {
                         </li>
                         {% endfor %}
                         <li>
-                            <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+                            <a class="dropdown-item" href="{% url 'create-category' %}">Add Category</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'category-list' %}">View Categories</a>
                         </li>
                     </ul>
                 <!-- End of dropdown for the different categories -->
@@ -70,12 +73,12 @@ td {
 
             <!-- Start of left-side task list button group -->
             <div class="btn-group-vertical w-100">
-                <a type="button" class="btn btn-primary" href="{% url 'task-list' %}">All Tasks</a>
+                <a type="button" class="btn btn-primary" href="{% url 'task-list' %}">View All Tasks</a>
                 <button class="btn btn-primary dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">Month Tasks</button>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu w-100">
                     {% for task in task_list %}
                     <li>
-                        <a type="button" class="btn btn-secondary" href="{% url 'task-detail' task.id %}?{{ thisMonth }}">{{ task.name }}</a>
+                        <a type="button" class="btn btn-secondary btn-sm w-100" href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="background-color:{{ task.category.color }}; border-width:0;">{{ task.name }}</a>
                     </li>
                     {% endfor %}
                 </ul>

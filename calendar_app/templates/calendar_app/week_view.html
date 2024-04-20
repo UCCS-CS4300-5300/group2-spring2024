@@ -54,10 +54,10 @@
         <!-- Filter button -->
         <button class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
           <!-- Dropdown menu UL -->
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu w-100 text-center">
             <!-- All categories button -->
             <li>
-              <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">All Categories</a>
+              <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">Clear Filter</a>
             </li>
               
             <!-- List of categories to filter by -->
@@ -66,10 +66,11 @@
               <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
             </li>
             {% endfor %}
-              
-            <!-- Edit categories button -->
             <li>
-              <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+              <a class="dropdown-item" href="{% url 'create-category' %}">Add Category</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{% url 'category-list' %}">View Categories</a>
             </li>
           </ul> <!-- End of dropdown menu UL -->
         <!-- End of category/filtering dropdown -->
