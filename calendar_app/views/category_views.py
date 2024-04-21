@@ -29,7 +29,7 @@ def createCategory(request):
     else:
         form = CategoryForm()
 
-    context = {'form': form}
+    context = {'form': form, 'title': 'Create a New Category'}
     return render(request, 'calendar_app/create_category_form.html', context)
 
 @login_required(login_url='/login/')
@@ -43,7 +43,7 @@ def updateCategory(request,category_id):
              form.save()
          return redirect('category-list')
 
-    context = {'form': form,'category':category}
+    context = {'form': form,'category':category, 'title': 'Update Category'}
     return render(request, 'calendar_app/update_category_form.html', context)
 
 @login_required(login_url='/login/')

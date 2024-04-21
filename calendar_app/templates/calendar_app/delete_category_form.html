@@ -1,14 +1,23 @@
-{% extends 'calendar_app/base_template.html' %}
-
+{% extends "calendar_app/base_template.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<h2>Are you sure you want to delete {{ category.name }}?</h2>
+<!-- Center the form on the screen with a vertical height of 80vh -->
+<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+    <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <!-- Dynamic title with category name -->
+        <h2>Are you sure you want to delete {{ category.name }}?</h2>
 
-<!-- TODO redirects to home now, change later-->
-<button class="btn btn-primary float-start" onclick="window.location.href='{% url 'home'%}'">Cancel</button>
-<form action = "" method="POST">
-        {% csrf_token %}
-        <input class="btn btn-danger float-start" type="submit" name="Delete">
-</form>
+        <!-- Cancel Button - Currently redirects to home, can change URL later -->
+        <div style="margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="window.location.href='{% url 'home' %}'">Cancel</button>
+        </div>
 
+        <!-- Form for deletion -->
+        <form action="" method="POST" style="display: flex; flex-direction: column; align-items: center;">
+            {% csrf_token %}
+            <input type="submit" value="Delete" class="btn btn-danger" style="width: 100px;">
+        </form>
+    </div>
+</div>
 {% endblock %}

@@ -4,7 +4,11 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
 from django.template.loader import render_to_string
-
+from django.test import TestCase
+from django.contrib.auth.models import Permission
+from calendar_app.views.category_views import createCategory, updateCategory, deleteCategory, CategoryListView
+from django.utils.timezone import now
+from django.utils import timezone
 from .models import *
 
 
@@ -978,3 +982,77 @@ class GraphProgressPrevMonthBase64Test(TestCase):
 #############################################################################
 # End of graph tests (Complete vs incomplete tasks) #########################
 #############################################################################
+
+# Category unit tests for both defualt and specific date options
+
+class TestCategoryViews(TestCase):
+    def setUp(self):
+        unique_suffix = now().strftime("%Y%m%d%H%M%S")
+        self.user = CustomUser.objects.create_user(username='user', email=f'user{unique_suffix}@example.com', password='test')
+        self.client.login(username='user', password='test')
+        self.category = Category.objects.create(name='Initial Category', user=self.user)
+
+    def testCategoryListView(self):
+        response = self.client.get(reverse('category-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 1)
+
+    def testCreateCategoryPost(self):
+        url = reverse('create-category')
+        data = {'name': 'New Category', 'description': 'A new category'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)  # Redirect after POST
+        self.assertEqual(Category.objects.count(), 1)  # one was already created in setup
+
+    def testUpdateCategoryPost(self):
+        url = reverse('update-category', args=[self.category.pk])
+        data = {'name': 'Updated Category', 'description': 'Updated description'}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)  # Redirect after POST
+        self.category.refresh_from_db()
+        self.assertEqual(self.category.name, 'Initial Category')
+
+    def testDeleteCategoryPost(self):
+        url = reverse('delete-category', args=[self.category.pk])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)  # Redirect after POST
+        with self.assertRaises(Category.DoesNotExist):
+            self.category.refresh_from_db()
+
+    def testPermissionRequiredForUpdate(self):
+        # This test checks if user with the required permission can update the category.
+        permission = Permission.objects.get(codename='change_category')
+        self.user.user_permissions.add(permission)
+        url = reverse('update-category', args=[self.category.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)  # Has permission now
+
+
+class CategoryByDateListViewTests(TestCase):
+    def setUp(self):
+        # Set up the user and login
+        unique_suffix = now().strftime("%Y%m%d%H%M%S")
+        self.user = CustomUser.objects.create_user(username='testuser', email=f'testuser{unique_suffix}@example.com', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+        # Set up categories
+        today = timezone.now().date()
+        yesterday = today - timezone.timedelta(days=1)
+        Category.objects.create(name='Today Category', user=self.user)
+        Category.objects.create(name='Yesterday Category', user=self.user)
+
+
+    def testViewWithDefaultDate(self):
+        # Testing with no specific date
+        response = self.client.get(reverse('category-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 2)
+        self.assertContains(response, 'Today Category')
+
+    def testViewWithSpecificDate(self):
+        # Testing with a specific date provided
+        yesterday = (timezone.now().date() - timezone.timedelta(days=1)).isoformat()
+        response = self.client.get(reverse('category-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 2)
+        self.assertContains(response, 'Today Category')     
