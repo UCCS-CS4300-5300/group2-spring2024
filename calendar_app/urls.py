@@ -7,7 +7,7 @@ from .views.category_views import *
 from .views.display_views import *
 from .views.task_views import *
 from .views.graph_views import *
-from .views.import_views import *
+from .views.api_views import *
 
 urlpatterns = [
     path('', index , name='index'),
