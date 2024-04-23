@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import Flow
 from django.conf import settings
 
 class GoogleCalendarAPI:
-    def __init__(self, credentials_path='credentials.json', scopes=None, redirect_uri=None):
+    def __init__(self, credentials_path='credentials/credentials.json', scopes=None, redirect_uri=None):
         self.credentials_path = credentials_path
         self.scopes = scopes or ['https://www.googleapis.com/auth/calendar.readonly']
         self.redirect_uri = redirect_uri
