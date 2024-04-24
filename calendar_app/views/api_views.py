@@ -10,6 +10,7 @@ from googleapiclient.errors import HttpError
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
+# Based on Google's documentation for using Google Calendar's API with Python
 class GoogleCalendar:
     def __init__(self):
         creds = None
@@ -21,9 +22,9 @@ class GoogleCalendar:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials/token.json", SCOPES
-            )
-            creds = flow.run_local_server(port=0)
+                "credentials.json", SCOPES, redirect_uri='http://127.0.0.1:8001/calendar/month/'
+                )
+            creds = flow.run_local_server(port=8001)
             # Save the credentials for the next run
             with open("credentials/token.json", "w") as token:
                 token.write(creds.to_json())

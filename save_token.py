@@ -28,7 +28,7 @@ def main():
       creds.refresh(Request())
     else:
       flow = InstalledAppFlow.from_client_secrets_file(
-          "credentials/credentials.json", SCOPES, redirect_uri='http://127.0.0.1:8000/calendar/month/'
+          "credentials.json", SCOPES, redirect_uri='http://127.0.0.1:8000/calendar/month/'
       )
       creds = flow.run_local_server(port=8000)
     # Save the credentials for the next run
