@@ -166,4 +166,5 @@ cython_debug/
 /result-*
 
 #Google Calendar API credentials
-/credentials
+/credentials/credentials.json
+/credentials/token.json
