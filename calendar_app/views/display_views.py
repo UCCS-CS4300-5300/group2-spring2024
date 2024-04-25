@@ -33,7 +33,8 @@ def register(request):
     return render(request, 'calendar_app/accounts/register.html', {'form': form})
 
 # Week View
-def week_view(request, category, year=None, month=None, day=None):
+def week_view(request, category_str:str, year=None, month=None, day=None):
+    filtered_categories = deserialize_category_list(category_str)
     if year and month and day:
         # Use the provided year, month, day if present
         current_date = datetime(year=year, month=month, day=day)
@@ -42,8 +43,9 @@ def week_view(request, category, year=None, month=None, day=None):
         current_date = datetime.now()
 
     # If a catagory is chosen, filter based on it
-    if category:
-        tasks = Task.objects.filter(category=category)
+    if filtered_categories:
+        categories = Category.objects.filter(pk__in=filtered_categories)
+        tasks = Task.objects.filter(category__in=categories)
     else:
         tasks = Task.objects.all()
     
@@ -51,7 +53,7 @@ def week_view(request, category, year=None, month=None, day=None):
         tasks = tasks.filter(user=request.user.id)
 
     context = {}
-
+    context['category_str'] = category_str
     context['year'] = current_date.year
     context['month'] = current_date.month
     context['day'] = current_date.day
@@ -101,9 +103,9 @@ def week_view(request, category, year=None, month=None, day=None):
     next_week = start_of_week + timedelta(weeks=1)
 
     # Construct URLs for the prev and next week buttons
-    if category:
-        prev_week_url = reverse('filtered-week-view-date', args=[category,prev_week.year, prev_week.month, prev_week.day])
-        next_week_url = reverse('filtered-week-view-date', args=[category,next_week.year, next_week.month, next_week.day])
+    if filtered_categories:
+        prev_week_url = reverse('filtered-week-view-date', args=[serialize_category_list(filtered_categories),prev_week.year, prev_week.month, prev_week.day])
+        next_week_url = reverse('filtered-week-view-date', args=[serialize_category_list(filtered_categories),next_week.year, next_week.month, next_week.day])
     else:
         prev_week_url = reverse('week-view-date', args=[prev_week.year, prev_week.month, prev_week.day])
         next_week_url = reverse('week-view-date', args=[next_week.year, next_week.month, next_week.day])
@@ -149,8 +151,9 @@ class MonthView(generic.ListView):
     
     def get_queryset(self):
         # Retrieve the category from URL path
-        filter_category = self.kwargs.get('category', None)
-    
+        filter_category_str = self.kwargs.get('category_str', None)
+        filter_categories = deserialize_category_list(filter_category_str)
+
         # Determine the current months date range from query parameter
         month_param = self.request.GET.get('month', datetime.now().strftime('%Y-%m'))
         year, month = map(int, month_param.split('-'))
@@ -158,8 +161,9 @@ class MonthView(generic.ListView):
         end_of_month = datetime(year, month, monthrange(year, month)[1])
 
         tasks = Task.objects.all()
-        if filter_category:
-            tasks = tasks.filter(category_id=filter_category, deadlineDay__range=[start_of_month, end_of_month])
+        if filter_categories:
+            tasks = tasks.filter(pk__in=filter_categories, deadlineDay__range=[start_of_month, end_of_month])
+            tasks = tasks.exclude(category=None)
         else:
             tasks = tasks.filter(deadlineDay__range=[start_of_month, end_of_month])
             tasks = tasks.filter(user=self.request.user.id)
@@ -168,11 +172,11 @@ class MonthView(generic.ListView):
         context = super().get_context_data(**kwargs)
 
         #get the category for the filter
-        filter_category_id = self.kwargs.get('category', None)
+        filter_category_str = self.kwargs.get('category_str', None)
+        filter_category_list = deserialize_category_list(filter_category_str)
     
-        if filter_category_id:
-            context['filter_category_id'] = filter_category_id
-            context['filter_category'] = get_object_or_404(Category, pk=filter_category_id)
+        context['filter_category_list'] = filter_category_list
+        context['category_str'] = filter_category_str
 
         if self.request.user:
             context['category_list'] = Category.objects.filter(user=self.request.user.id)
@@ -183,7 +187,7 @@ class MonthView(generic.ListView):
         currentDay = get_date(self.request.GET.get('month', None))   
 
         # Instantiate Calendar with current year+date
-        cal = Calendar(currentDay.year, currentDay.month,filter_category_id,self.request.user)
+        cal = Calendar(currentDay.year, currentDay.month,filter_category_list,self.request.user)
         
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
@@ -307,4 +311,12 @@ def get_text_color(backColor:str) -> str:
     else:
         return "#ffffff"
     
-    
+def deserialize_category_list(category_str:str) -> list[int]:
+    if not category_str:
+        return None
+    return list(map(int, category_str.split(',')))
+
+def serialize_category_list(category_list:list[int]) -> str:
+    if not category_list:
+        return None
+    return ','.join(map(str, category_list))
