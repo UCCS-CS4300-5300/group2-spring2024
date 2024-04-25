@@ -29,7 +29,6 @@ class Calendar(HTMLCalendar):
 
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
-            print(task)
             taskURL = reverse('task-detail', args=[task.id])
             taskName = task.name
             colorClass = "btn-primary"
@@ -114,11 +113,13 @@ class Calendar(HTMLCalendar):
     # Format the whole current month
     def formatmonth(self, withyear=True):
         if self.user:
-
             tasks = get_objects_for_user(self.user, 'calendar_app.view_task')
         else:
             tasks = Task.objects.all()
 
+        if self.filter_category_list:
+            tasks = tasks.filter(category__in=self.filter_category_list)
+            tasks = tasks.exclude(category=None)
   
         tasks = tasks.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
 

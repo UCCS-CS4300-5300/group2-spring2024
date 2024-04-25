@@ -162,11 +162,10 @@ class MonthView(generic.ListView):
 
         tasks = Task.objects.all()
         if filter_categories:
-            tasks = tasks.filter(pk__in=filter_categories, deadlineDay__range=[start_of_month, end_of_month])
+            tasks = tasks.filter(category__in=filter_categories)
             tasks = tasks.exclude(category=None)
-        else:
-            tasks = tasks.filter(deadlineDay__range=[start_of_month, end_of_month])
-            tasks = tasks.filter(user=self.request.user.id)
+        tasks = tasks.filter(deadlineDay__range=[start_of_month, end_of_month])
+        tasks = tasks.filter(user=self.request.user.id)
         return tasks
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -191,9 +190,6 @@ class MonthView(generic.ListView):
         
         # Set first day to Sunday to match approved sketch
         cal.setfirstweekday(6)
-
-        # Use formatmonth to get Calendar as table
-        html_cal = cal.formatmonth(withyear=True)
 
         today = date.today()
         # we are in the current month
