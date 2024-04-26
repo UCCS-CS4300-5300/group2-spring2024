@@ -8,6 +8,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from ..models import *
 from django.utils.dateparse import parse_datetime
+from dateutil.relativedelta import relativedelta
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
@@ -15,10 +16,16 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 class GoogleCalendar:
 
     def setup(request):
+        # Get date one month ago for importing past events
+        now = datetime.datetime.now()
+        one_month_ago = now - relativedelta(months=1)
+        time_min = one_month_ago.isoformat() + "Z"  # Append 'Z' to indicate UTC
+
         creds = None
+        # Get user token if they're already logged in
         if os.path.exists("credentials/token.json"):
             creds = Credentials.from_authorized_user_file("credentials/token.json", SCOPES)
-        # If there are no (valid) credentials available, let the user log in.
+        # If there are no (valid) credentials available, let the user log in to Google
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
@@ -33,17 +40,16 @@ class GoogleCalendar:
 
         try:
             service = build("calendar", "v3", credentials=creds)
-
-            # Call the Calendar API
             now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
             
-            # Previous maxResults events
+            # Previous events (change maxResults to adjust how many to import)
             past_events_result = (
                 service.events()
                 .list(
                     calendarId="primary",
+                    timeMin=time_min,
                     timeMax=now,
-                    maxResults=5,
+                    maxResults=15,
                     singleEvents=True,
                     orderBy="startTime",
                 )
@@ -51,13 +57,13 @@ class GoogleCalendar:
             )
             past_events = past_events_result.get("items", [])
 
-
+            # Upcoming events
             upcoming_events_result = (
                 service.events()
                 .list(
                     calendarId="primary",
                     timeMin=now,
-                    maxResults=5,
+                    maxResults=15,
                     singleEvents=True,
                     orderBy="startTime",
                 )
@@ -70,34 +76,33 @@ class GoogleCalendar:
                 print("No upcoming events found.")
                 return
 
-            # Prints the start and name of the next 10 events
+            # Get past and future events, sends them to be processed
             for event in past_events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
-                print(start, event["summary"])
                 task = create_task_from_event(event, start, request)
             
             for event in upcoming_events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
-                print(start, event["summary"])
-                task = create_task_from_event(event, start, request)
+                create_task_from_event(event, start, request)
 
         except HttpError as error:
             print(f"An error occurred: {error}")
 
 
+'''Converts Google Calendar events into tasks'''
 def create_task_from_event(event, start, request, category=None):
-    user = request.user
     
+    user = request.user # Get current user
+    
+    # Throwing errors
     if not user.is_authenticated:
         raise Exception("User is not logged in.")
-
-    #start = event['start'].get('datetime') or event['start'].get('date')
-    print("Start datetime:", start)
 
     if start is None:
         raise ValueError("No start time provided in event data")
 
-    start_datetime = parse_datetime(start)
+    start_datetime = parse_datetime(start) # Convert start to string (it's already a string but python doesn't like it?)
+
     if start_datetime is None:
         raise ValueError("Failed to parse datetime: {}".format(start))
     
@@ -128,8 +133,6 @@ def create_task_from_event(event, start, request, category=None):
 
     except ValueError as e:
         print("Error in creating task:", e)
-
-    return new_task
 
 def import_google_calendar_events(request):
     google_calendar = GoogleCalendar()
