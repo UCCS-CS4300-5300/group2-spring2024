@@ -1,6 +1,5 @@
 import datetime
 import os.path
-
 from django.shortcuts import redirect
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -9,7 +8,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from ..models import *
 from django.utils.dateparse import parse_datetime
-from guardian.shortcuts import assign_perm
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
@@ -26,7 +24,7 @@ class GoogleCalendar:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", SCOPES, redirect_uri='http://127.0.0.1:8001/calendar/month/'
+                "credentials/credentials.json", SCOPES, redirect_uri='http://127.0.0.1:8001/calendar/month/'
                 )
                 creds = flow.run_local_server(port=8001)
             # Save the credentials for the next run
@@ -45,7 +43,7 @@ class GoogleCalendar:
                 .list(
                     calendarId="primary",
                     timeMax=now,
-                    maxResults=20,
+                    maxResults=5,
                     singleEvents=True,
                     orderBy="startTime",
                 )
@@ -58,8 +56,8 @@ class GoogleCalendar:
                 service.events()
                 .list(
                     calendarId="primary",
-                    timeMax=now,
-                    maxResults=20,
+                    timeMin=now,
+                    maxResults=5,
                     singleEvents=True,
                     orderBy="startTime",
                 )
@@ -74,6 +72,11 @@ class GoogleCalendar:
 
             # Prints the start and name of the next 10 events
             for event in past_events:
+                start = event["start"].get("dateTime", event["start"].get("date"))
+                print(start, event["summary"])
+                task = create_task_from_event(event, start, request)
+            
+            for event in upcoming_events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 print(start, event["summary"])
                 task = create_task_from_event(event, start, request)
@@ -122,7 +125,7 @@ def create_task_from_event(event, start, request, category=None):
     # Save the new Task object
     try:
         new_task.save()
-        print("Task created successfully!")
+
     except ValueError as e:
         print("Error in creating task:", e)
 
