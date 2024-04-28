@@ -28,7 +28,7 @@
             <div class="list-group list-group-horizontal float-end">
                 <a class="btn btn-secondary float-end" href="{% url 'index' %}">Home</a>
                 &nbsp; <!-- Spacer; do not delete -->
-                <a class="btn btn-primary float-end" href="{% url 'create-task' %}">Create Task</a>
+                <a class="btn btn-primary float-end" href="{% url 'create-task' %}">Add Task</a>
             </div>
         </div>
     </div> <!-- End of page header -->
@@ -61,7 +61,7 @@
                         </svg>
                         <!-- Task name -->
                         <!-- Changed to non-heading text for accessibility -->
-                        <tasktext>{{ task.name }}</tasktext>
+                        <tasktext><a href="{% url 'task-detail' task.id%}">{{ task.name }}</a></tasktext>
                     </td> <!-- End of task name and color -->
 
                     <!-- Task category name -->
