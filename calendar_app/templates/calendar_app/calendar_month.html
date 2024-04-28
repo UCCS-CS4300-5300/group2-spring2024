@@ -90,7 +90,7 @@ td {
                 <ul class="dropdown-menu w-100">
                     {% for task in task_list %}
                     <li>
-                        <a type="button" class="btn btn-secondary btn-sm w-100" href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="background-color:{{ task.category.color }}; border-width:0;">{{ task.name }}</a>
+                        <a type="button" class="btn btn-primary btn-sm w-100" href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="background-color:{{ task.category.color }}; border-width:0;">{{ task.name }}</a>
                     </li>
                     {% endfor %}
                 </ul>
