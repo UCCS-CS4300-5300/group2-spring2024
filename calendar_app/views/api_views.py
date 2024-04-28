@@ -14,7 +14,6 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 # Based on Google's documentation for using Google Calendar's API with Python
 class GoogleCalendar:
-
     def setup(request):
         # Get date one month ago for importing past events
         now = datetime.datetime.now()
@@ -43,45 +42,21 @@ class GoogleCalendar:
             now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
             
             # Previous events (change maxResults to adjust how many to import)
-            past_events_result = (
+            events_result = (
                 service.events()
                 .list(
                     calendarId="primary",
                     timeMin=time_min,
-                    timeMax=now,
                     maxResults=15,
                     singleEvents=True,
                     orderBy="startTime",
                 )
                 .execute()
             )
-            past_events = past_events_result.get("items", [])
-
-            # Upcoming events
-            upcoming_events_result = (
-                service.events()
-                .list(
-                    calendarId="primary",
-                    timeMin=now,
-                    maxResults=15,
-                    singleEvents=True,
-                    orderBy="startTime",
-                )
-                .execute()
-            )
-            upcoming_events = upcoming_events_result.get("items", [])
-
-
-            if not past_events:
-                print("No upcoming events found.")
-                return
+            events = events_result.get("items", [])
 
             # Get past and future events, sends them to be processed
-            for event in past_events:
-                start = event["start"].get("dateTime", event["start"].get("date"))
-                task = create_task_from_event(event, start, request)
-            
-            for event in upcoming_events:
+            for event in events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 create_task_from_event(event, start, request)
 
@@ -134,6 +109,7 @@ def create_task_from_event(event, start, request, category=None):
     except ValueError as e:
         print("Error in creating task:", e)
 
+''' Entry point from the URL/button press '''
 def import_google_calendar_events(request):
     google_calendar = GoogleCalendar()
     GoogleCalendar.setup(request)
