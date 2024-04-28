@@ -34,7 +34,7 @@
   </div> <!-- End of page header -->
   
   <!-- Category list div -->
-  {% if 'category_list' %}
+  {% if category_list %}
   <div class="row ps-2 pe-2">
     <!-- Category list table -->
     <table class="table table-striped">
@@ -76,7 +76,7 @@
     </table> <!-- End of category list table -->
 
     {% else %}
-    <catname class="float-start mx-4">No categories exist.</catname>
+    <catname class="float-start mx-4">No categories found.</catname>
     {% endif %}
   </div> <!-- End of category list div -->
 

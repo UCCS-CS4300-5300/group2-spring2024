@@ -34,7 +34,7 @@
     </div> <!-- End of page header -->
     
     <!-- Task list div -->
-    {% if 'task_list' %}
+    {% if task_list %}
     <div class="row ps-2 pe-2">
         <!-- Task list table -->
         <table class="table table-striped">
@@ -88,11 +88,10 @@
             {% endfor %} <!-- End of task loop -->
             </tbody>
         </table> <!-- End of task list table -->
-    
-        {% else %}
-        <tasktext class="float-start mx-4">No tasks exist.</tasktext>
-        {% endif %}
     </div> <!-- End of category list div -->
+    {% else %}
+    <tasktext class="float-start mx-4">No tasks found.</tasktext>
+    {% endif %}
   
 </div> <!-- End of container div -->
 {% endblock %}
