@@ -18,7 +18,7 @@ class TaskListView(generic.ListView):
     model = Task
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        return Task.objects.filter(user=self.request.user).order_by('deadlineDay', 'deadlineTime')
 
 @login_required(login_url='/login/')
 def createTask(request):

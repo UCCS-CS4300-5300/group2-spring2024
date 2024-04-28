@@ -54,10 +54,10 @@
         <!-- Filter button -->
         <button class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Filter</button>
           <!-- Dropdown menu UL -->
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu w-100 text-center">
             <!-- All categories button -->
             <li>
-              <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">All Categories</a>
+              <a class="dropdown-item" href="{% url 'week-view-date' day=day year=year month=month%}">Clear Filter</a>
             </li>
               
             <!-- List of categories to filter by -->
@@ -75,10 +75,11 @@
               {{ category.name }} </a>
             </li>
             {% endfor %}
-              
-            <!-- Edit categories button -->
             <li>
-              <a class="dropdown-item" href="{% url 'category-list' %}">Edit Categories</a>
+              <a class="dropdown-item" href="{% url 'create-category' %}">Add Category</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{% url 'category-list' %}">View Categories</a>
             </li>
           </ul> <!-- End of dropdown menu UL -->
         <!-- End of category/filtering dropdown -->
@@ -98,7 +99,7 @@
 
         <!-- Display current week range -->
         <div class="col-10">
-          <h2>Week of {{ start_of_week|date:"F j, Y" }} - {{ end_of_week|date:"F j, Y" }}</h2>
+          <h2>{{ start_of_week|date:"F j, Y" }} - {{ end_of_week|date:"F j, Y" }}</h2>
         </div>
         
         <!-- Next week button -->
@@ -139,8 +140,12 @@
               <!-- Task buttons -->
               <p>
                 {% for task in tasks %}
-                  <button class="btn btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
-                    {{ task.name }}
+                  <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
+                    {% if task.status %} <!-- Strikethrough if task is complete -->
+                      <s>{{ task.name }}</s>
+                    {% else %}
+                      {{ task.name }}
+                    {% endif %}
                   </button>
                 <!-- Text for if there are no tasks -->
                 {% empty %}
