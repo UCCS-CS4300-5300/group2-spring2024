@@ -3,27 +3,30 @@ from calendar import HTMLCalendar
 from django.urls import reverse
 from guardian.shortcuts import get_objects_for_user
 
-from .models import Task
+from .models import Category, Task
 
 
 # Calendar class; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
-    def __init__(self, year=None, month=None,filter_category=None,user=None):
+    def __init__(self, year=None, month=None,filter_category_list:list[int]=None,user=None):
         self.year = year
         self.month = month
-        self.filter_category = filter_category
+        self.filter_category_list = filter_category_list
         self.user = user
         super(Calendar, self).__init__()
 
     # Format days and filter tasks by day
     # Use bootstrap; display tasks as small buttons
-    def formatday(self, currentDay, tasks,filter_category):
-        if filter_category:
-            tasksInDay = tasks.filter(deadlineDay__day=currentDay,category=filter_category)
+    def formatday(self, currentDay, tasks,filter_category_list):
+        if filter_category_list:
+            filterCategories = Category.objects.filter(pk__in=filter_category_list)
+            tasksInDay = tasks.filter(deadlineDay__day=currentDay,category__in=filterCategories)
+            tasksInDay = tasksInDay.exclude(category=None)
         else:
             tasksInDay = tasks.filter(deadlineDay__day=currentDay)
         dayHtml = ''
         
+
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
             taskURL = reverse('task-detail', args=[task.id])
@@ -43,11 +46,11 @@ class Calendar(HTMLCalendar):
         return '<td></td>'
 
     # Format weeks as table rows
-    def formatweek(self, currentWeek, tasks,filter_category):
+    def formatweek(self, currentWeek, tasks,filter_category_list):
         weekHtml = ''
 
         for dayHtml, weekDay in currentWeek:
-            weekHtml += self.formatday(dayHtml, tasks,filter_category)
+            weekHtml += self.formatday(dayHtml, tasks,filter_category_list)
 
         return f'<tr>{weekHtml}</tr>'
 
@@ -113,6 +116,11 @@ class Calendar(HTMLCalendar):
             tasks = get_objects_for_user(self.user, 'calendar_app.view_task')
         else:
             tasks = Task.objects.all()
+
+        if self.filter_category_list:
+            tasks = tasks.filter(category__in=self.filter_category_list)
+            tasks = tasks.exclude(category=None)
+  
         tasks = tasks.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
 
         cal = ''
@@ -131,6 +139,6 @@ class Calendar(HTMLCalendar):
         
         # Format the days
         for week in self.monthdays2calendar(self.year, self.month):
-            cal += f'{self.formatweek(week, tasks,self.filter_category)}\n'
+            cal += f'{self.formatweek(week, tasks,self.filter_category_list)}\n'
         
         return cal

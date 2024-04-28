@@ -4,6 +4,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from .models import *
+from .views.display_views import serialize_category_list
 
 
 class CategoryCRUDTestCase(TestCase):
@@ -13,13 +14,16 @@ class CategoryCRUDTestCase(TestCase):
         self.client = Client()
         self.category1 = Category.objects.create(name="Category 1",user=self.user1)
         self.category2 = Category.objects.create(name="Category 2",user=self.user1)
+        self.category3 = Category.objects.create(name="Category 3",user=self.user1)
         self.categorizedTask = Task.objects.create(name="Categorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.category1,status=False,user=self.user1)
-        self.uncategorizedTask= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False,user=self.user1)
+        self.uncategorizedTask= Task.objects.create(name="task with no category",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),status=False,user=self.user1)
+        self.category2Task = Task.objects.create(name="Category 2 Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),category=self.category2,status=False,user=self.user1)
+        self.category3Task = Task.objects.create(name="Category 3 Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),category=self.category3,status=False,user=self.user1)
         self.client.login(username='testuser',password='password12345')
     def test_categories_created(self):
         categories = Category.objects.all()
 
-        self.assertEquals(len(categories),2)
+        self.assertEquals(len(categories),3)
         self.assertIn(self.category1,categories)
         self.assertIn(self.category2,categories)
 
@@ -40,7 +44,7 @@ class CategoryCRUDTestCase(TestCase):
 
         response = self.client.post(url)
         self.assertEquals(response.status_code,302)
-        self.assertEquals(Category.objects.count(),1)
+        self.assertEquals(Category.objects.count(),2)
         self.assertNotIn(self.category1,Category.objects.all())
 
     def test_create_category(self):
@@ -51,7 +55,7 @@ class CategoryCRUDTestCase(TestCase):
 
         response = self.client.post(url,{'name':'New Category','color':'#000000'})
         self.assertEquals(response.status_code,302)
-        self.assertEquals(Category.objects.count(),3)
+        self.assertEquals(Category.objects.count(),4)
         self.assertIn(Category.objects.get(name='New Category'),Category.objects.all())
 
     def test_update_category(self):
@@ -63,7 +67,7 @@ class CategoryCRUDTestCase(TestCase):
 
         response = self.client.post(url,{'name':'Updated Category','color':'#000000'})
         self.assertEquals(response.status_code,302)
-        self.assertEquals(Category.objects.count(),2)
+        self.assertEquals(Category.objects.count(),3)
         self.assertIn(Category.objects.get(name='Updated Category'),Category.objects.all())
 
     def test_category_dropdown_week(self):
@@ -97,6 +101,27 @@ class CategoryCRUDTestCase(TestCase):
         self.assertContains(response,self.categorizedTask.name)
         self.assertContains(response,self.uncategorizedTask.name)
 
+    def test_multi_category_filtering_week(self):
+        url = reverse('filtered-week-view',args=[serialize_category_list([self.category1.id,self.category2.id])])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/week_view.html')
+        self.assertContains(response,self.categorizedTask.name)
+        self.assertNotContains(response,self.uncategorizedTask.name)
+        self.assertContains(response,self.category2Task.name)
+        self.assertNotContains(response,self.category3Task.name)
+
+    def test_multi_category_filtering_month(self):
+        url = reverse('filtered-month-view',args=[serialize_category_list([self.category1.id,self.category2.id])])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/calendar_month.html')
+        self.assertContains(response,self.categorizedTask.name)
+        self.assertNotContains(response,self.uncategorizedTask.name)
+        self.assertContains(response,self.category2Task.name)
+        self.assertNotContains(response,self.category3Task.name)
+        
+
     def test_category_filtering_month(self):
         url = reverse('filtered-month-view',args=[self.category1.id])
         response = self.client.get(url)
@@ -121,7 +146,7 @@ class CategoryUserFilteringTestCase(TestCase):
         self.user1Category = Category.objects.create(name="Category 1",user=self.user1)
         self.user2Category = Category.objects.create(name="Category 2",user=self.user2)
         self.user1Task = Task.objects.create(name="Categorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),  category=self.user1Category,status=False,user=self.user1)
-        self.user2Task= Task.objects.create(name="Uncategorized Task",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),category=self.user2Category,status=False,user=self.user2)
+        self.user2Task= Task.objects.create(name="task with no category",description="ex",deadlineDay=currentdate,deadlineTime="10:00:00",duration=datetime.timedelta(days=1),category=self.user2Category,status=False,user=self.user2)
         self.client.login(username='testuser',password='password12345')
     
     def test_user_filtering_week(self):
@@ -195,6 +220,25 @@ class CategoryUserFilteringTestCase(TestCase):
 
         response = self.client.get(reverse('month-view'))
         self.assertNotContains(response,self.user1Task.name)
+
+    #test that when doing multi category filtering and including
+    #a category that the user does not own
+    #those tasks are not shown
+    def test_multi_category_filtering_week(self):
+        url = reverse('filtered-week-view',args=[serialize_category_list([self.user1Category.id,self.user2Category.id])])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/week_view.html')
+        self.assertContains(response,self.user1Task.name)
+        self.assertNotContains(response,self.user2Task.name)
+
+    def test_multi_category_filtering_month(self):
+        url = reverse('filtered-month-view',args=[serialize_category_list([self.user1Category.id,self.user2Category.id])])
+        response = self.client.get(url)
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response,'calendar_app/calendar_month.html')
+        self.assertContains(response,self.user1Task.name)
+        self.assertNotContains(response,self.user2Task.name)
 
 
 class CategoryUserPermissionsTestCase(TestCase):

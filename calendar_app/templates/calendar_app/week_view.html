@@ -3,7 +3,7 @@
 
 <!-- For displaying images/scripts -->
 {% load static %}
-
+{% load view_extras %}
 <!-- Add custom styling for category color -->
 {% block style %}
   {% include './color_class_css.html'%}
@@ -63,7 +63,16 @@
             <!-- List of categories to filter by -->
             {% for category in category_list %}
             <li>
-              <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category=category.pk day=day year=year month=month %} ">{{ category.name }} </a>
+              {% if category_str|toggle_category:category.pk%}
+              <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'filtered-week-view-date' category_str=category_str|toggle_category:category.pk day=day year=year month=month %}">
+              {% else %}
+              <a class="dropdown-item category-{{ category.id }} btn" href="{% url 'week-view-date' day=day year=year month=month %}">
+              {% endif %}
+
+              {% if category.pk in filter_category_list%}
+              &#10003;
+              {% endif %}
+              {{ category.name }} </a>
             </li>
             {% endfor %}
             <li>
