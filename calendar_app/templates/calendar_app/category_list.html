@@ -1,6 +1,6 @@
 {% extends 'calendar_app/base_template.html' %}
 
-<!-- Add custom styling; for MonthView table generation -->
+<!-- Add custom styling -->
 {% block style %}
 <style>
   catname{
@@ -76,7 +76,7 @@
     </table> <!-- End of category list table -->
 
     {% else %}
-    <h4 class="float-start mx-4">No categories exist</h4>
+    <catname class="float-start mx-4">No categories exist.</catname>
     {% endif %}
   </div> <!-- End of category list div -->
 
