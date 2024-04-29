@@ -5,6 +5,9 @@
 {% load static %}
 {% load view_extras %}
 
+
+
+
 <!-- Add custom styling; for MonthView table generation -->
 {% block style %}
 <style>
@@ -27,6 +30,12 @@ td {
 
 <!-- Replace block content in base_template.html -->
 {% block content %}
+<!--<script src="hovering.js"></script>-->
+<script>
+    function hover() {
+        console.log("Yes!");
+    }
+</script>
 
 <!-- Container div -->
 <div class="container-lg">
@@ -142,5 +151,11 @@ td {
         </div> <!-- End of right-side calendar column -->
     </div> <!-- End of row containing columns -->
 </div> <!-- End of container div -->
+
+
+<div>
+  <a href="#" onmouseover="hover()">HOVER</a>
+</div>
+
 
 {% endblock %}
