@@ -30,11 +30,9 @@ td {
 
 <!-- Replace block content in base_template.html -->
 {% block content %}
-<!--<script src="hovering.js"></script>-->
+
+<!-- Javascript scripts for on hover details viewing -->
 <script>
-    // function hover(task) {
-    //     console.log(task);
-    // }
     function hover(task) {
         var tooltip = document.getElementById('tooltip');
         tooltip.innerHTML = task;
@@ -115,7 +113,6 @@ td {
                     </li>
                     {% endfor %}
 
-                    <div id="tooltip"></div>
                 </ul>
             </div> <!-- End of left-side task list button group -->
 
@@ -163,5 +160,6 @@ td {
         </div> <!-- End of right-side calendar column -->
     </div> <!-- End of row containing columns -->
 </div> <!-- End of container div -->
+<div id="tooltip"></div>
 
 {% endblock %}
