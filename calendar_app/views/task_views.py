@@ -41,7 +41,7 @@ def updateTask(request, task_id):
     task = Task.objects.get(pk=task_id)
     form = TaskForm(instance=task, user=request.user)
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, instance=task,user=request.user)
         if form.is_valid():
             form.save()
         return redirect('task-detail', task.id)

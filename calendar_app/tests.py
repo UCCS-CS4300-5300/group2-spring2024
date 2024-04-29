@@ -1,14 +1,17 @@
 from datetime import date, datetime, time, timedelta, timezone
 
+from django.contrib.auth.models import Permission
 from django.db.utils import IntegrityError
-from django.test import TestCase
-from django.urls import reverse
 from django.template.loader import render_to_string
 from django.test import TestCase
-from django.contrib.auth.models import Permission
-from calendar_app.views.category_views import createCategory, updateCategory, deleteCategory, CategoryListView
-from django.utils.timezone import now
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.timezone import now
+
+from calendar_app.views.category_views import (CategoryListView,
+                                               createCategory, deleteCategory,
+                                               updateCategory)
+
 from .models import *
 
 
@@ -356,13 +359,14 @@ class TasksTests(TestCase):
             'description': 'This is an updated test task',
             'deadlineDay': '2024-03-22',
             'deadlineTime': '13:00:00',
+            'duration': '02',
             'status': True
         }
         self.client.force_login(self.customUser)
         response = self.client.post(reverse('update-task', args=[self.newTask.id]), data=updated_data)
         self.assertEqual(response.status_code, 302)
         self.newTask.refresh_from_db()
-        self.assertEqual(self.newTask.name, 'TestTask1')
+        self.assertEqual(self.newTask.name, 'Updated Test Task')
 
     # Test Task deletion
     def test_task_deletion(self):
