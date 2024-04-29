@@ -1,29 +1,97 @@
 {% extends "calendar_app/base_template.html" %}
 {% load crispy_forms_tags %}
 
+<!-- Add custom styling -->
+{% block style %}
+<style>
+  tasktext{
+    font-size: 1.2em;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Center the task list in the middle of the screen with a vertical height of 80vh -->
-<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
-    <div style="background-color: #e0e0e0; padding: 30px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; width: 32.5%;">
-        <h2>Tasks</h2>
-        {% if task_list %}
-            <ul style="list-style: none; padding: 0;">
-                {% for task in task_list %}
-                <li>
-                    <a type="button" class="btn btn-primary btn-sm w-100" 
-                        href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="margin-top: 10px;">{{ task.name }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                <strong>No tasks available.</strong> Create tasks for them to be listed here.
-            </div>
-        {% endif %}
-        <!-- Back Button -->
-        <div style="margin-top: 20px;">
-            <a href="{% url 'home' %}" class="btn btn-secondary" style="width: 100px;">Back</a>
+<!-- Container div -->
+<div class="container-lg">
+
+    <!-- Page header with create category button-->
+    <div class="row">
+        <!-- Page title -->
+        <div class="col-7">
+            <p>
+            <h1 class="float-start">Tasks</h1>
+            </p>
         </div>
-    </div>
-</div>
+        
+        <!-- Back and create task buttons -->
+        <div class="col-5 mt-4">
+            <div class="list-group list-group-horizontal float-end">
+                <a class="btn btn-secondary float-end" href="{% url 'index' %}">Home</a>
+                &nbsp; <!-- Spacer; do not delete -->
+                <a class="btn btn-primary float-end" href="{% url 'create-task' %}">Add Task</a>
+            </div>
+        </div>
+    </div> <!-- End of page header -->
+    
+    <!-- Task list div -->
+    {% if task_list %}
+    <div class="row ps-2 pe-2">
+        <!-- Task list table -->
+        <table class="table table-striped">
+            
+            <!-- table headings-->
+            <thead>
+                <tr>
+                    <th class="col-4"><h2>Name</h2></th>
+                    <th class="col-3"><h2>Category</h2></th>
+                    <th class="col-2"><h2>Deadline</h2></th>
+                    <th class="col-3"><h2></h2></th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- Task loop -->
+            {% for task in task_list %}
+                <!-- Task row -->
+                <tr>
+                    <!-- Task name and color -->
+                    <td>
+                        <!-- Category color square -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-square-fill" viewBox="0 0 16 16" style="color:{% if task.category %}{{ task.category.color }}{% else %}#0d6dfd /* Primary blue */{% endif %};">
+                        <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        <!-- Task name -->
+                        <!-- Changed to non-heading text for accessibility -->
+                        <tasktext><a href="{% url 'task-detail' task.id%}">{{ task.name }}</a></tasktext>
+                    </td> <!-- End of task name and color -->
+
+                    <!-- Task category name -->
+                    <td>
+                        <tasktext>{{task.category}}</tasktext>
+                    </td>
+
+                    <!-- Task deadline info -->
+                    <td>
+                        <tasktext>{{task.deadlineDay}}, {{task.deadlineTime}}</tasktext>
+                    </td>
+        
+                    <!-- View, edit, and delete buttons -->
+                    <td>
+                        <div class="list-group list-group-horizontal float-end">
+                            <a class="btn btn-primary w-100" href="{%url 'task-detail' task.id %}">Details</a>
+                            &nbsp; <!-- Spacer; do not delete -->
+                            <a class="btn btn-primary w-100" href="{%url 'update-task' task.id %}">Edit</a>
+                            &nbsp; <!-- Spacer; do not delete -->
+                            <a class="btn btn-danger w-100" href="{%url 'delete-task' task.id %}">Delete</a>
+                        </div>
+                    </td>
+                </tr> <!-- End of task row -->
+            {% endfor %} <!-- End of task loop -->
+            </tbody>
+        </table> <!-- End of task list table -->
+    </div> <!-- End of category list div -->
+    {% else %}
+    <tasktext class="float-start mx-4">No tasks found.</tasktext>
+    {% endif %}
+  
+</div> <!-- End of container div -->
 {% endblock %}

@@ -15,7 +15,7 @@ class CategoryListView(generic.ListView):
     model = Category
 
     def get_queryset(self):
-        return Category.objects.filter(user=self.request.user)
+        return Category.objects.filter(user=self.request.user).order_by('name')
 
 @login_required(login_url='/login/')
 def createCategory(request):

@@ -78,13 +78,13 @@ def week_view(request, category_str:str, year=None, month=None, day=None):
     context['weekday_dates'] = weekday_dates
     # Dictionary of day names
     days_tasks = {
+        'Sunday': [],
         'Monday': [],
         'Tuesday': [],
         'Wednesday': [],
         'Thursday': [],
         'Friday': [],
         'Saturday': [],
-        'Sunday': [],
     }
 
     # Group tasks by their specific date
