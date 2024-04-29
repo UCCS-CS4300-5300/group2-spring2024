@@ -32,8 +32,18 @@ td {
 {% block content %}
 <!--<script src="hovering.js"></script>-->
 <script>
-    function hover() {
-        console.log("Yes!");
+    // function hover(task) {
+    //     console.log(task);
+    // }
+    function hover(task) {
+        var tooltip = document.getElementById('tooltip');
+        tooltip.innerHTML = task;
+        tooltip.style.display = 'block';
+    }
+
+    function hide() {
+        var tooltip = document.getElementById('tooltip');
+        tooltip.style.display = 'none';
     }
 </script>
 
@@ -101,9 +111,11 @@ td {
                 <ul class="dropdown-menu w-100">
                     {% for task in task_list %}
                     <li>
-                        <a type="button" class="btn btn-primary btn-sm w-100" href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="background-color:{{ task.category.color }}; border-width:0;">{{ task.name }}</a>
+                        <a type="button" class="btn btn-primary btn-sm w-100" href="{% url 'task-detail' task.id %}?{{ thisMonth }}" style="background-color:{{ task.category.color }}; border-width:0;" onmouseover="hover('{{ task.description }}')" onmouseout="hide()">{{ task.name }}</a>
                     </li>
                     {% endfor %}
+
+                    <div id="tooltip"></div>
                 </ul>
             </div> <!-- End of left-side task list button group -->
 
@@ -151,11 +163,5 @@ td {
         </div> <!-- End of right-side calendar column -->
     </div> <!-- End of row containing columns -->
 </div> <!-- End of container div -->
-
-
-<div>
-  <a href="#" onmouseover="hover()">HOVER</a>
-</div>
-
 
 {% endblock %}
