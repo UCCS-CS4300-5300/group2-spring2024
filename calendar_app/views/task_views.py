@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import generic
 from guardian.decorators import permission_required_or_403
+from guardian.shortcuts import get_objects_for_user
 
 from ..forms import TaskForm
 from ..models import CustomUser, Task
@@ -18,7 +19,7 @@ class TaskListView(generic.ListView):
     model = Task
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user).order_by('deadlineDay', 'deadlineTime')
+        return get_objects_for_user(self.request.user, 'calendar_app.view_task').order_by('deadlineDay', 'deadlineTime')
 
 @login_required(login_url='/login/')
 def createTask(request):
@@ -41,7 +42,7 @@ def updateTask(request, task_id):
     task = Task.objects.get(pk=task_id)
     form = TaskForm(instance=task, user=request.user)
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, instance=task,user=request.user)
         if form.is_valid():
             form.save()
         return redirect('task-detail', task.id)

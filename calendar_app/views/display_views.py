@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
+from guardian.shortcuts import get_objects_for_user
 
 from ..calendar_override import Calendar
 from ..forms import *
@@ -50,10 +51,11 @@ def week_view(request, category_str:str, year=None, month=None, day=None):
         tasks = Task.objects.all()
     
     if request.user:
-        tasks = tasks.filter(user=request.user.id)
+        tasks = get_objects_for_user(request.user, 'calendar_app.view_task').filter(pk__in=tasks.values_list('id', flat=True))
 
     context = {}
     context['category_str'] = category_str
+    context['filter_category_list'] = filtered_categories
     context['year'] = current_date.year
     context['month'] = current_date.month
     context['day'] = current_date.day
@@ -165,7 +167,7 @@ class MonthView(generic.ListView):
             tasks = tasks.filter(category__in=filter_categories)
             tasks = tasks.exclude(category=None)
         tasks = tasks.filter(deadlineDay__range=[start_of_month, end_of_month])
-        tasks = tasks.filter(user=self.request.user.id)
+        tasks = get_objects_for_user(self.request.user, 'calendar_app.view_task').filter(pk__in=tasks.values_list('id', flat=True))
         return tasks
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
