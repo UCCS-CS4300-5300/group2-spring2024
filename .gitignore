@@ -239,3 +239,7 @@ cython_debug/
 # Nix
 /result
 /result-*
+
+#Google Calendar API credentials
+/credentials/credentials.json
+/credentials/token.json

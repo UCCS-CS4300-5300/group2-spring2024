@@ -7,6 +7,7 @@ from .views.category_views import *
 from .views.display_views import *
 from .views.graph_views import *
 from .views.task_views import *
+from .views.api_views import *
 
 urlpatterns = [
     path('', index , name='index'),
@@ -54,4 +55,7 @@ urlpatterns = [
     # Monthly graphs
     path('graph/completed/month/', graphMonthlyTasksCompleted, name='graph-monthly-tasks-completed'),
     path('graph/progress/month/', graphMonthlyTaskProgress, name='graph-monthly-task-complete-vs-incomplete'),
+
+    # Google Calendar Imports
+    path('import-google-events/', import_google_calendar_events, name='import-google-events'),
 ]

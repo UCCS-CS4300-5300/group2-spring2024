@@ -6,7 +6,6 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views import generic
 from guardian.shortcuts import get_objects_for_user
@@ -14,6 +13,9 @@ from guardian.shortcuts import get_objects_for_user
 from ..calendar_override import Calendar
 from ..forms import *
 from ..models import *
+
+from google_auth_oauthlib.flow import Flow
+import os
 
 
 # Create your views here.
