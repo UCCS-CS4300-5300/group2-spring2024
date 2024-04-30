@@ -414,7 +414,7 @@ class TaskListViewTest(TestCase):
         # Get the previous month
         prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
 
-        # Make next month tasks; days are arbitrary
+        # Make tasks in current/next/previous months; days are arbitrary
         self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
                                            deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
                                            category=None,duration=timedelta(days=0, hours=4),
