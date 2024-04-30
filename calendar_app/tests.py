@@ -20,21 +20,25 @@ class AccountCreationTest(TestCase):
     def test_email_field_unique(self):
         # Create a user with a specific email
         email = "test@example.com"
-        CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
         # Attempt to create another user with the same email
         with self.assertRaises(IntegrityError) as raised:
-            CustomUser.objects.create_user(username="testuser2", email=email, password="testpassword456")
+            CustomUser.objects.create_user(
+                username="testuser2", email=email, password="testpassword456")
 
-        #have to do this wacky workaround
+        # have to do this wacky workaround
         self.assertEqual(IntegrityError, type(raised.exception))
 
     # NICK WILL FIX DO NOT DELETE !!!
-    #def test_email_field_not_blank(self):
+    # def test_email_field_not_blank(self):
     #    with self.assertRaises(ValueError) as raised:
     #        CustomUser.objects.create_user(username="testuser3", email="", password="testpassword789")
     #    self.assertIn('The email field cannot be blank.', str(raised.exception))
-        
+
 # Login and register view tests
+
+
 class RegisterPageTest(TestCase):
     def testRegisterView(self):
         url = reverse('register')
@@ -46,18 +50,21 @@ class RegisterPageTest(TestCase):
         }
         response = self.client.post(url, data)
         # Check if the registration was successful and redirects as expected
-        assert response.status_code == 200  # or 302 
+        assert response.status_code == 200  # or 302
 
     def testRegistrationPageLoads(self):
         url = reverse('register')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'calendar_app/accounts/register.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/accounts/register.html')
+
 
 class LoginPageTest(TestCase):
     def setUp(self):
         # Set up a user for testing login
-        self.CustomUser = CustomUser.objects.create_user(username='testuser', password='1234567!@#$%^&',email='test@test.com')
+        self.CustomUser = CustomUser.objects.create_user(
+            username='testuser', password='1234567!@#$%^&', email='test@test.com')
         self.CustomUser.save()
 
     def testLoginViewSuccess(self):
@@ -68,16 +75,19 @@ class LoginPageTest(TestCase):
             'email': 'test@test.com',
         }
         response = self.client.post(url, data, follow=True)
-        
+
         # Check if the login was successful and redirects as expected to home page.
         self.assertEqual(response.status_code, 200)
         # Check if authenticated
         self.assertTrue(response.context['user'].is_authenticated)
 
 # Task View test
+
+
 class TaskViewTest(TestCase):
     def testTaskPage(self):
-        self.user = CustomUser.objects.create_user(username='testuser', password='pass',email='email@test.com')
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='pass', email='email@test.com')
         self.client.login(username='testuser', password='pass')
         url = reverse('create-task')
         response = self.client.get(url)
@@ -95,19 +105,21 @@ class TaskViewTest(TestCase):
 
 # Month view template test
 # Modified to check current month
+
+
 class MonthViewTest(TestCase):
     def test_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Get the current year, month, and month name
         currYear = currMonthDate.year
         currMonth = currMonthDate.month
-        currMonthName = months[currMonth-1] # Indices start at 0
+        currMonthName = months[currMonth-1]  # Indices start at 0
 
         # Check URL, response status, and template
         response = self.client.get(reverse('month-view'))
@@ -120,12 +132,14 @@ class MonthViewTest(TestCase):
 
 # Next view template test
 # Modified version of MonthViewTest
+
+
 class NextMonthViewTest(TestCase):
     def test_next_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -135,11 +149,11 @@ class NextMonthViewTest(TestCase):
         # Get the current year, month, and month name
         nextYear = nextMonthDate.year
         nextMonth = nextMonthDate.month
-        nextMonthName = months[nextMonth-1] # Indices start at 0
+        nextMonthName = months[nextMonth-1]  # Indices start at 0
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('month-view')+f'?month={nextYear}-{nextMonth}' 
+        nextMonthURL = reverse('month-view')+f'?month={nextYear}-{nextMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(nextMonthURL)
@@ -152,12 +166,14 @@ class NextMonthViewTest(TestCase):
 
 # Previous view template test
 # Modified version of MonthViewTest
+
+
 class PrevMonthViewTest(TestCase):
     def test_prev_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -167,11 +183,11 @@ class PrevMonthViewTest(TestCase):
         # Get the current year, month, and month name
         prevYear = prevMonthDate.year
         prevMonth = prevMonthDate.month
-        prevMonthName = months[prevMonth-1] # Indices start at 0
+        prevMonthName = months[prevMonth-1]  # Indices start at 0
 
         # Previous month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('month-view')+f'?month={prevYear}-{prevMonth}' 
+        prevMonthURL = reverse('month-view')+f'?month={prevYear}-{prevMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(prevMonthURL)
@@ -183,29 +199,32 @@ class PrevMonthViewTest(TestCase):
         self.assertContains(response, prevMonthName)
 
 # Month view task display integration test
+
+
 class MonthTaskDisplay(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Make tasks in current month; days are arbitrary
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,4),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=False)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,16),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=1),
-                                           user=self.customUser,status=False)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,28),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=3),
-                                           user=self.customUser,status=False)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 4), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 16), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=1),
+                                            user=self.customUser, status=False)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 28), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=3),
+                                            user=self.customUser, status=False)
 
     def test_month_task_display(self):
         # Get and verify template being used is correct
@@ -213,22 +232,34 @@ class MonthTaskDisplay(TestCase):
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, self.newTask1.name) # TestTask1 is present
-        self.assertContains(response, self.newTask2.name) # TestTask2 is present
-        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+        # TestTask1 is present
+        self.assertContains(response, self.newTask1.name)
+        # TestTask2 is present
+        self.assertContains(response, self.newTask2.name)
+        # TestTask3 is present
+        self.assertContains(response, self.newTask3.name)
 
         # Check for individual tasks' detail links in response
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask3.id]))
 
 # Test for tasks in next month in month view;
 # modified version of MonthTaskDisplay
+
+
 class NextMonthTaskDisplay(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
@@ -237,19 +268,19 @@ class NextMonthTaskDisplay(TestCase):
         nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
 
         # Make next month tasks; days are arbitrary
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=False)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=False)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=False)
-    
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=False)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=False)
+
     def test_next_month_task_display(self):
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -258,29 +289,42 @@ class NextMonthTaskDisplay(TestCase):
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('month-view')+f'?month={nextMonthDate.year}-{nextMonthDate.month}'
-        
+        nextMonthURL = reverse(
+            'month-view')+f'?month={nextMonthDate.year}-{nextMonthDate.month}'
+
         # Get and verify template being used is correct
         response = self.client.get(nextMonthURL)
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, self.newTask1.name) # TestTask1 is present
-        self.assertContains(response, self.newTask2.name) # TestTask2 is present
-        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+        # TestTask1 is present
+        self.assertContains(response, self.newTask1.name)
+        # TestTask2 is present
+        self.assertContains(response, self.newTask2.name)
+        # TestTask3 is present
+        self.assertContains(response, self.newTask3.name)
 
         # Check for individual tasks' detail links in response
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask3.id]))
 
 # Test for tasks in previous month in month view;
 # modified version of MonthTaskDisplay
+
+
 class PrevMonthTaskDisplay(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         self.client.login(username='testuser1', password='testpassword123')
         # Get the first day of the current month
@@ -289,19 +333,19 @@ class PrevMonthTaskDisplay(TestCase):
         prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
 
         # Make previous month tasks; days are arbitrary
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,6),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=False)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,15),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=False)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,25),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=False)
-    
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 6), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 15), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=False)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 25), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=False)
+
     def test_prev_month_task_display(self):
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -310,21 +354,31 @@ class PrevMonthTaskDisplay(TestCase):
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('month-view')+f'?month={prevMonthDate.year}-{prevMonthDate.month}'
-        
+        prevMonthURL = reverse(
+            'month-view')+f'?month={prevMonthDate.year}-{prevMonthDate.month}'
+
         # Get and verify template being used is correct
         response = self.client.get(prevMonthURL)
         self.assertTemplateUsed(response, 'calendar_app/calendar_month.html')
 
         # Check for individual tasks in response
-        self.assertContains(response, self.newTask1.name) # TestTask1 is present
-        self.assertContains(response, self.newTask2.name) # TestTask2 is present
-        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+        # TestTask1 is present
+        self.assertContains(response, self.newTask1.name)
+        # TestTask2 is present
+        self.assertContains(response, self.newTask2.name)
+        # TestTask3 is present
+        self.assertContains(response, self.newTask3.name)
 
         # Check for individual tasks' detail links in response
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask3.id]))
 
 #############################################################################
 # End of month view tests
@@ -334,11 +388,13 @@ class PrevMonthTaskDisplay(TestCase):
 # Start of task tests
 #############################################################################
 
+
 class TasksTests(TestCase):
     # User and Task for Testing CRUD operations
     def setUp(self):
         email = "test@example.com"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
         self.client.login(username='testuser1', password='testpassword123')
         # Make tasks
         self.newTask = Task.objects.create(name='TestTask1', description='TestDesc1',
@@ -346,13 +402,17 @@ class TasksTests(TestCase):
                                            category=None, duration=timedelta(days=0, hours=2),
                                            user=self.customUser, status=False)
     # Test Task creation
+
     def test_task_creation(self):
         self.assertEqual(Task.objects.count(), 1)
-        self.assertEqual(Task.objects.get(id=self.newTask.id).name, 'TestTask1')
+        self.assertEqual(Task.objects.get(
+            id=self.newTask.id).name, 'TestTask1')
 
     # Test Task details read
+
     def test_task_details(self):
-        response = self.client.get(reverse('task-detail', args=[self.newTask.id]))
+        response = self.client.get(
+            reverse('task-detail', args=[self.newTask.id]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'TestTask1')
 
@@ -367,7 +427,8 @@ class TasksTests(TestCase):
             'status': True
         }
         self.client.force_login(self.customUser)
-        response = self.client.post(reverse('update-task', args=[self.newTask.id]), data=updated_data)
+        response = self.client.post(
+            reverse('update-task', args=[self.newTask.id]), data=updated_data)
         self.assertEqual(response.status_code, 302)
         self.newTask.refresh_from_db()
         self.assertEqual(self.newTask.name, 'Updated Test Task')
@@ -375,18 +436,22 @@ class TasksTests(TestCase):
     # Test Task deletion
     def test_task_deletion(self):
         self.client.force_login(self.customUser)
-        response = self.client.post(reverse('delete-task', args=[self.newTask.id]))
+        response = self.client.post(
+            reverse('delete-task', args=[self.newTask.id]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Task.objects.count(), 0)
 
 # TASK LIST VIEW ############################################################
 
 # No tasks
+
+
 class TaskListNoTasksViewTest(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser", email=email, password="testpassword123")
 
         self.client.login(username='testuser', password='testpassword123')
 
@@ -399,14 +464,17 @@ class TaskListNoTasksViewTest(TestCase):
         self.assertIn('No tasks', response.content.decode())
 
 # With tasks
+
+
 class TaskListViewTest(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser", email=email, password="testpassword123")
 
         self.client.login(username='testuser', password='testpassword123')
-        
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
         # Get the next month
@@ -415,22 +483,26 @@ class TaskListViewTest(TestCase):
         prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
 
         # Make categories; colors are arbitrary
-        self.categoryTask2 = Category.objects.create(name="Category 1",user=self.customUser,color="#ffff00")
-        self.categoryTask3 = Category.objects.create(name="Category 2",user=self.customUser,color="#ee11ee")
+        self.categoryTask2 = Category.objects.create(
+            name="Category 1", user=self.customUser, color="#ffff00")
+        self.categoryTask3 = Category.objects.create(
+            name="Category 2", user=self.customUser, color="#ee11ee")
 
         # Make tasks in current/next/previous months; days are arbitrary
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=False)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=self.categoryTask2,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=False)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=self.categoryTask3,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=False)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=self.categoryTask2, duration=timedelta(
+                                                days=0, hours=2),
+                                            user=self.customUser, status=False)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=self.categoryTask3, duration=timedelta(
+                                                days=0, hours=8),
+                                            user=self.customUser, status=False)
 
     def test_task_list_view(self):
         # Get and verify template being used is correct
@@ -438,63 +510,89 @@ class TaskListViewTest(TestCase):
         self.assertTemplateUsed(response, 'calendar_app/task_list.html')
 
         # Check for index/home and create/add task links
-        self.assertContains(response, reverse('index')) # Index/home link is present
-        self.assertContains(response, reverse('create-task')) # Create/add task link is present
+        # Index/home link is present
+        self.assertContains(response, reverse('index'))
+        # Create/add task link is present
+        self.assertContains(response, reverse('create-task'))
 
         # Check for individual tasks in response
-        self.assertContains(response, self.newTask1.name) # TestTask1 is present
-        self.assertContains(response, self.newTask2.name) # TestTask2 is present
-        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+        # TestTask1 is present
+        self.assertContains(response, self.newTask1.name)
+        # TestTask2 is present
+        self.assertContains(response, self.newTask2.name)
+        # TestTask3 is present
+        self.assertContains(response, self.newTask3.name)
 
         # Check for individual tasks' custom category colors in response
         # Task 1 has no custom category color because it is uncategorized
-        self.assertContains(response, self.newTask2.category.color) # TestTask2 color is present
-        self.assertContains(response, self.newTask3.category.color) # TestTask3 color is present
+        # TestTask2 color is present
+        self.assertContains(response, self.newTask2.category.color)
+        # TestTask3 color is present
+        self.assertContains(response, self.newTask3.category.color)
 
         # Check for individual tasks' detail links in response
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask3.id]))
 
         # Check for individual tasks' update links in response
-        self.assertContains(response, reverse('update-task', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('update-task', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('update-task', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'update-task', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'update-task', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'update-task', args=[self.newTask3.id]))
 
         # Check for individual tasks' delete links in response
-        self.assertContains(response, reverse('delete-task', args=[self.newTask1.id])) # TestTask1 link is present
-        self.assertContains(response, reverse('delete-task', args=[self.newTask2.id])) # TestTask2 link is present
-        self.assertContains(response, reverse('delete-task', args=[self.newTask3.id])) # TestTask3 link is present
+        # TestTask1 link is present
+        self.assertContains(response, reverse(
+            'delete-task', args=[self.newTask1.id]))
+        # TestTask2 link is present
+        self.assertContains(response, reverse(
+            'delete-task', args=[self.newTask2.id]))
+        # TestTask3 link is present
+        self.assertContains(response, reverse(
+            'delete-task', args=[self.newTask3.id]))
 
 #############################################################################
 # End of task tests
 #############################################################################
 
+
 class WeekTest(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser", email=email, password="testpassword123")
 
         self.client.login(username='testuser', password='testpassword123')
         # Get the current day
         currentDay = datetime.now().date()
-        
 
         # Make test tasks in current week
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day),deadlineTime=time(12,0),
-                                           category=None,duration=timedelta(hours=1),
-                                           user=self.customUser,status=False)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(currentDay.year, currentDay.month, currentDay.day),deadlineTime=time(0,1),
-                                           category=None,duration=timedelta(hours=2),
-                                           user=self.customUser,status=False)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(currentDay.year, currentDay.month, currentDay.day), deadlineTime=time(12, 0),
+                                            category=None, duration=timedelta(hours=1),
+                                            user=self.customUser, status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(currentDay.year, currentDay.month, currentDay.day), deadlineTime=time(0, 1),
+                                            category=None, duration=timedelta(hours=2),
+                                            user=self.customUser, status=False)
 
     def test_week_task_display(self):
         # Get and verify template being used is correct
         response = self.client.get(reverse('week-view'))
-    
+
         self.assertTemplateUsed(response, 'calendar_app/week_view.html')
 
         # Check that tasks exist
@@ -502,8 +600,11 @@ class WeekTest(TestCase):
         self.assertContains(response, self.newTask2.name)
 
         # Check URLs for task detail views
-        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id]))
-        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id]))
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask1.id]))
+        self.assertContains(response, reverse(
+            'task-detail', args=[self.newTask2.id]))
+
 
 class TestCurrentDay(TestCase):
     def testDateHtmlGenerationMonth(self):
@@ -520,34 +621,37 @@ class TestCurrentDay(TestCase):
         self.assertIn(expected_html, response.content.decode('utf-8'))
 
     def testDateHtmlGenerationWeek(self):
-        response = self.client.get(reverse('week-view')) 
+        response = self.client.get(reverse('week-view'))
         self.assertEqual(response.status_code, 200)
 
         today_date = datetime.now().day
 
         # This checks for the class "today" but not for the tasks or button structure
-        self.assertTrue('class="col-1 today"' in response.content.decode('utf-8'))
+        self.assertTrue(
+            'class="col-1 today"' in response.content.decode('utf-8'))
 
 #############################################################################
 # Graph tests (Completed tasks) #############################################
 #############################################################################
-        
+
 # TEMPLATE TESTS ############################################################
-        
+
 # Current month view template test
+
+
 class GraphCompletedMonthViewTest(TestCase):
     def test_graph_completed_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Get the current year, month, and month name
         currYear = currMonthDate.year
         currMonth = currMonthDate.month
-        currMonthName = months[currMonth-1] # Indices start at 0
+        currMonthName = months[currMonth-1]  # Indices start at 0
 
         # Check URL, response status, and template
         response = self.client.get(reverse('graph-monthly-tasks-completed'))
@@ -560,12 +664,14 @@ class GraphCompletedMonthViewTest(TestCase):
 
 # Next view template test
 # Modified version of GraphCompletedMonthViewTest
+
+
 class GraphCompletedNextMonthViewTest(TestCase):
     def test_graph_completed_next_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -575,11 +681,12 @@ class GraphCompletedNextMonthViewTest(TestCase):
         # Get the current year, month, and month name
         nextYear = nextMonthDate.year
         nextMonth = nextMonthDate.month
-        nextMonthName = months[nextMonth-1] # Indices start at 0
+        nextMonthName = months[nextMonth-1]  # Indices start at 0
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
+        nextMonthURL = reverse('graph-monthly-tasks-completed') + \
+            f'?month={nextYear}-{nextMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(nextMonthURL)
@@ -592,12 +699,14 @@ class GraphCompletedNextMonthViewTest(TestCase):
 
 # Previous view template test
 # Modified version of GraphCompletedMonthViewTest
+
+
 class GraphCompletedPrevMonthViewTest(TestCase):
     def test_graph_completed_prev_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -607,11 +716,12 @@ class GraphCompletedPrevMonthViewTest(TestCase):
         # Get the current year, month, and month name
         prevYear = prevMonthDate.year
         prevMonth = prevMonthDate.month
-        prevMonthName = months[prevMonth-1] # Indices start at 0
+        prevMonthName = months[prevMonth-1]  # Indices start at 0
 
         # Previous month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
+        prevMonthURL = reverse('graph-monthly-tasks-completed') + \
+            f'?month={prevYear}-{prevMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(prevMonthURL)
@@ -625,6 +735,8 @@ class GraphCompletedPrevMonthViewTest(TestCase):
 # NO TASKS TESTS ############################################################
 
 # Test for if there are NO tasks in current month
+
+
 class GraphCompletedNoTasksTest(TestCase):
     def test_graph_completed_no_tasks(self):
         # Get and verify template being used is correct
@@ -635,6 +747,8 @@ class GraphCompletedNoTasksTest(TestCase):
         self.assertIn('no completed tasks', response.content.decode())
 
 # Test for if there are NO tasks in next month
+
+
 class GraphCompletedNoTasksNextMonthTest(TestCase):
     def test_graph_completed_next_month_no_tasks(self):
         # Get the first day of the current month
@@ -649,7 +763,8 @@ class GraphCompletedNoTasksNextMonthTest(TestCase):
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
+        nextMonthURL = reverse('graph-monthly-tasks-completed') + \
+            f'?month={nextYear}-{nextMonth}'
 
         # Get and verify template being used is correct
         response = self.client.get(nextMonthURL)
@@ -659,6 +774,8 @@ class GraphCompletedNoTasksNextMonthTest(TestCase):
         self.assertIn('no completed tasks', response.content.decode())
 
 # Test for if there are NO tasks in prev month
+
+
 class GraphCompletedNoTasksPrevMonthTest(TestCase):
     def test_graph_completed_prev_month_no_tasks(self):
         # Get the first day of the current month
@@ -673,8 +790,9 @@ class GraphCompletedNoTasksPrevMonthTest(TestCase):
 
         # Previous month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
-        
+        prevMonthURL = reverse('graph-monthly-tasks-completed') + \
+            f'?month={prevYear}-{prevMonth}'
+
         # Get and verify template being used is correct
         response = self.client.get(prevMonthURL)
         self.assertTemplateUsed(response, 'calendar_app/graph_completed.html')
@@ -685,29 +803,32 @@ class GraphCompletedNoTasksPrevMonthTest(TestCase):
 # GRAPH GENERATION TESTS ####################################################
 
 # Current month graph generation test
+
+
 class GraphCompletedBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Make next month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_completed_base64(self):
         # Get and verify template being used is correct
@@ -718,11 +839,14 @@ class GraphCompletedBase64Test(TestCase):
         self.assertIn('data:image/png;base64,', response.content.decode())
 
 # Next month graph generation test
+
+
 class GraphCompletedNextMonthBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -734,22 +858,23 @@ class GraphCompletedNextMonthBase64Test(TestCase):
 
         # Next month URL; argument is the same as used in
         # the graph_completed.html template
-        self.nextMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}' 
+        self.nextMonthURL = reverse(
+            'graph-monthly-tasks-completed')+f'?month={nextYear}-{nextMonth}'
 
         # Make next month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_completed_next_month_base64(self):
         # Get and verify template being used is correct
@@ -760,11 +885,14 @@ class GraphCompletedNextMonthBase64Test(TestCase):
         self.assertIn('data:image/png;base64,', response.content.decode())
 
 # Prev month graph generation test
+
+
 class GraphCompletedPrevMonthBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -776,22 +904,23 @@ class GraphCompletedPrevMonthBase64Test(TestCase):
 
         # Previous month URL; argument is the same as used in
         # the graph_completed.html template
-        self.prevMonthURL = reverse('graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}' 
+        self.prevMonthURL = reverse(
+            'graph-monthly-tasks-completed')+f'?month={prevYear}-{prevMonth}'
 
         # Make previous month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_completed_prev_month_base64(self):
         # Get and verify template being used is correct
@@ -803,8 +932,8 @@ class GraphCompletedPrevMonthBase64Test(TestCase):
 
 #############################################################################
 # End of graph tests (Completed tasks) ######################################
-#############################################################################     
-        
+#############################################################################
+
 #############################################################################
 # Graph tests (Complete vs incomplete tasks) ################################
 #############################################################################
@@ -812,24 +941,28 @@ class GraphCompletedPrevMonthBase64Test(TestCase):
 # TEMPLATE TESTS ############################################################
 
 # Current month view template test
+
+
 class GraphProgressMonthViewTest(TestCase):
     def test_graph_progress_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Get the current year, month, and month name
         currYear = currMonthDate.year
         currMonth = currMonthDate.month
-        currMonthName = months[currMonth-1] # Indices start at 0
+        currMonthName = months[currMonth-1]  # Indices start at 0
 
         # Check URL, response status, and template
-        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
+        response = self.client.get(
+            reverse('graph-monthly-task-complete-vs-incomplete'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for correct year and month
         self.assertContains(response, currYear)
@@ -837,12 +970,14 @@ class GraphProgressMonthViewTest(TestCase):
 
 # Next view template test
 # Modified version of GraphProgressMonthViewTest
+
+
 class GraphProgressNextMonthViewTest(TestCase):
     def test_graph_progress_next_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -852,16 +987,18 @@ class GraphProgressNextMonthViewTest(TestCase):
         # Get the next year, month, and month name
         nextYear = nextMonthDate.year
         nextMonth = nextMonthDate.month
-        nextMonthName = months[nextMonth-1] # Indices start at 0
+        nextMonthName = months[nextMonth-1]  # Indices start at 0
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
+        nextMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(nextMonthURL)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for correct year and month
         self.assertContains(response, nextYear)
@@ -869,12 +1006,14 @@ class GraphProgressNextMonthViewTest(TestCase):
 
 # Previous view template test
 # Modified version of GraphProgressMonthViewTest
+
+
 class GraphProgressPrevMonthViewTest(TestCase):
     def test_graph_progress_prev_month_view(self):
         # List of month names
-        months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December',]
-        
+        months = ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December',]
+
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
@@ -884,16 +1023,18 @@ class GraphProgressPrevMonthViewTest(TestCase):
         # Get the current year, month, and month name
         prevYear = prevMonthDate.year
         prevMonth = prevMonthDate.month
-        prevMonthName = months[prevMonth-1] # Indices start at 0
+        prevMonthName = months[prevMonth-1]  # Indices start at 0
 
         # Previous month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
+        prevMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}'
 
         # Check URL, response status, and template
         response = self.client.get(prevMonthURL)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for correct year and month
         self.assertContains(response, prevYear)
@@ -902,16 +1043,22 @@ class GraphProgressPrevMonthViewTest(TestCase):
 # GRAPH GENERATION TESTS ####################################################
 
 # Test for if there are NO tasks in current month
+
+
 class GraphProgressNoTasksTest(TestCase):
     def test_graph_progress_no_tasks(self):
         # Get and verify template being used is correct
-        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        response = self.client.get(
+            reverse('graph-monthly-task-complete-vs-incomplete'))
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for the "no tasks" message
         self.assertIn('no tasks', response.content.decode())
 
 # Test for if there are NO tasks in next month
+
+
 class GraphProgressNoTasksNextMonthTest(TestCase):
     def test_graph_progress_next_month_no_tasks(self):
         # Get the first day of the current month
@@ -926,16 +1073,20 @@ class GraphProgressNoTasksNextMonthTest(TestCase):
 
         # Next month URL; argument is the same as used in
         # the calendar_month.html template
-        nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
-        
+        nextMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}'
+
         # Get and verify template being used is correct
         response = self.client.get(nextMonthURL)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for the "no tasks" message
         self.assertIn('no tasks', response.content.decode())
 
 # Test for if there are NO tasks in prev month
+
+
 class GraphProgressNoTasksPrevMonthTest(TestCase):
     def test_graph_progress_prev_month_no_tasks(self):
         # Get the first day of the current month
@@ -950,11 +1101,13 @@ class GraphProgressNoTasksPrevMonthTest(TestCase):
 
         # Previous month URL; argument is the same as used in
         # the calendar_month.html template
-        prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
-        
+        prevMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}'
+
         # Get and verify template being used is correct
         response = self.client.get(prevMonthURL)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for the "no tasks" message
         self.assertIn('no tasks', response.content.decode())
@@ -962,44 +1115,52 @@ class GraphProgressNoTasksPrevMonthTest(TestCase):
 # GRAPH GENERATION TESTS ####################################################
 
 # Current month graph generation test
+
+
 class GraphProgressBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
 
         # Make next month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(currMonthDate.year, currMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_progress_base64(self):
         # Get and verify template being used is correct
-        response = self.client.get(reverse('graph-monthly-task-complete-vs-incomplete'))
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        response = self.client.get(
+            reverse('graph-monthly-task-complete-vs-incomplete'))
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for base64 string (shouldn't be generated if there are errors or no tasks)
         self.assertIn('data:image/png;base64,', response.content.decode())
 
 # Next month graph generation test
+
+
 class GraphProgressNextMonthBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -1011,37 +1172,42 @@ class GraphProgressNextMonthBase64Test(TestCase):
 
         # Next month URL; argument is the same as used in
         # the graph_completed.html template
-        self.nextMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}' 
+        self.nextMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={nextYear}-{nextMonth}'
 
         # Make next month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(nextMonthDate.year, nextMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_progress_next_month_base64(self):
         # Get and verify template being used is correct
         response = self.client.get(self.nextMonthURL)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for base64 string (shouldn't be generated if there are errors or no tasks)
         self.assertIn('data:image/png;base64,', response.content.decode())
 
 # Prev month graph generation test
+
+
 class GraphProgressPrevMonthBase64Test(TestCase):
     def setUp(self):
         # Make test user to assign tasks to
         email = "testuser@uccs.edu"
-        self.customUser = CustomUser.objects.create_user(username="testuser1", email=email, password="testpassword123")
+        self.customUser = CustomUser.objects.create_user(
+            username="testuser1", email=email, password="testpassword123")
 
         # Get the first day of the current month
         currMonthDate = datetime.now().replace(day=1)
@@ -1053,27 +1219,29 @@ class GraphProgressPrevMonthBase64Test(TestCase):
 
         # Previous month URL; argument is the same as used in
         # the graph_completed.html template
-        self.prevMonthURL = reverse('graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}' 
+        self.prevMonthURL = reverse(
+            'graph-monthly-task-complete-vs-incomplete')+f'?month={prevYear}-{prevMonth}'
 
         # Make previous month tasks; days are arbitrary
         # 3 completed
-        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,2),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=4),
-                                           user=self.customUser,status=True)
-        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,8),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=2),
-                                           user=self.customUser,status=True)
-        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
-                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
-                                           category=None,duration=timedelta(days=0, hours=8),
-                                           user=self.customUser,status=True)
+        self.newTask1 = Task.objects.create(name='TestTask1', description='TestDesc1',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 2), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=4),
+                                            user=self.customUser, status=True)
+        self.newTask2 = Task.objects.create(name='TestTask2', description='TestDesc2',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 8), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=2),
+                                            user=self.customUser, status=True)
+        self.newTask3 = Task.objects.create(name='TestTask3', description='TestDesc3',
+                                            deadlineDay=date(prevMonthDate.year, prevMonthDate.month, 24), deadlineTime=time(23, 59),
+                                            category=None, duration=timedelta(days=0, hours=8),
+                                            user=self.customUser, status=True)
 
     def test_graph_progress_prev_month_base64(self):
         # Get and verify template being used is correct
         response = self.client.get(self.prevMonthURL)
-        self.assertTemplateUsed(response, 'calendar_app/graph_complete_vs_incomplete.html')
+        self.assertTemplateUsed(
+            response, 'calendar_app/graph_complete_vs_incomplete.html')
 
         # Check for base64 string (shouldn't be generated if there are errors or no tasks)
         self.assertIn('data:image/png;base64,', response.content.decode())
@@ -1084,12 +1252,15 @@ class GraphProgressPrevMonthBase64Test(TestCase):
 
 # Category unit tests for both defualt and specific date options
 
+
 class TestCategoryViews(TestCase):
     def setUp(self):
         unique_suffix = now().strftime("%Y%m%d%H%M%S")
-        self.user = CustomUser.objects.create_user(username='user', email=f'user{unique_suffix}@example.com', password='test')
+        self.user = CustomUser.objects.create_user(
+            username='user', email=f'user{unique_suffix}@example.com', password='test')
         self.client.login(username='user', password='test')
-        self.category = Category.objects.create(name='Initial Category', user=self.user)
+        self.category = Category.objects.create(
+            name='Initial Category', user=self.user)
 
     def testCategoryListView(self):
         response = self.client.get(reverse('category-list'))
@@ -1101,11 +1272,13 @@ class TestCategoryViews(TestCase):
         data = {'name': 'New Category', 'description': 'A new category'}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)  # Redirect after POST
-        self.assertEqual(Category.objects.count(), 1)  # one was already created in setup
+        # one was already created in setup
+        self.assertEqual(Category.objects.count(), 1)
 
     def testUpdateCategoryPost(self):
         url = reverse('update-category', args=[self.category.pk])
-        data = {'name': 'Updated Category', 'description': 'Updated description'}
+        data = {'name': 'Updated Category',
+                'description': 'Updated description'}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)  # Redirect after POST
         self.category.refresh_from_db()
@@ -1131,7 +1304,8 @@ class CategoryByDateListViewTests(TestCase):
     def setUp(self):
         # Set up the user and login
         unique_suffix = now().strftime("%Y%m%d%H%M%S")
-        self.user = CustomUser.objects.create_user(username='testuser', email=f'testuser{unique_suffix}@example.com', password='12345')
+        self.user = CustomUser.objects.create_user(
+            username='testuser', email=f'testuser{unique_suffix}@example.com', password='12345')
         self.client.login(username='testuser', password='12345')
 
         # Set up categories
@@ -1139,7 +1313,6 @@ class CategoryByDateListViewTests(TestCase):
         yesterday = today - timezone.timedelta(days=1)
         Category.objects.create(name='Today Category', user=self.user)
         Category.objects.create(name='Yesterday Category', user=self.user)
-
 
     def testViewWithDefaultDate(self):
         # Testing with no specific date
@@ -1150,8 +1323,9 @@ class CategoryByDateListViewTests(TestCase):
 
     def testViewWithSpecificDate(self):
         # Testing with a specific date provided
-        yesterday = (timezone.now().date() - timezone.timedelta(days=1)).isoformat()
+        yesterday = (timezone.now().date() -
+                     timezone.timedelta(days=1)).isoformat()
         response = self.client.get(reverse('category-list'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['object_list']), 2)
-        self.assertContains(response, 'Today Category')     
+        self.assertContains(response, 'Today Category')

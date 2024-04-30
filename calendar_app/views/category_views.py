@@ -17,6 +17,7 @@ class CategoryListView(generic.ListView):
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user).order_by('name')
 
+
 @login_required(login_url='/login/')
 def createCategory(request):
     if request.method == 'POST':
@@ -32,26 +33,28 @@ def createCategory(request):
     context = {'form': form, 'title': 'Create a New Category'}
     return render(request, 'calendar_app/create_category_form.html', context)
 
+
 @login_required(login_url='/login/')
-@permission_required_or_403('change_category',(Category,'pk','category_id'))
-def updateCategory(request,category_id):
-    category = get_object_or_404(Category,pk=category_id)
+@permission_required_or_403('change_category', (Category, 'pk', 'category_id'))
+def updateCategory(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
     form = CategoryForm(instance=category)
     if request.method == 'POST':
-         form = CategoryForm(request.POST, instance=category)
-         if form.is_valid():
-             form.save()
-         return redirect('category-list')
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+        return redirect('category-list')
 
-    context = {'form': form,'category':category, 'title': 'Update Category'}
+    context = {'form': form, 'category': category, 'title': 'Update Category'}
     return render(request, 'calendar_app/update_category_form.html', context)
 
+
 @login_required(login_url='/login/')
-@permission_required_or_403('delete_category',(Category,'pk','category_id'))
-def deleteCategory(request,category_id):
-    category = get_object_or_404(Category,pk=category_id)
+@permission_required_or_403('delete_category', (Category, 'pk', 'category_id'))
+def deleteCategory(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
     if request.method == 'POST':
-       category.delete()
-       return redirect('index')
-    context = {'category':category}
+        category.delete()
+        return redirect('index')
+    context = {'category': category}
     return render(request, 'calendar_app/delete_category_form.html', context)

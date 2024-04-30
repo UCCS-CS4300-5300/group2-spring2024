@@ -10,9 +10,10 @@ from ..models import CustomUser, Task
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(permission_required_or_403('view_task',(Task,'pk','pk')), name='dispatch')
+@method_decorator(permission_required_or_403('view_task', (Task, 'pk', 'pk')), name='dispatch')
 class TaskDetailView(generic.DetailView):
     model = Task
+
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class TaskListView(generic.ListView):
@@ -21,10 +22,11 @@ class TaskListView(generic.ListView):
     def get_queryset(self):
         return get_objects_for_user(self.request.user, 'calendar_app.view_task').order_by('deadlineDay', 'deadlineTime')
 
+
 @login_required(login_url='/login/')
 def createTask(request):
     if request.method == 'POST':
-        form = TaskForm(request.POST,user=request.user)
+        form = TaskForm(request.POST, user=request.user)
         if form.is_valid():
             # Save the form data to the database
             form.instance.user = request.user
@@ -36,13 +38,14 @@ def createTask(request):
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
 
+
 @login_required(login_url='/login/')
-@permission_required_or_403('change_task',(Task,'pk','task_id'))
+@permission_required_or_403('change_task', (Task, 'pk', 'task_id'))
 def updateTask(request, task_id):
     task = Task.objects.get(pk=task_id)
     form = TaskForm(instance=task, user=request.user)
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task,user=request.user)
+        form = TaskForm(request.POST, instance=task, user=request.user)
         if form.is_valid():
             form.save()
         return redirect('task-detail', task.id)
@@ -50,8 +53,9 @@ def updateTask(request, task_id):
     context = {'form': form}
     return render(request, 'calendar_app/task_form.html', context)
 
+
 @login_required(login_url='/login/')
-@permission_required_or_403('delete_task',(Task,'pk','task_id'))
+@permission_required_or_403('delete_task', (Task, 'pk', 'task_id'))
 def deleteTask(request, task_id):
     task = Task.objects.get(pk=task_id)
     if request.method == 'POST':

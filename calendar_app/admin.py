@@ -7,9 +7,14 @@ from .models import *
 # Register your models here.
 class CategoryAdmin(GuardedModelAdmin):
     pass
-admin.site.register(Category,CategoryAdmin)
+
+
+admin.site.register(Category, CategoryAdmin)
+
 
 class TaskAdmin(GuardedModelAdmin):
     pass
-admin.site.register(Task,TaskAdmin)
+
+
+admin.site.register(Task, TaskAdmin)
 admin.site.register(User)

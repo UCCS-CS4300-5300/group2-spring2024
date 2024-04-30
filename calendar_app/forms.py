@@ -18,19 +18,22 @@ class CustomUserCreationForm(UserCreationForm):
 class TaskForm(ModelForm):
     class Meta:
         model = Task
-        fields = ('name', 'description', 'deadlineDay', 'deadlineTime', 'category', 'duration', 'status')
+        fields = ('name', 'description', 'deadlineDay',
+                  'deadlineTime', 'category', 'duration', 'status')
 
-    def __init__(self,*args, **kwargs):
-        filterUser = kwargs.pop('user',None)
-        filterUser = filterUser if isinstance(filterUser,CustomUser) else None
+    def __init__(self, *args, **kwargs):
+        filterUser = kwargs.pop('user', None)
+        filterUser = filterUser if isinstance(filterUser, CustomUser) else None
         super(TaskForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
-        self.fields['category'].queryset = Category.objects.filter(user=filterUser)
+        self.fields['category'].queryset = Category.objects.filter(
+            user=filterUser)
+
 
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
-        fields = ['name','color']
+        fields = ['name', 'color']
         widgets = {
             'color': forms.CharField(widget=ColorWidget)
         }

@@ -8,7 +8,7 @@ from .models import Category, Task
 
 # Calendar class; overriding HTMLCalendar
 class Calendar(HTMLCalendar):
-    def __init__(self, year=None, month=None,filter_category_list:list[int]=None,user=None):
+    def __init__(self, year=None, month=None, filter_category_list: list[int] = None, user=None):
         self.year = year
         self.month = month
         self.filter_category_list = filter_category_list
@@ -17,15 +17,17 @@ class Calendar(HTMLCalendar):
 
     # Format days and filter tasks by day
     # Use bootstrap; display tasks as small buttons
-    def formatday(self, currentDay, tasks,filter_category_list):
+    def formatday(self, currentDay, tasks, filter_category_list):
         if filter_category_list:
-            filterCategories = Category.objects.filter(pk__in=filter_category_list)
-            tasksInDay = tasks.filter(deadlineDay__day=currentDay,category__in=filterCategories)
+            filterCategories = Category.objects.filter(
+                pk__in=filter_category_list)
+            tasksInDay = tasks.filter(
+                deadlineDay__day=currentDay, category__in=filterCategories)
             tasksInDay = tasksInDay.exclude(category=None)
         else:
             tasksInDay = tasks.filter(deadlineDay__day=currentDay)
         dayHtml = ''
-        
+
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
             taskURL = reverse('task-detail', args=[task.id])
@@ -36,20 +38,20 @@ class Calendar(HTMLCalendar):
             if task.status:
                 taskName = f'<s>{taskName}</s>'
             dayHtml += f'<a class="btn {colorClass} btn-sm w-100" href="{taskURL}" role="button" onmouseover="hover(\'{task.description}\')" onmouseout="hide()">{taskName}</a><br>'
-        
+
         # Add numerical date and tasks to cell
         if currentDay != 0:
             return f'<td><p class="text-end">{currentDay}</p><p>{dayHtml}</p></td>'
-        
+
         # Return empty otherwise
         return '<td></td>'
 
     # Format weeks as table rows
-    def formatweek(self, currentWeek, tasks,filter_category_list):
+    def formatweek(self, currentWeek, tasks, filter_category_list):
         weekHtml = ''
 
         for dayHtml, weekDay in currentWeek:
-            weekHtml += self.formatday(dayHtml, tasks,filter_category_list)
+            weekHtml += self.formatday(dayHtml, tasks, filter_category_list)
 
         return f'<tr>{weekHtml}</tr>'
 
@@ -57,21 +59,21 @@ class Calendar(HTMLCalendar):
     # according to the sketch approved by the customers
     def formatweekheader(self):
         # The first day is Sunday to match the approved sketch
-        days = ['S','M','T','W','T','F','S']
-        
+        days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+
         # Start the HTML table row
         weekHeader = '<tr class="text-center">'
 
         # Label the day cells
         for day in days:
-             weekHeader += '<th scope="col">'
-             weekHeader += day
-             weekHeader += '</th>'
+            weekHeader += '<th scope="col">'
+            weekHeader += day
+            weekHeader += '</th>'
 
         # Close the table row
         weekHeader += '</tr>'
 
-        return f'<thead>{weekHeader}</thead>'                  
+        return f'<thead>{weekHeader}</thead>'
 
     # Format month name header
     # Kept just in case; moved to calendar_month.html with
@@ -119,25 +121,26 @@ class Calendar(HTMLCalendar):
         if self.filter_category_list:
             tasks = tasks.filter(category__in=self.filter_category_list)
             tasks = tasks.exclude(category=None)
-  
-        tasks = tasks.filter(deadlineDay__year=self.year,deadlineDay__month=self.month)
+
+        tasks = tasks.filter(deadlineDay__year=self.year,
+                             deadlineDay__month=self.month)
 
         cal = ''
 
         # Starting HTML; format the month
-        #cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
+        # cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
         # Month name/header is now in calendar_month.html because
-        # the buttons to get the next and previous months don't 
+        # the buttons to get the next and previous months don't
         # work from here due to complications with string formatting
 
         # Start the HTML table for the weeks and days
         cal += f'<table class="table table-bordered table-fixed">'
-        
+
         # Format the week header
         cal += f'{self.formatweekheader()}\n'
-        
+
         # Format the days
         for week in self.monthdays2calendar(self.year, self.month):
             cal += f'{self.formatweek(week, tasks,self.filter_category_list)}\n'
-        
+
         return cal
