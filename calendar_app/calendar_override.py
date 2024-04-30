@@ -26,7 +26,6 @@ class Calendar(HTMLCalendar):
             tasksInDay = tasks.filter(deadlineDay__day=currentDay)
         dayHtml = ''
         
-
         # Show tasks as small buttons in primary (color)
         for task in tasksInDay:
             taskURL = reverse('task-detail', args=[task.id])
@@ -36,7 +35,7 @@ class Calendar(HTMLCalendar):
                 colorClass = f"category-{task.category.id}"
             if task.status:
                 taskName = f'<s>{taskName}</s>'
-            dayHtml += f'<a class="btn {colorClass} btn-sm w-100" href="{taskURL}" role="button">{taskName}</a><br>'
+            dayHtml += f'<a class="btn {colorClass} btn-sm w-100" href="{taskURL}" role="button" onmouseover="hover(\'{task.description}\')" onmouseout="hide()">{taskName}</a><br>'
         
         # Add numerical date and tasks to cell
         if currentDay != 0:

@@ -30,6 +30,20 @@
 <!-- Replace block content in base_template.html -->
 {% block content %}
 
+<!-- Javascript scripts for on hover details viewing -->
+<script>
+    function hover(task) {
+        var tooltip = document.getElementById('tooltip');
+        tooltip.innerHTML = task;
+        tooltip.style.display = 'block';
+    }
+
+    function hide() {
+        var tooltip = document.getElementById('tooltip');
+        tooltip.style.display = 'none';
+    }
+</script>
+
 <!-- Container div -->
 <div class="container-lg">
   <!-- Page name heading -->
@@ -140,7 +154,7 @@
               <!-- Task buttons -->
               <p>
                 {% for task in tasks %}
-                  <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'">
+                  <button class="btn btn-primary btn-sm task w-100 {% if task.category %}category-{{ task.category.id }}{% endif %}" onclick="window.location.href='{% url 'task-detail' task.id %}'" onmouseover="hover('{{ task.description }}')" onmouseout="hide()">
                     {% if task.status %} <!-- Strikethrough if task is complete -->
                       <s>{{ task.name }}</s>
                     {% else %}
@@ -158,6 +172,7 @@
       </table><!-- End of calendar table -->
     </div> <!-- End of right-side column -->
   </div> <!-- End of row containing columns -->
+  <div id="tooltip"></div>
 </div> <!-- End of container div -->
 <!-- Debugging -->
 <!--<p>weekday_date: {{ weekday_date }}</p>-->

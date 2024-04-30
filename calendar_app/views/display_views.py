@@ -231,8 +231,7 @@ class MonthView(generic.ListView):
                         before_tasks = match.group(1) # The opening part of the cell with date
                         after_tasks = match.group(3) # The closing tag of the cell
                         task_html = ''.join(
-                            #f'<a href="/task/{task.id}" class="btn category-{task.category.id} btn-sm w-100" role="button">{task.name}</a><br>'
-                            f'<a href="/task/{task.id}" class="btn category-{task.category.id if task.category else "no-category"} btn-sm w-100" role="button">{task.name}</a><br>'
+                            f'<a href="/task/{task.id}" class="btn category-{task.category.id if task.category else "no-category"} btn-sm w-100" role="button" onmouseover="hover(\'{task.description}\')" onmouseout="hide()">{task.name}</a><br>'
                             for task in tasks if task.deadlineDay.day == today.day)
                         replacement = f'{before_tasks}{task_html}{after_tasks}'
                         # Use regex to replace the content inside the cell not the cell itself
