@@ -315,3 +315,65 @@ class CategoryUserPermissionsTestCase(TestCase):
         response = self.client.get(reverse('delete-category',args=[self.user2Category.id]))
         self.assertEquals(response.status_code,403)
 
+# CATEGORY LIST VIEW ############################################################
+
+# No categories
+class CategoryListNoTasksViewTest(TestCase):
+    def setUp(self):
+        # Make test user to assign categories to
+        email = "testuser@uccs.edu"
+        self.user1 = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+
+        self.client.login(username='testuser', password='testpassword123')
+
+    def test_category_list_no_categories_view(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('category-list'))
+        self.assertTemplateUsed(response, 'calendar_app/category_list.html')
+
+        # Check for the "no categories" message
+        self.assertIn('No categories', response.content.decode())
+
+# With categories
+class CategoryListViewTest(TestCase):
+    def setUp(self):
+        # Make test user to assign categories to
+        email = "testuser@uccs.edu"
+        self.user1 = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+
+        self.client.login(username='testuser', password='testpassword123')
+
+        # Make categories; colors are arbitrary
+        self.category1 = Category.objects.create(name="Category 1",user=self.user1,color="#010101")
+        self.category2 = Category.objects.create(name="Category 2",user=self.user1,color="#aabbcc")
+        self.category3 = Category.objects.create(name="Category 3",user=self.user1,color="#244224")
+        
+
+    def test_category_list_view(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('category-list'))
+        self.assertTemplateUsed(response, 'calendar_app/category_list.html')
+
+        # Check for index/home and create/add category links
+        self.assertContains(response, reverse('index')) # Index/home link is present
+        self.assertContains(response, reverse('create-category')) # Create/add category link is present
+
+        # Check for individual categories in response
+        self.assertContains(response, self.category1.name) # category1 is present
+        self.assertContains(response, self.category2.name) # category2 is present
+        self.assertContains(response, self.category3.name) # category3 is present
+
+        # Check for individual categories' colors in response
+        self.assertContains(response, self.category1.color) # category1 color is present
+        self.assertContains(response, self.category2.color) # category2 color is present
+        self.assertContains(response, self.category3.color) # category3 color is present
+
+        # Check for individual categories' update links in response
+        self.assertContains(response, reverse('update-category', args=[self.category1.id])) # category1 link is present
+        self.assertContains(response, reverse('update-category', args=[self.category2.id])) # category2 link is present
+        self.assertContains(response, reverse('update-category', args=[self.category3.id])) # category3 link is present
+
+        # Check for individual categories' delete links in response
+        self.assertContains(response, reverse('delete-category', args=[self.category1.id])) # category1 link is present
+        self.assertContains(response, reverse('delete-category', args=[self.category2.id])) # category2 link is present
+        self.assertContains(response, reverse('delete-category', args=[self.category3.id])) # category3 link is present

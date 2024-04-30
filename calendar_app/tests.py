@@ -330,6 +330,10 @@ class PrevMonthTaskDisplay(TestCase):
 # End of month view tests
 #############################################################################
 
+#############################################################################
+# Start of task tests
+#############################################################################
+
 class TasksTests(TestCase):
     # User and Task for Testing CRUD operations
     def setUp(self):
@@ -374,6 +378,97 @@ class TasksTests(TestCase):
         response = self.client.post(reverse('delete-task', args=[self.newTask.id]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Task.objects.count(), 0)
+
+# TASK LIST VIEW ############################################################
+
+# No tasks
+class TaskListNoTasksViewTest(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+
+        self.client.login(username='testuser', password='testpassword123')
+
+    def test_task_list_no_tasks_view(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('task-list'))
+        self.assertTemplateUsed(response, 'calendar_app/task_list.html')
+
+        # Check for the "no tasks" message
+        self.assertIn('No tasks', response.content.decode())
+
+# With tasks
+class TaskListViewTest(TestCase):
+    def setUp(self):
+        # Make test user to assign tasks to
+        email = "testuser@uccs.edu"
+        self.customUser = CustomUser.objects.create_user(username="testuser", email=email, password="testpassword123")
+
+        self.client.login(username='testuser', password='testpassword123')
+        
+        # Get the first day of the current month
+        currMonthDate = datetime.now().replace(day=1)
+        # Get the next month
+        nextMonthDate = currMonthDate.replace(month=currMonthDate.month+1)
+        # Get the previous month
+        prevMonthDate = currMonthDate.replace(month=currMonthDate.month-1)
+
+        # Make categories; colors are arbitrary
+        self.categoryTask2 = Category.objects.create(name="Category 1",user=self.customUser,color="#ffff00")
+        self.categoryTask3 = Category.objects.create(name="Category 2",user=self.customUser,color="#ee11ee")
+
+        # Make tasks in current/next/previous months; days are arbitrary
+        self.newTask1 = Task.objects.create(name='TestTask1',description='TestDesc1',
+                                           deadlineDay=date(currMonthDate.year,currMonthDate.month,2),deadlineTime=time(23,59),
+                                           category=None,duration=timedelta(days=0, hours=4),
+                                           user=self.customUser,status=False)
+        self.newTask2 = Task.objects.create(name='TestTask2',description='TestDesc2',
+                                           deadlineDay=date(nextMonthDate.year,nextMonthDate.month,8),deadlineTime=time(23,59),
+                                           category=self.categoryTask2,duration=timedelta(days=0, hours=2),
+                                           user=self.customUser,status=False)
+        self.newTask3 = Task.objects.create(name='TestTask3',description='TestDesc3',
+                                           deadlineDay=date(prevMonthDate.year,prevMonthDate.month,24),deadlineTime=time(23,59),
+                                           category=self.categoryTask3,duration=timedelta(days=0, hours=8),
+                                           user=self.customUser,status=False)
+
+    def test_task_list_view(self):
+        # Get and verify template being used is correct
+        response = self.client.get(reverse('task-list'))
+        self.assertTemplateUsed(response, 'calendar_app/task_list.html')
+
+        # Check for index/home and create/add task links
+        self.assertContains(response, reverse('index')) # Index/home link is present
+        self.assertContains(response, reverse('create-task')) # Create/add task link is present
+
+        # Check for individual tasks in response
+        self.assertContains(response, self.newTask1.name) # TestTask1 is present
+        self.assertContains(response, self.newTask2.name) # TestTask2 is present
+        self.assertContains(response, self.newTask3.name) # TestTask3 is present
+
+        # Check for individual tasks' custom category colors in response
+        # Task 1 has no custom category color because it is uncategorized
+        self.assertContains(response, self.newTask2.category.color) # TestTask2 color is present
+        self.assertContains(response, self.newTask3.category.color) # TestTask3 color is present
+
+        # Check for individual tasks' detail links in response
+        self.assertContains(response, reverse('task-detail', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('task-detail', args=[self.newTask3.id])) # TestTask3 link is present
+
+        # Check for individual tasks' update links in response
+        self.assertContains(response, reverse('update-task', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('update-task', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('update-task', args=[self.newTask3.id])) # TestTask3 link is present
+
+        # Check for individual tasks' delete links in response
+        self.assertContains(response, reverse('delete-task', args=[self.newTask1.id])) # TestTask1 link is present
+        self.assertContains(response, reverse('delete-task', args=[self.newTask2.id])) # TestTask2 link is present
+        self.assertContains(response, reverse('delete-task', args=[self.newTask3.id])) # TestTask3 link is present
+
+#############################################################################
+# End of task tests
+#############################################################################
 
 class WeekTest(TestCase):
     def setUp(self):
