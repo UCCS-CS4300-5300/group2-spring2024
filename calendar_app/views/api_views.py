@@ -52,7 +52,7 @@ class GoogleCalendar:
                 .list(
                     calendarId="primary",
                     timeMin=time_min,
-                    maxResults=15,
+                    maxResults=30,
                     singleEvents=True,
                     orderBy="startTime",
                 )
